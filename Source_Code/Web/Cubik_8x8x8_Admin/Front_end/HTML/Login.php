@@ -1,11 +1,18 @@
+<?php
+session_start();
+if (isset($_SESSION['account'])) {
+    header("Location: /Cubik_8x8x8/Source_Code/Web/Cubik_8x8x8_Admin/Front_end/HTML/Index.html");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/Cubik_8x8x8/Source_Code/Web/Cubik_8x8x8_Admin/Front_end/CSS/Login.css">
+    <link rel="stylesheet" href="../CSS/Login.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
-    <script src="/Cubik_8x8x8/Source_Code/Web/Cubik_8x8x8_Admin/Front_end/JavaScript/jquery-3.2.1.min.js"></script>
+    <script src="../JavaScript/jquery-3.2.1.min.js"></script>
     <title>Document</title>
 </head>
 <body>
@@ -17,6 +24,6 @@
             <input class="login-button" id="logBttn" type="button" value="Log In">
         </form>
     </div>
-    <script src="/Cubik_8x8x8/Source_Code/Web/Cubik_8x8x8_Admin/Front_end/JavaScript/Login.js"></script>
+    <script src="../JavaScript/Login.js"></script>
 </body>
 </html>

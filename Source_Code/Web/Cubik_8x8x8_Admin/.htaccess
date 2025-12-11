@@ -1,2 +1,8 @@
 RewriteEngine On
-RewriteRule ^$ Front_end/Login.html [L]
+
+# Allow direct access to static files
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Redirect root to Router.php
+RewriteRule ^$ Back_end/Router.php [L]

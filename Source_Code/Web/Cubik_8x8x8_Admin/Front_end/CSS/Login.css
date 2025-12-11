@@ -1,10 +1,10 @@
 /* From Uiverse.io by Smit-Prajapati */ 
 body {
-    margin: 0;
-    background-image: url('/Cubik_8x8x8/Source_Code/Web/Cubik_8x8x8_Admin/Front_end/Resources/Image/background.jpg');
+    background-image: url('../Resources/Image/background.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    background-attachment: fixed;
 }
 .container {
   max-width: 350px;
