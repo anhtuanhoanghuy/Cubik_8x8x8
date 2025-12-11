@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule ^$ Front_end/Login.html [L]

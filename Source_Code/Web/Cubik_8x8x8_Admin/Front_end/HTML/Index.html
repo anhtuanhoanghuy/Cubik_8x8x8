@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/Cubik_8x8x8/Source_Code/Web/Cubik_8x8x8_Admin/Front_end/CSS/Index.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+<script src="/Cubik_8x8x8/Source_Code/Web/Cubik_8x8x8_Admin/Front_end/JavaScript/jquery-3.2.1.min.js"></script>
+<title>Upload Firmware</title>
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="container">
+        <h2>Upload Firmware</h2>
+
+        <div class="info">
+            <strong>Phiên bản hiện tại:</strong> v1.2.3  
+            <br>
+            <strong>Kích thước tối đa:</strong> 2 MB
+        </div>
+
+        <form id="uploadForm" enctype="multipart/form-data">
+
+            <input type="file" name="firmware" accept=".bin, .hex" required>
+
+            <button type="submit" id="uploadBtn">
+                Upload Firmware
+            </button>
+
+            <div class="status" id="statusText"></div>
+        </form>
+    </div>
+    <button id= "btn-logout" class="btn-logout" aria-label="Logout">Logout</button>
+<script src="/Cubik_8x8x8/Source_Code/Web/Cubik_8x8x8_Admin/Front_end/JavaScript/Index.js"></script>
+</body>
+</html>
