@@ -3,30 +3,90 @@ from tkinter import filedialog, messagebox
 import os
 import zlib
 from datetime import datetime
+import subprocess
+import hashlib
+
+#Lấy đường dẫn tuyệt đối của thư mục chứa tool
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def embed_metadata(bin_path, output_path):
+    # Đọc firmware gốc
     with open(bin_path, 'rb') as f:
-        data = f.read()
-    
-    size = len(data)
-    crc32 = zlib.crc32(data) & 0xFFFFFFFF
-    build_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    version = "1.0.0"
+        firmware = f.read()
 
-    meta_str = f"VERSION={version};SIZE={size};CRC32={crc32:08X};BUILDTIME={build_time};"
+    size = len(firmware)
+    crc32 = zlib.crc32(firmware) & 0xFFFFFFFF
+    build_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # ✅ Version tạm để cứng, Anh có thể sửa sau
+    version = "2.0.0"
+
+    # Tạo đường dẫn tuyệt đối
+    openssl_path = os.path.join(BASE_DIR, "OpenSSL-Win64", "bin", "openssl.exe")
+    key_path = os.path.join(BASE_DIR, "Key", "private.pem")
+    signature_file = os.path.join(BASE_DIR, "signature.bin")
+
+    # Ký SHA-256
+    subprocess.run([
+        openssl_path,
+        "dgst", "-sha256",
+        "-sign", key_path,
+        "-out", signature_file,
+        bin_path
+    ], check=True)
+
+    with open(signature_file, "rb") as f:
+        signature = f.read()
+
+    # Tạo metadata
+    meta_str = (
+        f"VERSION={version};"
+        f"SIZE={size};"
+        f"CRC32={crc32:08X};"
+        f"SIGLEN={len(signature)};"
+        f"BUILDTIME={build_time};"
+    )
+
     meta_bytes = meta_str.encode('utf-8')
     meta_bytes += b'\0' * (64 - len(meta_bytes))
 
-    with open(output_path, 'wb') as f:
-        f.write(data)
-        f.write(meta_bytes)
+    # ✅ Tạo thư mục STM32/Revision
+    revision_dir = os.path.join(BASE_DIR, "..", "STM32", "Revision")
+    revision_dir = os.path.abspath(revision_dir)
+    os.makedirs(revision_dir, exist_ok=True)
 
-    # Trả về metadata để hiển thị
+    # ✅ Tạo thư mục version bên trong Revision
+    version_dir = os.path.join(revision_dir, f"version_{version}")
+    os.makedirs(version_dir, exist_ok=True)
+
+    # ✅ Lấy 4 ký tự cuối của CRC32
+    crc_short = f"{crc32:08X}"[-4:]
+
+    # ✅ Tạo tên file output theo format output_0x____.bin
+    output_file = os.path.join(version_dir, f"output_0x{crc_short}.bin")
+
+    # Ghi file output
+    with open(output_file, 'wb') as f:
+        f.write(meta_bytes)
+        f.write(signature)
+        f.write(firmware)
+
+    # ✅ Copy signature.bin vào thư mục version
+    signature_copy_path = os.path.join(version_dir, "signature.bin")
+    with open(signature_copy_path, "wb") as f:
+        f.write(signature)
+
+    # ✅ Xóa signature.bin tạm trong BASE_DIR
+    if os.path.exists(signature_file):
+        os.remove(signature_file)
+
     return {
         "Version": version,
         "Size": size,
         "CRC32": f"{crc32:08X}",
-        "Build Time": build_time
+        "Signature Length": len(signature),
+        "Build Time": build_time,
+        "Version Folder": version_dir
     }
 
 def select_file():
