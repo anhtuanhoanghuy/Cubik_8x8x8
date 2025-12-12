@@ -169,6 +169,10 @@ button:disabled {
     opacity: 1;
 }
 
+#uploadBtn {
+    margin-top: 10px;
+}
+
 #uploadBtn.fade-in {
     animation: fadeIn 0.5s forwards;
 }
@@ -224,6 +228,12 @@ button:disabled {
 
 .file a:hover {
     text-decoration: underline;
+}
+
+.file-info {
+    margin-bottom: 20px;
+    font-size: small;
+    color: #fff;
 }
 
 /* ===========================

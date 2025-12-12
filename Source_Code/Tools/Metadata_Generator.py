@@ -19,7 +19,7 @@ def embed_metadata(bin_path, output_path):
     build_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # ✅ Version tạm để cứng, Anh có thể sửa sau
-    version = "2.0.0"
+    version = "3.0.0"
 
     # Tạo đường dẫn tuyệt đối
     openssl_path = os.path.join(BASE_DIR, "OpenSSL-Win64", "bin", "openssl.exe")
@@ -47,8 +47,10 @@ def embed_metadata(bin_path, output_path):
         f"BUILDTIME={build_time};"
     )
 
+    # Prefix length 2 bytes (Little Endian)
     meta_bytes = meta_str.encode('utf-8')
-    meta_bytes += b'\0' * (64 - len(meta_bytes))
+    meta_len = len(meta_bytes)
+    prefix = meta_len.to_bytes(2, byteorder="little")
 
     # ✅ Tạo thư mục STM32/Revision
     revision_dir = os.path.join(BASE_DIR, "..", "STM32", "Revision")
@@ -67,6 +69,7 @@ def embed_metadata(bin_path, output_path):
 
     # Ghi file output
     with open(output_file, 'wb') as f:
+        f.write(prefix)
         f.write(meta_bytes)
         f.write(signature)
         f.write(firmware)

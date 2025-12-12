@@ -19,7 +19,7 @@ if(isset($_SESSION["account"])) {
 }
 
 // Nếu nhận POST login
-if(isset($_POST['username'], $_POST['password'])) {
+if (isset($_POST['username'], $_POST['password'])) {
     $username = $_POST['username'];
     $password = md5($_POST['password']);
 
@@ -27,11 +27,22 @@ if(isset($_POST['username'], $_POST['password'])) {
     $stmt = $conn->prepare($sql);
     $stmt->execute([$username, $password]);
 
-    if($stmt->rowCount() === 1){
+    // Lấy đúng 1 bản ghi
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($row) {
+        // Đăng nhập thành công
         $_SESSION["account"] = $username;
-        echo json_encode(['status'=>1,'message'=>'Đăng nhập thành công']);
+        echo json_encode([
+            'status'  => 1,
+            'message' => 'Đăng nhập thành công'
+        ]);
     } else {
-        echo json_encode(['status'=>0,'message'=>'Sai tài khoản hoặc mật khẩu']);
+        // Sai mật khẩu hoặc tài khoản
+        echo json_encode([
+            'status'  => 0,
+            'message' => 'Sai tài khoản hoặc mật khẩu'
+        ]);
     }
 
     db_disconnect();

@@ -1,5 +1,4 @@
 const form = document.getElementById("uploadForm");
-const btn = document.getElementById("uploadBtn");
 const statusText = document.getElementById("statusText");
 const fileInfo = document.getElementById("fileInfo");
 const fileInput = document.getElementById("firmwareFile");
@@ -9,65 +8,29 @@ const verifyBox = document.getElementById("verifyBox");
 const fields = ["v", "s", "c", "sig", "bt", "meta"];
 
 // Khởi tạo: nút Submit bị vô hiệu hóa nếu chưa chọn file
-btn.disabled = true;
+uploadBtn.disabled = true;
 
 // Khi thay đổi file, cập nhật thông tin
 fileInput.addEventListener('change', () => {
+    resetAll();
     const file = fileInput.files[0];
-
     if (file) {
-        btn.disabled = false;
+        const fileName = file.name;
+        const fileExt = fileName.split('.').pop().toLowerCase();
+        if (fileExt !== 'bin') {
+            statusText.textContent = "File không hợp lệ! Chỉ được upload file .bin";
+            return;
+        }
+
+        verifyBtn.disabled = false;
 
         // Hiển thị tên và kích thước file (MB, 2 chữ số thập phân)
         const sizeKB = Math.round(file.size / 1024);
         fileInfo.textContent = `Kích thước: ${sizeKB} KB`;
     } else {
-        btn.disabled = true;
+        verifyBtn.disabled = true;
         fileInfo.textContent = "";
     }
-});
-
-form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const file = fileInput.files[0];
-
-    // Kiểm tra file
-    if (!file) {
-        statusText.textContent = "Vui lòng chọn file để upload!";
-        return;
-    }
-
-    const fileName = file.name;
-    const fileExt = fileName.split('.').pop().toLowerCase();
-    if (fileExt !== 'bin') {
-        statusText.textContent = "File không hợp lệ! Chỉ được upload file .bin";
-        return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = "Đang upload...";
-    statusText.textContent = "";
-
-    const formData = new FormData(form);
-
-    try {
-        const res = await fetch("/api/upload_firmware", {
-            method: "POST",
-            body: formData
-        });
-
-        if (res.ok) {
-            statusText.textContent = "Upload thành công!";
-        } else {
-            statusText.textContent = "Upload thất bại.";
-        }
-    } catch (err) {
-        statusText.textContent = "Lỗi kết nối đến server!";
-    }
-
-    btn.disabled = false;
-    btn.textContent = "Upload Firmware";
 });
 
 // Logout
@@ -92,19 +55,15 @@ function resetAll() {
     verifyBtn.disabled = true;
 }
 
-// ✅ Khi chọn file → reset và enable Verify
-fileInput.addEventListener("change", () => {
-    resetAll();
-    if (fileInput.files.length > 0) {
-        verifyBtn.disabled = false;   // ✅ Bật Verify khi có file
-    }
-});
+
 
 // ✅ VERIFY
 verifyBtn.onclick = async () => {
     const file = fileInput.files[0];
-    if (!file) return;
-
+    if (!file) {
+        statusText.textContent = "Vui lòng chọn file để upload!";
+        return;
+    }
     // Reset trước khi verify lại
     verifyBox.style.display = "none";
     fields.forEach(id => {
@@ -119,21 +78,25 @@ verifyBtn.onclick = async () => {
     // Loading 0.5s
     await new Promise(r => setTimeout(r, 500));
 
-    // Đọc metadata
-    const buffer = await file.slice(0, 64).arrayBuffer();
-    const bytes = new Uint8Array(buffer);
-    const metaStr = new TextDecoder().decode(bytes).replace(/\0/g, "");
-    const parts = metaStr.split(";");
+    // ----==== ĐỌC PREFIX LENGTH (2 bytes) ====----
+    const prefixBuf = await file.slice(0, 2).arrayBuffer();
+    const prefixArr = new Uint8Array(prefixBuf);
+    const metaLen = prefixArr[0] | (prefixArr[1] << 8); // little-endian
 
+    // ----==== ĐỌC ĐÚNG METADATA ====----
+    const metaBuf = await file.slice(2, 2 + metaLen).arrayBuffer();
+    const metaStr = new TextDecoder().decode(new Uint8Array(metaBuf));
+
+    // Parse key=value
     const info = {};
-    parts.forEach(p => {
+    metaStr.split(";").forEach(p => {
         if (p.includes("=")) {
             const [k, v] = p.split("=");
-            info[k] = v;
+            info[k.trim()] = v.trim();
         }
     });
 
-    // ✅ Check từng dòng
+    // ----==== Check từng dòng ====----
     const checks = [
         ["v", info.VERSION],
         ["s", info.SIZE],
@@ -146,25 +109,72 @@ verifyBtn.onclick = async () => {
         const [id, ok] = checks[i];
         const line = document.getElementById(id);
         line.classList.add("show");
-        await new Promise(r => setTimeout(r, 300));
-        line.querySelector(".state").innerHTML = ok ? "✅" : "❌";
+        await new Promise(r => setTimeout(r, 1000));
+        line.querySelector(".state").innerHTML = ok ? `${ok} ✅` : "Undefined ❌";
     }
 
-    // ✅ Metadata tổng
+    // ----==== Metadata tổng ====----
     const allOK = info.VERSION && info.SIZE && info.CRC32 && info.SIGLEN && info.BUILDTIME;
 
     const metaLine = document.getElementById("meta");
     metaLine.classList.add("show");
     await new Promise(r => setTimeout(r, 300));
-    metaLine.querySelector(".state").innerHTML = allOK ? "✅" : "❌";
+    metaLine.querySelector(".state").innerHTML = allOK ? "OK ✅" : "Undefined ❌";
 
-    // ✅ Nếu OK → hiện nút Upload
+    // ----==== Nếu OK → cho phép upload ====----
     if (allOK) {
         uploadBtn.style.display = "inline-block";
         uploadBtn.classList.add("fade-in");
+        uploadBtn.disabled = false;
     }
 };
 
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const file = fileInput.files[0];
+
+    // Kiểm tra file
+    if (!file) {
+        statusText.textContent = "Vui lòng chọn file để upload!";
+        return;
+    }
+
+    const fileName = file.name;
+    const fileExt = fileName.split('.').pop().toLowerCase();
+    if (fileExt !== 'bin') {
+        statusText.textContent = "File không hợp lệ! Chỉ được upload file .bin";
+        return;
+    }
+
+    uploadBtn.disabled = true;
+    uploadBtn.textContent = "Đang upload...";
+    statusText.textContent = "";
+
+    const formData = new FormData(form);
+   
+    try {
+        const res = await fetch("/Cubik_8x8x8/Source_Code/Web/Cubik_8x8x8_Admin/Back_end/Upload.php", {
+            method: "POST",
+            body: formData
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            if (data.status === "ok") {
+                statusText.textContent = "Upload thành công!";
+            } else {
+                statusText.textContent = data.message;
+            }
+        } else {
+            statusText.textContent = "Upload thất bại.";
+        }
+    } catch (err) {
+        statusText.textContent = "Lỗi kết nối đến server!";
+        uploadBtn.disabled = false;
+    }
+    uploadBtn.textContent = "Upload Firmware";
+});
 
 // --------------------------------------------
 // FAKE DATA
