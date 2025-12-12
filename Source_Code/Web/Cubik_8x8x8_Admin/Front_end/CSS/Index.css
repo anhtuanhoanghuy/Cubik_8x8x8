@@ -1,29 +1,42 @@
+/* ===========================
+   BACKGROUND
+=========================== */
 body {
-    margin: 0;
-    background-image: url("images/bg-960.jpg");
+    background-image: url('../Resources/Image/background.jpg');
+    background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-    font-family: Arial, sans-serif;
-    color: #ffffff;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
 }
 
-.overlay {
-    background: rgba(0,0,0,0.55);
-    position: fixed;
-    inset: 0;
+/* ===========================
+   LAYOUT CHÍNH
+=========================== */
+.layout-wrapper {
+    display: flex;
+    justify-content: center; /* ✅ Form nằm chính giữa */
+    align-items: flex-start;
+    gap: 60px;               /* ✅ Khoảng cách giữa form và tree */
+    margin-top: 80px;
+    padding: 0 40px;         /* ✅ Không để tree sát mép phải */
+}
+
+/* ===========================
+   FORM UPLOAD (BÊN TRÁI)
+=========================== */
+.upload-section {
+    flex-shrink: 0;
 }
 
 .container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    z-index: 1;
-    max-width: 420px;
-    margin: 80px auto;
-    padding: 32px;
+    width: 420px;
+    padding: 20px;
     background: rgba(255,255,255,0.08);
     border-radius: 14px;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(50px);
     border: 1px solid rgba(255,255,255,0.2);
 }
 
@@ -32,6 +45,7 @@ h2 {
     text-align: center;
     font-weight: 600;
     font-size: 24px;
+    color: #fff;
 }
 
 .info {
@@ -40,11 +54,15 @@ h2 {
     background: rgba(255,255,255,0.1);
     border-radius: 10px;
     font-size: 14px;
+    color: #fff;
 }
 
+/* ===========================
+   INPUT FILE
+=========================== */
 input[type="file"] {
-    width: 100%;              
-    display: block;         
+    width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
     padding: 12px;
     background: rgba(255,255,255,0.1);
@@ -54,10 +72,9 @@ input[type="file"] {
     margin-bottom: 20px;
 }
 
-.file-info {
-    margin-bottom: 20px;
-}
-
+/* ===========================
+   BUTTON
+=========================== */
 button {
     width: 100%;
     padding: 14px;
@@ -79,17 +96,24 @@ button:disabled {
     cursor: not-allowed;
 }
 
+/* ===========================
+   STATUS TEXT
+=========================== */
 .status {
     text-align: center;
     margin-top: 18px;
     font-size: 14px;
+    color: #fff;
 }
 
+/* ===========================
+   LOGOUT BUTTON
+=========================== */
 .btn-logout {
     width: 70px;
     position: fixed;
-    top: 16px;
-    right: 16px;
+    top: 20px;
+    right: 20px;
     z-index: 9999;
     background: rgba(79, 154, 229, 0.95);
     color: #fff;
@@ -102,21 +126,146 @@ button:disabled {
     transition: transform .12s ease, opacity .12s ease;
 }
 
-/* nhỏ lại trên mobile */
-@media (max-width: 480px) {
-  .btn-logout {
-    top: 10px;
-    right: 10px;
-    padding: 6px 10px;
-    font-size: 13px;
-  }
+.btn-logout:hover { opacity: 0.95; }
+.btn-logout:active { transform: translateY(1px); }
+
+/* ===========================
+   VERIFY CHECK LINES
+=========================== */
+.loading-icon {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #ccc;
+    border-top-color: #3498db;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-left: 6px;
 }
 
-.btn-logout:active { transform: translateY(1px); }
-.btn-logout:hover { opacity: 0.95; }
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 
-/* Nếu bạn muốn icon */
-.btn-logout .icon {
-  margin-right: 6px;
-  vertical-align: middle;
+.tick {
+    color: #2ecc71;
+    font-weight: bold;
+    opacity: 0;
+    animation: fadeIn 0.4s forwards;
+}
+
+.cross {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.check-line {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    color: #fff;
+}
+
+.check-line.show {
+    opacity: 1;
+}
+
+#uploadBtn.fade-in {
+    animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ===========================
+   TREE CONTAINER (BÊN PHẢI)
+=========================== */
+.tree-container {
+    flex-shrink: 0;
+    width: 400px;
+    background: rgba(255,255,255,0.85);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.tree-container h3 {
+    margin-top: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+.tree-container ul {
+    list-style: none;
+    padding-left: 20px;
+}
+
+.tree-container li {
+    margin: 4px 0;
+}
+
+.folder {
+    font-weight: bold;
+    color: #2c3e50;
+    cursor: pointer;
+}
+
+.file {
+    color: #555;
+    margin-left: 15px;
+}
+
+.file a {
+    color: #2980b9;
+    text-decoration: none;
+}
+
+.file a:hover {
+    text-decoration: underline;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 900px) {
+    .layout-wrapper {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+}
+
+.tree-container ul {
+    list-style: none;
+    padding-left: 20px;
+}
+
+.tree-container li {
+    margin: 4px 0;
+}
+
+.folder {
+    font-weight: bold;
+    color: #2c3e50;
+    cursor: pointer;
+    user-select: none;
+}
+
+.subtree {
+    display: none;
+    margin-top: 6px;
+    margin-left: 10px;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.35s ease;
+    margin-left: 10px;
+}
+
+.subtree.show {
+    display: block;
+    max-height: 500px; /* đủ lớn để chứa nội dung */
+    opacity: 1;
 }
