@@ -19,7 +19,7 @@ def embed_metadata(bin_path, output_path):
     build_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # ✅ Version tạm để cứng, Anh có thể sửa sau
-    version = "3.0.0"
+    version = "1.0.0"
 
     # Tạo đường dẫn tuyệt đối
     openssl_path = os.path.join(BASE_DIR, "OpenSSL-Win64", "bin", "openssl.exe")

@@ -11,8 +11,19 @@ if (!isset($_FILES["firmware"])) {
     exit;
 }
 
+if ($_FILES['firmware']['size'] > 2 * 1024 * 1024) {
+    echo json_encode([
+        "status" => "error",
+        "message" => "File vượt quá 2MB"
+    ]);
+    exit;
+}
+
 $tmpPath  = $_FILES["firmware"]["tmp_name"];
 $fileName = $_FILES["firmware"]["name"];
+// Chỉ cho phép chữ, số, -, _, .
+$safeFileName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $fileName);
+
 
 // Đọc toàn bộ file
 $data = file_get_contents($tmpPath);
@@ -97,7 +108,7 @@ if (!is_dir($versionDir)) {
     mkdir($versionDir, 0777, true);
 }
 
-$firmwarePath = "$versionDir/firmware.bin";
+$firmwarePath = "$versionDir/$safeFileName";
 
 // Move file .bin đã upload
 move_uploaded_file($tmpPath, $firmwarePath);
@@ -131,10 +142,11 @@ file_put_contents("$baseDir/latest.json", json_encode($latest, JSON_PRETTY_PRINT
 // 8. Ghi vào database
 // -----------------------------------------
 $sql = "INSERT INTO firmware_versions(
-            version, file_path, manifest_path, size, crc32, siglen, build_time, description
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            name, version, file_path, manifest_path, size, crc32, siglen, build_time, description
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);
-$stmt->execute([$version,
+$stmt->execute([$safeFileName,
+                $version,
                 $firmwarePath,
                 $manifestPath,
                 $info["SIZE"],

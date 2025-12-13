@@ -15,13 +15,13 @@
         <div class="upload-section">
             <div class="container">
                 <h2>Upload Firmware</h2>
-
                 <div class="info">
-                    <strong>Phiên bản hiện tại:</strong> v1.2.3  
+                    <strong>Current newest version:</strong>
+                    <span id="latestVersion">--</span>
                     <br>
-                    <strong>Kích thước tối đa:</strong> 2 MB
+                    <strong>Max size:</strong>
+                    <span id="maxSize">2 MB</span>
                 </div>
-
                 <form id="uploadForm" enctype="multipart/form-data">
                     <input type="file" id="firmwareFile" name="firmware" accept=".bin" required>
                     <div id="fileInfo" class="file-info"></div>
