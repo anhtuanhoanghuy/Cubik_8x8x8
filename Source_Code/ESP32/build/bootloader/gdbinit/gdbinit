@@ -1,0 +1,2 @@
+source D:/xampp/htdocs/Cubik_8x8x8/Source_Code/ESP32/build/bootloader/gdbinit/symbols
+source D:/xampp/htdocs/Cubik_8x8x8/Source_Code/ESP32/build/bootloader/gdbinit/connect
