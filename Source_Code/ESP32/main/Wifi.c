@@ -1,13 +1,59 @@
+#include <stdio.h>
 #include <string.h>
 #include "esp_wifi.h"
-#include "Wifi.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
+#include "nvs.h"
+#include "esp_event.h"
+#include "esp_netif.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "Wifi.h"
 
 static const char *TAG = "MY_CHECKER";
 static esp_netif_t *ap_netif  = NULL;
 static esp_netif_t *sta_netif = NULL;
 static bool wifi_inited = false;
+static EventGroupHandle_t wifi_event_group;
+
+wifi_event_group = xEventGroupCreate();
+
+static void wifi_event_handler(void *arg,
+                               esp_event_base_t event_base,
+                               int32_t event_id,
+                               void *event_data)
+{
+    if (event_base == WIFI_EVENT) {
+
+        switch (event_id) {
+
+        case WIFI_EVENT_SCAN_DONE:
+            xEventGroupSetBits(wifi_event_group, WIFI_SCAN_DONE_BIT);
+            break;
+
+        case WIFI_EVENT_STA_CONNECTED:
+            xEventGroupSetBits(wifi_event_group, WIFI_STA_CONNECTED_BIT);
+            ESP_LOGI("WIFI", "STA connected (no IP yet)");
+            break;
+
+        case WIFI_EVENT_STA_DISCONNECTED:
+            xEventGroupClearBits(wifi_event_group, WIFI_STA_GOT_IP_BIT);
+            xEventGroupSetBits(wifi_event_group, WIFI_STA_DISCONNECTED_BIT);
+            ESP_LOGW("WIFI", "STA disconnected");
+            break;
+
+        default:
+            break;
+        }
+
+    } else if (event_base == IP_EVENT &&
+               event_id == IP_EVENT_STA_GOT_IP) {
+
+        ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
+        ESP_LOGI("WIFI", "STA connected");
+        xEventGroupSetBits(wifi_event_group, WIFI_STA_GOT_IP_BIT);
+    }
+}
 
 void wifi_reset(void)
 {
@@ -101,11 +147,15 @@ void wifi_enter_stationAP_mode(const char *ssid, const char *password) {
     ESP_ERROR_CHECK(esp_wifi_start());
 }
 
-void wifi_scan(void) {
+void wifi_scan_start(void) {
     wifi_scan_config_t scan_cfg = {
     .show_hidden = true
     };
-    esp_wifi_scan_start(&scan_cfg, true);
+    esp_wifi_scan_start(&scan_cfg, false);
+}
+
+void wifi_scan_stop(void) {
+    esp_wifi_scan_stop();
 }
 
 void wifi_connect(const char *ssid, const char *password) {
@@ -147,4 +197,20 @@ void wifi_on(void)
 {
     esp_wifi_start();
     esp_wifi_connect();
+}
+
+void wifi_get_record_count(uint16_t *number) {
+    esp_wifi_scan_get_ap_num(number);
+}
+
+void wifi_get_record_list(uint16_t *number, wifi_ap_record_t *ap_records) {
+    esp_wifi_scan_get_ap_records(number, ap_records);
+}
+
+void wifi_get_one_record_list(wifi_ap_record_t *ap_record) {
+    esp_wifi_scan_get_ap_record(ap_record);
+}
+
+void wifi_clear_all_list(void) {
+    esp_wifi_clear_ap_list();
 }
