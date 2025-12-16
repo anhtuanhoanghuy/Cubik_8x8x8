@@ -7,28 +7,80 @@
 #include "Wifi.h"
 #include "WebServer.h"
 
-static esp_err_t root_get_handler(httpd_req_t *req){
-    const char html[] =
-        "<html><body>"
-        "<h2>WiFi Config</h2>"
-        "<form method='POST' action='/wifi'>"
-        "SSID:<br><input name='ssid'><br>"
-        "Password:<br><input name='pass' type='password'><br><br>"
-        "<input type='submit' value='Save'>"
-        "</form>"
-        "</body></html>";
+extern const char admin_html_start[] asm("_binary_Admin_html_start");
+extern const char admin_html_end[]   asm("_binary_Admin_html_end");
 
-    httpd_resp_send(req, html, HTTPD_RESP_USE_STRLEN);
+static esp_err_t root_get_handler(httpd_req_t *req) {
+    httpd_resp_send(req, admin_html_start,
+        admin_html_end - admin_html_start);
     return ESP_OK;
 }
 
+static esp_err_t scan_wifi_get_handler(httpd_req_t *req) {
+    ESP_LOGI("HTTP", "scan_wifi handler called");
+    wifi_scan_start();
+    httpd_resp_set_type(req, "application/json");
+    httpd_resp_send(req, "{\"status\":\"scanning\"}", HTTPD_RESP_USE_STRLEN);
+    return ESP_OK;
+}
+
+static esp_err_t scan_result_get_handler(httpd_req_t *req)
+{
+    ESP_LOGI("HTTP", "scan_result handler called");
+    if (wifi_get_scan_state() != WIFI_SCAN_DONE) {
+        httpd_resp_send(req,
+            "{\"status\":\"running\",\"aps\":[]}",
+            HTTPD_RESP_USE_STRLEN);
+        return ESP_OK;
+    }
+    httpd_resp_set_type(req, "application/json");
+    char json[1024];
+    int len = 0;
+    uint16_t record_count;
+    wifi_ap_record_t list[MAX_AP_NUM];
+    wifi_get_record_count(&record_count);
+    wifi_get_record_list(list, record_count);
+    len += sprintf(json + len, sizeof(json) - len,
+            "{\"status\":\"done\",\"count\":%d,\"aps\":[", record_count);
+    for (int i = 0; i < record_count; i++) {
+        len += sprintf(json + len, sizeof(json) - len,
+            "{\"ssid\":\"%s\",\"rssi\":%d,\"secure\":%s}%s",
+            list[i].ssid,
+            list[i].rssi,
+            list[i].authmode != WIFI_AUTH_OPEN ? "true" : "false",
+            (i < record_count - 1) ? "," : ""
+        );
+    }
+
+    len += sprintf(json + len, sizeof(json) - len, "]}");
+    httpd_resp_send(req, json, len);
+
+    return ESP_OK;
+}
+
+httpd_uri_t uri_scan_result_get = {
+    .uri      = "/scan_result",
+    .method   = HTTP_GET,
+    .handler  = scan_result_get_handler,
+    .user_ctx = NULL
+};
+
 /* URI handler structure for GET /uri */
-httpd_uri_t uri_get = {
+static httpd_uri_t uri_root_get = {
     .uri = "/",
     .method = HTTP_GET,
     .handler = root_get_handler,
     .user_ctx = NULL
 }; 
+
+/* URI handler structure for GET /uri */
+static httpd_uri_t uri_scan_wifi_get = {
+    .uri = "/scan_wifi",
+    .method = HTTP_GET,
+    .handler = scan_wifi_get_handler,
+    .user_ctx = NULL
+}; 
+
 
 httpd_handle_t wifi_start_webserver(void) {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
@@ -37,7 +89,9 @@ httpd_handle_t wifi_start_webserver(void) {
     // Start the httpd server
     if (httpd_start(&server, &config) == ESP_OK) {
         // Register URI handlers
-        httpd_register_uri_handler(server, &uri_get);
+        httpd_register_uri_handler(server, &uri_root_get);
+        httpd_register_uri_handler(server, &uri_scan_wifi_get);
+        httpd_register_uri_handler(server, &uri_scan_result_get);
         ESP_LOGI("HTTP", "Starting web server...");
     }
     return server;

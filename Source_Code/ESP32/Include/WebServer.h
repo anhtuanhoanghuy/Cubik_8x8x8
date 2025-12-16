@@ -4,12 +4,18 @@
 #include "esp_err.h"
 #include "esp_http_server.h"
 
-esp_err_t root_get_handler(httpd_req_t *);
+#include <stdio.h>
+#include <string.h>
+#include "esp_wifi.h"
+#include "esp_log.h"
+#include "nvs_flash.h"
+#include "nvs.h"
+#include "Wifi.h"
+#include "WebServer.h"
 
 httpd_handle_t wifi_start_webserver(void);
 
-void wifi_stop_webserver(httpd_handle_t);
-
-void test_lib(void);
+/* Function for stopping the webserver */
+void wifi_stop_webserver(httpd_handle_t server);
 
 #endif // __WEBSERVER_H__
