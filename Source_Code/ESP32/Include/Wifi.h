@@ -39,9 +39,9 @@ void wifi_off(void);
  
 void wifi_on(void);
 
-void wifi_get_record_count(uint16_t *);
+uint16_t wifi_get_record_count(void);
 
-uint16_t wifi_get_record_list(wifi_ap_record_t *, uint16_t);
+wifi_ap_record_t *wifi_get_record_list();
 
 void wifi_get_one_record_list(wifi_ap_record_t *);
 

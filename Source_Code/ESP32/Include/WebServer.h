@@ -3,7 +3,6 @@
 
 #include "esp_err.h"
 #include "esp_http_server.h"
-
 #include <stdio.h>
 #include <string.h>
 #include "esp_wifi.h"

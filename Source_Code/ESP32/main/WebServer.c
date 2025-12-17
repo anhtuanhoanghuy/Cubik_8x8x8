@@ -27,34 +27,52 @@ static esp_err_t scan_wifi_get_handler(httpd_req_t *req) {
 static esp_err_t scan_result_get_handler(httpd_req_t *req)
 {
     ESP_LOGI("HTTP", "scan_result handler called");
+    httpd_resp_set_type(req, "application/json");
     if (wifi_get_scan_state() != WIFI_SCAN_DONE) {
         httpd_resp_send(req,
             "{\"status\":\"running\",\"aps\":[]}",
             HTTPD_RESP_USE_STRLEN);
         return ESP_OK;
     }
-    httpd_resp_set_type(req, "application/json");
     char json[1024];
     int len = 0;
-    uint16_t record_count;
-    wifi_ap_record_t list[MAX_AP_NUM];
-    wifi_get_record_count(&record_count);
-    wifi_get_record_list(list, record_count);
-    len += sprintf(json + len, sizeof(json) - len,
-            "{\"status\":\"done\",\"count\":%d,\"aps\":[", record_count);
+
+    uint16_t record_count = wifi_get_record_count();
+    wifi_ap_record_t *list = wifi_get_record_list();
+
+    ESP_LOGI("WIFI", "%d wifi found", record_count);
+
     for (int i = 0; i < record_count; i++) {
-        len += sprintf(json + len, sizeof(json) - len,
-            "{\"ssid\":\"%s\",\"rssi\":%d,\"secure\":%s}%s",
-            list[i].ssid,
+        ESP_LOGI("WIFI",
+            "[%2d] SSID: %-32s | RSSI: %4d | CH: %2d | Auth: %d",
+            i,
+            (char *)list[i].ssid,
             list[i].rssi,
-            list[i].authmode != WIFI_AUTH_OPEN ? "true" : "false",
+            list[i].primary,
+            list[i].authmode
+        );
+    }
+
+    /* Build JSON */
+    len += snprintf(json + len, sizeof(json) - len,
+        "{\"status\":\"done\",\"count\":%d,\"aps\":[",
+        record_count
+    );
+
+    for (int i = 0; i < record_count && len < sizeof(json); i++) {
+        len += snprintf(json + len, sizeof(json) - len,
+            "{\"ssid\":\"%s\",\"rssi\":%d,\"secure\":%s}%s",
+            (char *)list[i].ssid,
+            list[i].rssi,
+            (list[i].authmode != WIFI_AUTH_OPEN) ? "true" : "false",
             (i < record_count - 1) ? "," : ""
         );
     }
 
-    len += sprintf(json + len, sizeof(json) - len, "]}");
-    httpd_resp_send(req, json, len);
+    len += snprintf(json + len, sizeof(json) - len, "]}");
 
+    httpd_resp_set_type(req, "application/json");
+    httpd_resp_send(req, json, len);
     return ESP_OK;
 }
 

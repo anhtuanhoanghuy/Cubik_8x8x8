@@ -1,14 +1,12 @@
 #include <stdio.h>
 #include <string.h>
-#include "esp_wifi.h"
+#include "Wifi.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "nvs.h"
 #include "esp_event.h"
 #include "esp_netif.h"
-#include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "Wifi.h"
 
 
 static const char *TAG = "MY_CHECKER";
@@ -18,8 +16,7 @@ static bool wifi_inited = false;
 static EventGroupHandle_t wifi_event_group = NULL;
 static wifi_scan_state_t scan_state = WIFI_SCAN_IDLE;
 static wifi_ap_record_t ap_records[MAX_AP_NUM];
-static uint8_t ap_max_scan = MAX_AP_NUM;
-static uint16_t ap_count = 0;
+static uint16_t ap_count = MAX_AP_NUM;
 
 EventGroupHandle_t wifi_get_event_group(void) {
     return wifi_event_group;
@@ -34,9 +31,19 @@ static void wifi_event_handler(void *arg,
         switch (event_id) {
 
         case WIFI_EVENT_SCAN_DONE:
-            esp_wifi_scan_get_ap_num(&ap_count);
-            esp_wifi_scan_get_ap_records(&ap_max_scan, ap_records);
+            ESP_LOGI("WIFI", "SCAN DONE");
+            esp_wifi_scan_get_ap_records(&ap_count, ap_records);
             scan_state = WIFI_SCAN_DONE;
+            for (int i = 0; i < ap_count; i++) {
+                ESP_LOGI("WIFI",
+                    "[%2d] SSID: %-32s | RSSI: %4d | CH: %2d | Auth: %d",
+                    i,
+                    (char *)ap_records[i].ssid,
+                    ap_records[i].rssi,
+                    ap_records[i].primary,
+                    ap_records[i].authmode
+                );
+            }
             break;
 
         case WIFI_EVENT_STA_CONNECTED:
@@ -112,7 +119,25 @@ void wifi_init(void)
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+        ESP_ERROR_CHECK(
+        esp_event_handler_instance_register(
+            WIFI_EVENT,
+            ESP_EVENT_ANY_ID,
+            &wifi_event_handler,
+            NULL,
+            NULL
+        )
+    );
 
+    ESP_ERROR_CHECK(
+        esp_event_handler_instance_register(
+            IP_EVENT,
+            IP_EVENT_STA_GOT_IP,
+            &wifi_event_handler,
+            NULL,
+            NULL
+        )
+    );
     wifi_inited = true;
 }
 
@@ -169,7 +194,7 @@ void wifi_scan_start(void) {
     wifi_scan_config_t scan_cfg = {
         .show_hidden = true
     };
-    ap_count = 0;
+    ap_count = MAX_AP_NUM;
     scan_state = WIFI_SCAN_RUNNING;
     esp_wifi_scan_start(&scan_cfg, false);
 }
@@ -219,19 +244,12 @@ void wifi_on(void)
     esp_wifi_connect();
 }
 
-void wifi_get_record_count(uint16_t *number) {
-    esp_wifi_scan_get_ap_num(number);
+uint16_t wifi_get_record_count() {
+    return ap_count;
 }
 
-uint16_t wifi_get_record_list(wifi_ap_record_t *out, uint16_t max)
-{
-    if (!out || ap_count == 0) return 0;
-
-    uint16_t n = ap_count;
-    if (n > max) n = max;
-
-    memcpy(out, ap_records, n * sizeof(wifi_ap_record_t));
-    return n;
+wifi_ap_record_t *wifi_get_record_list() {
+    return ap_records;
 }
 
 

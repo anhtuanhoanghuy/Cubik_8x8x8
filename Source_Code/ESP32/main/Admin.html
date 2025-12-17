@@ -229,10 +229,20 @@ function scanWifi() {
     scanInProgress = true;
     connectedSSID = "";
 
-    document.getElementById("wifiList").innerHTML = "Đang quét WiFi...";
-
     // 1️⃣ gửi lệnh bắt đầu scan
-    fetch("/scan_wifi");
+    fetch("/scan_wifi")
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "scanning") {
+                    // đang scan → không làm gì, chờ vòng sau
+                    document.getElementById("wifiList").innerHTML = "Đang quét WiFi...";
+                    return;
+                }
+            })
+            .catch(err => {
+                clearInterval(timer);
+                console.error("Scan error:", err);
+            });
 
     // 2️⃣ poll kết quả
     const timer = setInterval(() => {
@@ -241,14 +251,14 @@ function scanWifi() {
             .then(data => {
                 if (data.status === "running") {
                     // đang scan → không làm gì, chờ vòng sau
-                    console.log("WiFi scanning...");
+                    console.log("WiFi running...");
                     return;
                 }
 
                 if (data.status === "done") {
                     scanInProgress = false;
                     clearInterval(timer);
-
+                    console.log("Done");
                     if (Array.isArray(data.aps)) {
                         renderWifiList(data.aps);
                     } else {
@@ -349,24 +359,46 @@ document.getElementById("passwordInput").addEventListener("input", function() {
 function connectWifi() {
     let pass = document.getElementById("passwordInput").value;
 
+    if (!selectedSSID || !pass) {
+        alert("Thiếu SSID hoặc mật khẩu");
+        return;
+    }
 
     // Loading
     document.getElementById("loadingBox").style.display = "flex";
 
 
-    setTimeout(() => {
-        if (pass === "12345678") {
-            connectedSSID = selectedSSID;
+    setTimeout(() => {  
+        fetch("/connect_wifi", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                ssid: selectedSSID,
+                password: pass
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
             document.getElementById("loadingBox").style.display = "none";
-            closePopup();
-            renderWifiList();
-            alert("Kết nối thành công tới " + selectedSSID);
-        } else {
+
+            if (data.status === "ok") {
+                connectedSSID = selectedSSID;
+                closePopup();
+                renderWifiList();
+                alert("Kết nối thành công tới " + selectedSSID);
+            } else {
+                alert(data.message || "Kết nối thất bại");
+                document.getElementById("passwordInput").value = "";
+                document.getElementById("connectBtn").disabled = true;
+            }
+        })
+        .catch(err => {
             document.getElementById("loadingBox").style.display = "none";
-            alert("Sai mật khẩu, vui lòng nhập lại");
-            document.getElementById("passwordInput").value = "";
-            document.getElementById("connectBtn").disabled = true;
-        }
+            alert("Lỗi kết nối ESP32");
+            console.error(err);
+        });
     }, 1500);
 }
 
