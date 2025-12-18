@@ -49,6 +49,8 @@ void wifi_clear_all_list(void);
 
 uint8_t wifi_get_scan_state(void);
 
+void wifi_forget(void);
+
 
 
 #endif // __WIFICONNECT_H__

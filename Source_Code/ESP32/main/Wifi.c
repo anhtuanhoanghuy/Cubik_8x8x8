@@ -47,12 +47,13 @@ static void wifi_event_handler(void *arg,
             break;
 
         case WIFI_EVENT_STA_CONNECTED:
+            xEventGroupClearBits(wifi_event_group, WIFI_STA_DISCONNECTED_BIT);
             xEventGroupSetBits(wifi_event_group, WIFI_STA_CONNECTED_BIT);
             ESP_LOGI("WIFI", "STA connected (no IP yet)");
             break;
 
         case WIFI_EVENT_STA_DISCONNECTED:
-            xEventGroupClearBits(wifi_event_group, WIFI_STA_GOT_IP_BIT);
+            xEventGroupClearBits(wifi_event_group, WIFI_STA_CONNECTED_BIT | WIFI_STA_GOT_IP_BIT);
             xEventGroupSetBits(wifi_event_group, WIFI_STA_DISCONNECTED_BIT);
             ESP_LOGW("WIFI", "STA disconnected");
             break;
@@ -63,8 +64,6 @@ static void wifi_event_handler(void *arg,
 
     } else if (event_base == IP_EVENT &&
                event_id == IP_EVENT_STA_GOT_IP) {
-
-        ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
         ESP_LOGI("WIFI", "STA connected");
         xEventGroupSetBits(wifi_event_group, WIFI_STA_GOT_IP_BIT);
     }
@@ -263,5 +262,28 @@ void wifi_clear_all_list(void) {
 
 uint8_t wifi_get_scan_state(void) {
     return scan_state;
+}
+
+void wifi_forget(void)
+{
+    esp_wifi_disconnect();
+
+    wifi_config_t empty = {0};
+    esp_wifi_set_config(WIFI_IF_STA, &empty);
+
+    nvs_handle_t nvs;
+    if (nvs_open("wifi", NVS_READWRITE, &nvs) == ESP_OK) {
+        nvs_erase_all(nvs);
+        nvs_commit(nvs);
+        nvs_close(nvs);
+    }
+
+    xEventGroupClearBits(wifi_event_group,
+        WIFI_STA_CONNECTED_BIT |
+        WIFI_STA_GOT_IP_BIT
+    );
+    xEventGroupSetBits(wifi_event_group, WIFI_STA_DISCONNECTED_BIT);
+
+    ESP_LOGI("WIFI", "WiFi credentials forgotten");
 }
 
