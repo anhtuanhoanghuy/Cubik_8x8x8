@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <string.h>
-#include "esp_wifi.h"
+
 #include "esp_log.h"
-#include "nvs_flash.h"
-#include "nvs.h"
+#include "esp_http_server.h"
+
 #include "Wifi.h"
 #include "WebServer.h"
 #include "cJSON.h"
 
 httpd_handle_t server = NULL;
+
 /* HTML binary */
 extern const char admin_html_start[] asm("_binary_Admin_html_start");
 extern const char admin_html_end[]   asm("_binary_Admin_html_end");
@@ -110,8 +111,7 @@ static esp_err_t connect_wifi_post_handler(httpd_req_t *req)
         return ESP_FAIL;
     }
 
-    int ret = httpd_req_recv(req, buf, req->content_len);
-    if (ret <= 0) {
+    if (httpd_req_recv(req, buf, req->content_len) <= 0) {
         free(buf);
         httpd_resp_send_err(req,
             HTTPD_500_INTERNAL_SERVER_ERROR,
@@ -143,31 +143,11 @@ static esp_err_t connect_wifi_post_handler(httpd_req_t *req)
         return ESP_FAIL;
     }
 
-    ESP_LOGI(TAG, "Connect to SSID: %s", ssid->valuestring);
+    ESP_LOGI(TAG, "Connecting to SSID: %s", ssid->valuestring);
 
-    wifi_config_t wifi_config = {0};
-
-    strncpy((char *)wifi_config.sta.ssid,
-            ssid->valuestring,
-            sizeof(wifi_config.sta.ssid) - 1);
-
-    strncpy((char *)wifi_config.sta.password,
-            password->valuestring,
-            sizeof(wifi_config.sta.password) - 1);
+    wifi_connect(ssid->valuestring, password->valuestring);
 
     cJSON_Delete(root);
-
-    /* Reset state */
-    esp_wifi_disconnect();
-    xEventGroupClearBits(
-        wifi_get_event_group(),
-        WIFI_STA_CONNECTED_BIT |
-        WIFI_STA_GOT_IP_BIT |
-        WIFI_STA_DISCONNECTED_BIT
-    );
-
-    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
-    ESP_ERROR_CHECK(esp_wifi_connect());
 
     httpd_resp_set_type(req, "application/json");
     httpd_resp_send(req,
@@ -183,16 +163,22 @@ static esp_err_t connect_wifi_post_handler(httpd_req_t *req)
  * ========================================================= */
 static esp_err_t wifi_status_get_handler(httpd_req_t *req)
 {
+    ESP_LOGI(TAG, "/wifi_status");
     EventBits_t bits = xEventGroupGetBits(wifi_get_event_group());
-
     const char *status = "idle";
 
-    if (bits & WIFI_STA_GOT_IP_BIT) {
-        status = "got_ip";
-    } else if (bits & WIFI_STA_CONNECTED_BIT) {
-        status = "connecting";
-    } else if (bits & WIFI_STA_DISCONNECTED_BIT) {
+    /* ❌ Ưu tiên lỗi trước */
+    if (bits & WIFI_STA_FAIL_PASSWORD_BIT) {
         status = "fail";
+    }
+    else if (bits & WIFI_STA_GOT_IP_BIT) {
+        status = "got_ip";
+    }
+    else if (bits & WIFI_STA_CONNECTED_BIT) {
+        status = "connecting";
+    }
+    else if (bits & WIFI_STA_DISCONNECTED_BIT) {
+        status = "reconnecting";
     }
 
     char resp[64];
@@ -201,33 +187,37 @@ static esp_err_t wifi_status_get_handler(httpd_req_t *req)
 
     httpd_resp_set_type(req, "application/json");
     httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
-
     return ESP_OK;
 }
 
+
+/* =========================================================
+ * DISCONNECT / FORGET
+ * ========================================================= */
 static esp_err_t disconnect_wifi_post_handler(httpd_req_t *req)
 {
-    ESP_LOGI("HTTP", "/disconnect_wifi");
+    ESP_LOGI(TAG, "/disconnect_wifi");
 
-    esp_wifi_disconnect();
-
-    xEventGroupClearBits(wifi_get_event_group(),
-        WIFI_STA_CONNECTED_BIT |
-        WIFI_STA_GOT_IP_BIT
+    /* Đánh dấu user chủ động disconnect */
+    xEventGroupSetBits(
+        wifi_get_event_group(),
+        WIFI_STA_USER_DISCONNECT_BIT
     );
-    xEventGroupSetBits(wifi_get_event_group(), WIFI_STA_DISCONNECTED_BIT);
+
+    wifi_disconnect();
 
     httpd_resp_set_type(req, "application/json");
     httpd_resp_send(req,
         "{\"status\":\"ok\",\"message\":\"disconnected\"}",
         HTTPD_RESP_USE_STRLEN
     );
+
     return ESP_OK;
 }
 
 static esp_err_t forget_wifi_post_handler(httpd_req_t *req)
 {
-    ESP_LOGI("HTTP", "/forget_wifi");
+    ESP_LOGI(TAG, "/forget_wifi");
 
     wifi_forget();
 
@@ -242,17 +232,43 @@ static esp_err_t forget_wifi_post_handler(httpd_req_t *req)
 static esp_err_t exit_ap_post_handler(httpd_req_t *req)
 {
     ESP_LOGI(TAG, "Exit AP mode");
-    httpd_resp_set_type(req, "application/json");
-    httpd_resp_send(req,
-        "{\"status\":\"ok\",\"message\":\"AP disabled\"}",
-        HTTPD_RESP_USE_STRLEN
-    );
-    wifi_stop_webserver();
-        // Tắt AP, giữ STA
+
+    /* Mở lại auto reconnect */
+    // xEventGroupClearBits(
+    //     wifi_get_event_group(),
+    //     WIFI_STA_MANUAL_CONNECT_BIT
+    // );
+
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-    return ESP_OK;
+
+    wifi_stop_webserver();
+    // apsta_active = false;
 }
 
+static esp_err_t wifi_current_get_handler(httpd_req_t *req)
+{
+    wifi_status_info_t info = {0};
+
+    httpd_resp_set_type(req, "application/json");
+
+    if (wifi_get_current_status(&info) && info.connected && info.ssid[0] != '\0') {
+
+        char resp[192];
+        snprintf(resp, sizeof(resp),
+            "{\"connected\":true,\"ssid\":\"%s\",\"rssi\":%d}",
+            info.ssid,
+            info.rssi
+        );
+        httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
+    } else {
+        httpd_resp_send(req,
+            "{\"connected\":false}",
+            HTTPD_RESP_USE_STRLEN
+        );
+    }
+
+    return ESP_OK;
+}
 
 /* =========================================================
  * URI TABLE
@@ -305,6 +321,11 @@ static httpd_uri_t uri_exit_ap = {
     .handler  = exit_ap_post_handler
 };
 
+static httpd_uri_t uri_wifi_current = {
+    .uri    = "/wifi_current",
+    .method = HTTP_GET,
+    .handler= wifi_current_get_handler
+};
 
 /* =========================================================
  * START / STOP SERVER
@@ -321,7 +342,8 @@ httpd_handle_t wifi_start_webserver(void)
         httpd_register_uri_handler(server, &uri_wifi_status);
         httpd_register_uri_handler(server, &uri_disconnect_wifi);
         httpd_register_uri_handler(server, &uri_forget_wifi);
-        httpd_register_uri_handler(server, &uri_exit_ap);
+        httpd_register_uri_handler(server, &uri_wifi_current);
+
         ESP_LOGI(TAG, "HTTP server started");
     }
 
@@ -332,6 +354,7 @@ void wifi_stop_webserver(void)
 {
     if (server) {
         httpd_stop(server);
+        server = NULL;
         ESP_LOGI(TAG, "HTTP server stopped");
     }
 }

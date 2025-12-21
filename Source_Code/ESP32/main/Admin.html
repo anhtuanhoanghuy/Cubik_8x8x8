@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>ESP32 WiFi Config</title>
+<!-- --------------------------------------------------CSS---------------------------------------------------- -->
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -216,9 +217,9 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-
-
 </style>
+
+<!-- ----------------------------------------------------HTML----------------------------------------------------- -->
 </head>
 <body>
 
@@ -257,12 +258,21 @@
         <button id="disconnect_wifi" onclick="disconnectNetwork()">Ngắt kết nối</button>
     </div>
 </div>
+<!-- -------------------------------------------------SCRIPT---------------------------------------------------- -->
 <script>
-
 let selectedSSID = "";
 let connectedSSID = "";
 let lastScanResult = [];
 let scanInProgress = false;
+let wifiState = "idle";
+let wifiStatusTimer = null;
+let connectedWifiTimer = null;
+
+document.addEventListener("DOMContentLoaded", () => {
+    fetchConnectedWifi();          // gọi ngay lần đầu
+    startConnectedWifiPolling();   // sau đó poll mỗi 2s
+});
+
 
 function showScanHint(text) {
     let hint = document.getElementById("scanHint");
@@ -307,27 +317,69 @@ function scanWifi() {
     }, 2000);
 }
 
+function startConnectedWifiPolling() {
+    // Tránh tạo nhiều timer
+    if (connectedWifiTimer) return;
+
+    connectedWifiTimer = setInterval(() => {
+        fetchConnectedWifi();
+    }, 2000);
+}
 
 
 function renderWifiList(list = lastScanResult) {
     let html = "";
+    let hasConnectedInList = false;
 
     list.forEach(wifi => {
-        const connected = wifi.ssid === connectedSSID;
+        const isThisSSID = wifi.ssid === connectedSSID;
+        if (isThisSSID) hasConnectedInList = true;
+
+        let statusText = "";
+        if (isThisSSID) {
+            if (wifiState === "got_ip") {
+                statusText = '<span style="color:green">Đã kết nối</span>';
+            } else if (wifiState === "reconnecting") {
+                statusText = '<span style="color:orange">Mất kết nối</span>';
+            } else if (wifiState === "fail") {
+                statusText = '<span style="color:red">Kết nối lỗi</span>';
+            }
+        }
 
         html += `
         <div class="wifi-item"
              onclick="wifiClicked('${escapeJS(wifi.ssid)}', ${wifi.secure})">
             <div class="wifi-name">${wifi.ssid}</div>
             <div class="icons">
-                ${connected ? '<span style="color:green">Đã kết nối</span>' : ''}
+                ${statusText}
                 ${wifi.secure ? '🔒' : ''}
             </div>
         </div>`;
     });
 
+    // WiFi đã từng kết nối nhưng không còn trong scan
+    if (connectedSSID && !hasConnectedInList) {
+        let statusText =
+            wifiState === "got_ip" ? "Đã kết nối" :
+            wifiState === "reconnecting" ? "Mất kết nối" :
+            "Không kết nối";
+
+        html =
+        `
+        <div class="wifi-item"
+             onclick="wifiClicked('${escapeJS(connectedSSID)}', true)">
+            <div class="wifi-name">${connectedSSID}</div>
+            <div class="icons">
+                <span>${statusText}</span>
+            </div>
+        </div>
+        ` + html;
+    }
+
     document.getElementById("wifiList").innerHTML = html;
 }
+
+
 
 
 
@@ -395,7 +447,8 @@ document.getElementById("passwordInput").addEventListener("input", function() {
 });
 
 
-let wifiStatusTimer = null;
+
+
 
 function connectWifi() {
     const pass = document.getElementById("passwordInput").value;
@@ -436,21 +489,21 @@ function connectWifi() {
 }
 
 function startWifiStatusPolling() {
-    stopWifiStatusPolling(); // tránh trùng timer
+    stopWifiStatusPolling();
 
     wifiStatusTimer = setInterval(() => {
         fetch("/wifi_status")
             .then(res => res.json())
             .then(data => {
-                console.log("WiFi status:", data.status);
+                wifiState = data.status;
+                console.log("WiFi status:", wifiState);
 
-                if (data.status === "connecting") {
-                    // vẫn đang kết nối → không làm gì
+                if (wifiState === "connecting") {
                     return;
                 }
 
-                if (data.status === "got_ip") {
-                    connectedSSID = selectedSSID;
+                if (wifiState === "got_ip") {
+                    connectedSSID = selectedSSID || connectedSSID;
                     stopWifiStatusPolling();
                     document.getElementById("loadingBox").style.display = "none";
                     closePopup();
@@ -458,20 +511,26 @@ function startWifiStatusPolling() {
                     return;
                 }
 
-                if (data.status === "fail") {
+                if (wifiState === "reconnecting") {
+                    // MẤT WIFI SAU KHI ĐÃ KẾT NỐI
+                    document.getElementById("loadingBox").style.display = "none";
+                    renderWifiList();
+                    return;
+                }
+
+                if (wifiState === "fail") {
                     stopWifiStatusPolling();
                     document.getElementById("loadingBox").style.display = "none";
-                    alert("Kết nối WiFi thất bại (sai mật khẩu hoặc AP không phản hồi)");
+                    alert("Sai mật khẩu hoặc không kết nối được WiFi");
                 }
             })
-            .catch(err => {
+            .catch(() => {
                 stopWifiStatusPolling();
                 document.getElementById("loadingBox").style.display = "none";
-                alert("Mất kết nối tới ESP32");
-                console.error(err);
             });
-    }, 2000); // poll mỗi 2 giây
+    }, 2000);
 }
+
 
 function stopWifiStatusPolling() {
     if (wifiStatusTimer) {
@@ -557,9 +616,29 @@ function outsideClick(event) {
     }
 }
 
+function fetchConnectedWifi() {
+    fetch("/wifi_current")
+        .then(res => res.json())
+        .then(data => {
+            if (data.connected) {
+                connectedSSID = data.ssid;
+                wifiState = "got_ip";
+            } else {
+                wifiState = "idle";
+            }
+            renderWifiList();
+        })
+        .catch(() => {
+            wifiState = "idle";
+        });
+}
+
+
+
 function escapeJS(str) {
     return str.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 }
+
 </script>
 </body>
 </html>
