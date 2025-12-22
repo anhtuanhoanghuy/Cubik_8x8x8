@@ -10,12 +10,21 @@
 #define WIFI_STA_DISCONNECTED_BIT (1<<3) //bit3
 
 #define MAX_AP_NUM 30
+#define MAX_WIFI_SAVED 10
+#define WIFI_SSID_MAX  32
+#define WIFI_PASS_MAX  64
 
 typedef enum {
     WIFI_SCAN_IDLE = 0,
     WIFI_SCAN_RUNNING,
     WIFI_SCAN_DONE
 } wifi_scan_state_t;
+
+typedef struct {
+    bool connected;
+    char ssid[WIFI_SSID_MAX];
+    int8_t rssi;
+} wifi_status_info_t;
 
 EventGroupHandle_t wifi_get_event_group(void);
 
@@ -50,6 +59,8 @@ void wifi_clear_all_list(void);
 uint8_t wifi_get_scan_state(void);
 
 void wifi_forget(void);
+
+bool wifi_get_current_status(wifi_status_info_t *);
 
 
 

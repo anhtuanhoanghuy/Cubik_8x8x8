@@ -263,6 +263,27 @@ let selectedSSID = "";
 let connectedSSID = "";
 let lastScanResult = [];
 let scanInProgress = false;
+let connectedWifiTimer = null;
+document.addEventListener("DOMContentLoaded", () => {
+    fetchConnectedWifi();          // gọi ngay lần đầu
+    startConnectedWifiPolling();   // sau đó poll mỗi 2s
+});
+
+function startConnectedWifiPolling() {
+    // Tránh tạo nhiều timer
+    if (connectedWifiTimer) return;
+
+    connectedWifiTimer = setInterval(() => {
+        fetchConnectedWifi();
+    }, 2000);
+}
+
+function stopConnectedWifiPolling() {
+    if (connectedWifiTimer) {
+        clearInterval(connectedWifiTimer);
+        connectedWifiTimer = null;
+    }
+}
 
 function showScanHint(text) {
     let hint = document.getElementById("scanHint");
@@ -308,26 +329,58 @@ function scanWifi() {
 }
 
 
-
 function renderWifiList(list = lastScanResult) {
     let html = "";
+    let hasConnectedInList = false;
 
     list.forEach(wifi => {
-        const connected = wifi.ssid === connectedSSID;
+        const isThisSSID = wifi.ssid === connectedSSID;
+        if (isThisSSID) hasConnectedInList = true;
+
+        let statusText = "";
+        if (isThisSSID) {
+            if (wifiState === "got_ip") {
+                statusText = '<span style="color:green">Đã kết nối</span>';
+            } else if (wifiState === "reconnecting") {
+                statusText = '<span style="color:orange">Mất kết nối</span>';
+            } else if (wifiState === "fail") {
+                statusText = '<span style="color:red">Kết nối lỗi</span>';
+            }
+        }
 
         html += `
         <div class="wifi-item"
              onclick="wifiClicked('${escapeJS(wifi.ssid)}', ${wifi.secure})">
             <div class="wifi-name">${wifi.ssid}</div>
             <div class="icons">
-                ${connected ? '<span style="color:green">Đã kết nối</span>' : ''}
+                ${statusText}
                 ${wifi.secure ? '🔒' : ''}
             </div>
         </div>`;
     });
 
+    // WiFi đã từng kết nối nhưng không còn trong scan
+    if (connectedSSID && !hasConnectedInList) {
+        let statusText =
+            wifiState === "got_ip" ? "Đã kết nối" :
+            wifiState === "reconnecting" ? "Mất kết nối" :
+            "Không kết nối";
+
+        html =
+        `
+        <div class="wifi-item"
+             onclick="wifiClicked('${escapeJS(connectedSSID)}', true)">
+            <div class="wifi-name">${connectedSSID}</div>
+            <div class="icons">
+                <span>${statusText}</span>
+            </div>
+        </div>
+        ` + html;
+    }
+
     document.getElementById("wifiList").innerHTML = html;
 }
+
 
 
 
@@ -555,6 +608,23 @@ function outsideClick(event) {
     if (event.target.id === "connectedPopup") {
         closeConnectedPopup();
     }
+}
+
+function fetchConnectedWifi() {
+    fetch("/wifi_current", { method: "GET" })
+        .then(res => res.json())
+        .then(data => {
+            if (data.connected) {
+                connectedSSID = data.ssid;
+                wifiState = "got_ip";
+            } else {
+                wifiState = "idle";
+            }
+            renderWifiList();
+        })
+        .catch(() => {
+            wifiState = "idle";
+        });
 }
 
 function escapeJS(str) {

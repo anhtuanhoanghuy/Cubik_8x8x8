@@ -205,6 +205,31 @@ static esp_err_t wifi_status_get_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
+static esp_err_t wifi_current_get_handler(httpd_req_t *req)
+{
+    wifi_status_info_t info = {0};
+
+    httpd_resp_set_type(req, "application/json");
+
+    if (wifi_get_current_status(&info) && info.connected && info.ssid[0] != '\0') {
+
+        char resp[192];
+        snprintf(resp, sizeof(resp),
+            "{\"connected\":true,\"ssid\":\"%s\",\"rssi\":%d}",
+            info.ssid,
+            info.rssi
+        );
+        httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
+    } else {
+        httpd_resp_send(req,
+            "{\"connected\":false}",
+            HTTPD_RESP_USE_STRLEN
+        );
+    }
+
+    return ESP_OK;
+}
+
 static esp_err_t disconnect_wifi_post_handler(httpd_req_t *req)
 {
     ESP_LOGI("HTTP", "/disconnect_wifi");
@@ -287,6 +312,12 @@ static httpd_uri_t uri_wifi_status = {
     .handler  = wifi_status_get_handler
 };
 
+static httpd_uri_t uri_wifi_current = {
+    .uri    = "/wifi_current",
+    .method = HTTP_GET,
+    .handler= wifi_current_get_handler
+};
+
 static httpd_uri_t uri_disconnect_wifi = {
     .uri      = "/disconnect_wifi",
     .method   = HTTP_POST,
@@ -322,6 +353,7 @@ httpd_handle_t wifi_start_webserver(void)
         httpd_register_uri_handler(server, &uri_disconnect_wifi);
         httpd_register_uri_handler(server, &uri_forget_wifi);
         httpd_register_uri_handler(server, &uri_exit_ap);
+        httpd_register_uri_handler(server, &uri_wifi_current);
         ESP_LOGI(TAG, "HTTP server started");
     }
 

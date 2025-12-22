@@ -287,3 +287,22 @@ void wifi_forget(void)
     ESP_LOGI("WIFI", "WiFi credentials forgotten");
 }
 
+bool wifi_get_current_status(wifi_status_info_t *info)
+{
+    if (!info) return false;
+
+    wifi_ap_record_t ap;
+    esp_err_t err = esp_wifi_sta_get_ap_info(&ap);
+
+    if (err == ESP_OK) {
+        info->connected = true;
+        strncpy(info->ssid, (char *)ap.ssid, WIFI_SSID_MAX);
+        info->rssi = ap.rssi;
+        return true;
+    }
+
+    info->connected = false;
+    info->ssid[0] = 0;
+    info->rssi = -127;
+    return false;
+}
