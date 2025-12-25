@@ -437,11 +437,13 @@ bool wifi_get_current_status(wifi_status_info_t *info)
         info->connected = true;
         strncpy(info->ssid, (char *)ap.ssid, WIFI_SSID_MAX);
         info->rssi = ap.rssi;
+        info->secure = (ap.authmode != WIFI_AUTH_OPEN) ? true : false;
         return true;
     }
 
     info->connected = false;
     info->ssid[0] = 0;
     info->rssi = -127;
+    info->secure = false;
     return false;
 }

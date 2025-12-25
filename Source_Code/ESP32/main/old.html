@@ -260,133 +260,38 @@
 </div>
 <!-- -------------------------------------------------SCRIPT---------------------------------------------------- -->
 <script>
-/* ================== STATE ================== */
 let selectedSSID = "";
 let connectedSSID = "";
-let wifiSecure = false;
-
 let lastScanResult = [];
 let scanInProgress = false;
-
-let wifiState = "idle"; // idle | connecting | got_ip | reconnecting | fail
-let isConnecting = false;
-
+let wifiState = "idle";
 let wifiStatusTimer = null;
-let wifiCurrentTimer = null;
+let connectedWifiTimer = null;
 
-/* ================== INIT ================== */
 document.addEventListener("DOMContentLoaded", () => {
-    startWifiCurrentPolling();
+    fetchConnectedWifi();          // gọi ngay lần đầu
+    startConnectedWifiPolling();   // sau đó poll mỗi 2s
 });
 
-/* ================== WIFI CURRENT ================== */
-function fetchConnectedWifi() {
-    if (isConnecting) return;
 
-    fetch("/wifi_current")
-        .then(res => res.json())
-        .then(data => {
-            if (data.connected) {
-                connectedSSID = data.ssid;
-                wifiSecure = data.secure;
-                wifiState = "got_ip";
-            } else {
-                connectedSSID = "";
-                wifiState = "idle";
-            }
-            renderWifiList();
-        })
-        .catch(() => {
-            wifiState = "idle";
-        });
+function showScanHint(text) {
+    let hint = document.getElementById("scanHint");
+    if (!hint) {
+        hint = document.createElement("div");
+        hint.id = "scanHint";
+        hint.style.textAlign = "center";
+        hint.style.marginTop = "10px";
+        document.body.insertBefore(hint, document.getElementById("wifiList"));
+    }
+    hint.innerText = text;
 }
 
-function startWifiCurrentPolling() {
-    if (wifiCurrentTimer) return;
-    fetchConnectedWifi();
-    wifiCurrentTimer = setInterval(fetchConnectedWifi, 2000);
-}
-
-function stopWifiCurrentPolling() {
-    if (!wifiCurrentTimer) return;
-    clearInterval(wifiCurrentTimer);
-    wifiCurrentTimer = null;
-}
-
-/* ================== WIFI STATUS ================== */
-function startWifiStatusPolling() {
-    stopWifiStatusPolling();
-
-    wifiStatusTimer = setInterval(() => {
-        fetch("/wifi_status")
-            .then(res => res.json())
-            .then(data => {
-                wifiState = data.status;
-                console.log("wifi_status:", wifiState);
-
-                if (wifiState === "connecting") return;
-
-                if (wifiState === "got_ip") {
-                    onWifiConnected();
-                }
-
-                if (wifiState === "fail") {
-                    onWifiConnectFail();
-                }
-
-                if (wifiState === "reconnecting") {
-                    renderWifiList();
-                }
-            })
-            .catch(() => {
-                onWifiConnectFail();
-            });
-    }, 2000);
-}
-
-function stopWifiStatusPolling() {
-    if (!wifiStatusTimer) return;
-    clearInterval(wifiStatusTimer);
-    wifiStatusTimer = null;
-}
-
-/* ================== CONNECT CALLBACK ================== */
-function onWifiConnected() {
-    console.log("WiFi connected");
-
-    isConnecting = false;
-    stopWifiStatusPolling();
-    stopWifiCurrentPolling();
-
-    setTimeout(() => {
-        startWifiCurrentPolling();
-    }, 500);
-
-    document.getElementById("loadingBox").style.display = "none";
-    closePopup();
-    renderWifiList();
-}
-
-function onWifiConnectFail() {
-    console.log("WiFi connect failed");
-
-    isConnecting = false;
-    wifiState = "fail";
-
-    stopWifiStatusPolling();
-    startWifiCurrentPolling();
-
-    document.getElementById("loadingBox").style.display = "none";
-    alert("Sai mật khẩu hoặc không kết nối được WiFi");
-    renderWifiList();
-}
-
-/* ================== SCAN ================== */
 function scanWifi() {
     if (scanInProgress) return;
     scanInProgress = true;
 
     showScanHint("Đang quét WiFi...");
+
     fetch("/scan_wifi");
 
     const timer = setInterval(() => {
@@ -412,7 +317,16 @@ function scanWifi() {
     }, 2000);
 }
 
-/* ================== UI ================== */
+function startConnectedWifiPolling() {
+    // Tránh tạo nhiều timer
+    if (connectedWifiTimer) return;
+
+    connectedWifiTimer = setInterval(() => {
+        fetchConnectedWifi();
+    }, 2000);
+}
+
+
 function renderWifiList(list = lastScanResult) {
     let html = "";
     let hasConnectedInList = false;
@@ -423,9 +337,13 @@ function renderWifiList(list = lastScanResult) {
 
         let statusText = "";
         if (isThisSSID) {
-            if (wifiState === "got_ip") statusText = '<span style="color:green">Đã kết nối</span>';
-            else if (wifiState === "reconnecting") statusText = '<span style="color:orange">Mất kết nối</span>';
-            else if (wifiState === "fail") statusText = '<span style="color:red">Kết nối lỗi</span>';
+            if (wifiState === "got_ip") {
+                statusText = '<span style="color:green">Đã kết nối</span>';
+            } else if (wifiState === "reconnecting") {
+                statusText = '<span style="color:orange">Mất kết nối</span>';
+            } else if (wifiState === "fail") {
+                statusText = '<span style="color:red">Kết nối lỗi</span>';
+            }
         }
 
         html += `
@@ -439,108 +357,187 @@ function renderWifiList(list = lastScanResult) {
         </div>`;
     });
 
+    // WiFi đã từng kết nối nhưng không còn trong scan
     if (connectedSSID && !hasConnectedInList) {
-        html = `
+        let statusText =
+            wifiState === "got_ip" ? "Đã kết nối" :
+            wifiState === "reconnecting" ? "Mất kết nối" :
+            "Không kết nối";
+
+        html =
+        `
         <div class="wifi-item"
              onclick="wifiClicked('${escapeJS(connectedSSID)}', true)">
             <div class="wifi-name">${connectedSSID}</div>
             <div class="icons">
-                ${wifiState === "got_ip" ? "Đã kết nối" : "Mất kết nối"}
-                ${wifiSecure ? '🔒' : ''}
+                <span>${statusText}</span>
             </div>
-        </div>` + html;
+        </div>
+        ` + html;
     }
 
     document.getElementById("wifiList").innerHTML = html;
 }
 
-/* ================== CLICK ================== */
+
+
+
+
+function rssiToLevel(rssi) {
+    if (rssi > -50) return 4;
+    if (rssi > -65) return 3;
+    if (rssi > -75) return 2;
+    return 1;
+}
+
+
 function wifiClicked(ssid, secure) {
     selectedSSID = ssid;
 
+
+    // Nếu nhấn vào WiFi đang kết nối → mở popup tùy chọn
     if (ssid === connectedSSID) {
         document.getElementById("connectedSSIDName").innerText = ssid;
         document.getElementById("connectedPopup").style.display = "flex";
         return;
     }
 
+
+    // Nếu WiFi không có mật khẩu → kết nối ngay
     if (!secure) {
-        connectWifiDirect(ssid, "");
+        document.getElementById("loadingBox").style.display = "flex";
+
+        fetch("/connect_wifi", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                ssid: ssid,
+                password: ""
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "ok") {
+                startWifiStatusPolling();
+            } else {
+                document.getElementById("loadingBox").style.display = "none";
+                alert("Không thể kết nối WiFi");
+            }
+        });
+
         return;
     }
 
+
+    // Nếu WiFi có mật khẩu → mở popup nhập mật khẩu
     document.getElementById("popupSSID").innerText = ssid;
     document.getElementById("passwordPopup").style.display = "flex";
 }
 
-function connectWifiDirect(ssid, password) {
-    isConnecting = true;
-    wifiState = "connecting";
 
-    stopWifiCurrentPolling();
-    startWifiStatusPolling();
-
-    document.getElementById("loadingBox").style.display = "flex";
-
-    fetch("/connect_wifi", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ssid, password })
-    });
+function closePopup() {
+    document.getElementById("passwordPopup").style.display = "none";
+    document.getElementById("passwordInput").value = "";
+    document.getElementById("connectBtn").disabled = true;
 }
+
 
 document.getElementById("passwordInput").addEventListener("input", function() {
     document.getElementById("connectBtn").disabled = this.value.length < 8;
 });
 
+
+
+
+
 function connectWifi() {
     const pass = document.getElementById("passwordInput").value;
+
     if (!selectedSSID || pass.length < 8) {
         alert("SSID hoặc mật khẩu không hợp lệ");
         return;
     }
-    connectWifiDirect(selectedSSID, pass);
+
+    document.getElementById("loadingBox").style.display = "flex";
+
+    fetch("/connect_wifi", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            ssid: selectedSSID,
+            password: pass
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "ok") {
+            startWifiStatusPolling();
+        } else {
+            stopWifiStatusPolling();
+            document.getElementById("loadingBox").style.display = "none";
+            alert("Không thể bắt đầu kết nối WiFi");
+        }
+    })
+    .catch(err => {
+        stopWifiStatusPolling();
+        document.getElementById("loadingBox").style.display = "none";
+        alert("Lỗi kết nối tới ESP32");
+        console.error(err);
+    });
 }
 
-/* ================== POPUP ================== */
-function closePopup() {
-    document.getElementById("passwordPopup").style.display = "none";
-    document.getElementById("passwordInput").value = "";
+function startWifiStatusPolling() {
+    stopWifiStatusPolling();
+
+    wifiStatusTimer = setInterval(() => {
+        fetch("/wifi_status")
+            .then(res => res.json())
+            .then(data => {
+                wifiState = data.status;
+                console.log("WiFi status:", wifiState);
+
+                if (wifiState === "connecting") {
+                    return;
+                }
+
+                if (wifiState === "got_ip") {
+                    connectedSSID = selectedSSID || connectedSSID;
+                    stopWifiStatusPolling();
+                    document.getElementById("loadingBox").style.display = "none";
+                    closePopup();
+                    renderWifiList();
+                    return;
+                }
+
+                if (wifiState === "reconnecting") {
+                    // MẤT WIFI SAU KHI ĐÃ KẾT NỐI
+                    document.getElementById("loadingBox").style.display = "none";
+                    renderWifiList();
+                    return;
+                }
+
+                if (wifiState === "fail") {
+                    stopWifiStatusPolling();
+                    document.getElementById("loadingBox").style.display = "none";
+                    alert("Sai mật khẩu hoặc không kết nối được WiFi");
+                }
+            })
+            .catch(() => {
+                stopWifiStatusPolling();
+                document.getElementById("loadingBox").style.display = "none";
+            });
+    }, 2000);
 }
 
-function closeConnectedPopup() {
-    document.getElementById("connectedPopup").style.display = "none";
-}
 
-/* ================== UTIL ================== */
-function showScanHint(text) {
-    let hint = document.getElementById("scanHint");
-    if (!hint) {
-        hint = document.createElement("div");
-        hint.id = "scanHint";
-        hint.style.textAlign = "center";
-        hint.style.marginTop = "10px";
-        document.body.insertBefore(hint, document.getElementById("wifiList"));
+function stopWifiStatusPolling() {
+    if (wifiStatusTimer) {
+        clearInterval(wifiStatusTimer);
+        wifiStatusTimer = null;
     }
-    hint.innerText = text;
 }
-
-function escapeJS(str) {
-    return str.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
-}
-
-function outsideClick(event) {
-    // Nếu click vào nền (không phải khung popup)
-    if (event.target.id === "passwordPopup") {
-        closePopup();
-    }
-
-
-    if (event.target.id === "connectedPopup") {
-        closeConnectedPopup();
-    }
-}
-
 // Popup: Quên mạng này
 function forgetNetwork() {
     fetch("/forget_wifi", { method: "POST" })
@@ -577,7 +574,6 @@ function disconnectNetwork() {
         .catch(() => alert("Mất kết nối tới ESP32"));
 }
 
- //Exit AP mode
 function exitAP() {
     fetch("/exit_ap", { method: "POST" })
         .then(res => res.json())
@@ -602,7 +598,47 @@ function exitAP() {
             alert("Không thể gửi lệnh thoát AP");
         });
 }
-</script>
 
+
+// Đóng popup kết nối hiện tại
+function closeConnectedPopup() {
+    document.getElementById("connectedPopup").style.display = "none";
+}
+function outsideClick(event) {
+    // Nếu click vào nền (không phải khung popup)
+    if (event.target.id === "passwordPopup") {
+        closePopup();
+    }
+
+
+    if (event.target.id === "connectedPopup") {
+        closeConnectedPopup();
+    }
+}
+
+function fetchConnectedWifi() {
+    fetch("/wifi_current")
+        .then(res => res.json())
+        .then(data => {
+            if (data.connected) {
+                connectedSSID = data.ssid;
+                wifiState = "got_ip";
+            } else {
+                wifiState = "idle";
+            }
+            renderWifiList();
+        })
+        .catch(() => {
+            wifiState = "idle";
+        });
+}
+
+
+
+function escapeJS(str) {
+    return str.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+}
+
+</script>
 </body>
 </html>

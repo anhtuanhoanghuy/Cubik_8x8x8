@@ -35,6 +35,7 @@ typedef struct {
     bool connected;
     char ssid[WIFI_SSID_MAX];
     int8_t rssi;
+    bool secure;
 } wifi_status_info_t;
 
 bool wifi_get_current_status(wifi_status_info_t *info);

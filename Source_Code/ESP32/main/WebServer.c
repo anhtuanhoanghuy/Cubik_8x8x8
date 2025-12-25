@@ -239,11 +239,23 @@ static esp_err_t exit_ap_post_handler(httpd_req_t *req)
     //     WIFI_STA_MANUAL_CONNECT_BIT
     // );
 
+    /* 1. Trả response trước */
+    httpd_resp_set_type(req, "application/json");
+    httpd_resp_send(req,
+        "{\"status\":\"ok\",\"message\":\"AP disabled\"}",
+        HTTPD_RESP_USE_STRLEN
+    );
+
+    /* 2. Stop HTTP server */
+    wifi_stop_webserver();
+    // apsta_active = false;   
+
+    /* 3. Chuyển sang STA-only */
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
 
-    wifi_stop_webserver();
-    // apsta_active = false;
+    return ESP_OK;
 }
+
 
 static esp_err_t wifi_current_get_handler(httpd_req_t *req)
 {
@@ -255,9 +267,10 @@ static esp_err_t wifi_current_get_handler(httpd_req_t *req)
 
         char resp[192];
         snprintf(resp, sizeof(resp),
-            "{\"connected\":true,\"ssid\":\"%s\",\"rssi\":%d}",
+            "{\"connected\":true,\"ssid\":\"%s\",\"rssi\":%d,\"secure\":%s}",
             info.ssid,
-            info.rssi
+            info.rssi,
+            info.secure ? "true" : "false"
         );
         httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
     } else {
@@ -336,13 +349,18 @@ httpd_handle_t wifi_start_webserver(void)
 
     if (httpd_start(&server, &config) == ESP_OK) {
         httpd_register_uri_handler(server, &uri_root);
-        httpd_register_uri_handler(server, &uri_scan_wifi);
-        httpd_register_uri_handler(server, &uri_scan_result);
-        httpd_register_uri_handler(server, &uri_connect_wifi);
+        httpd_register_uri_handler(server, &uri_wifi_current);
         httpd_register_uri_handler(server, &uri_wifi_status);
+        httpd_register_uri_handler(server, &uri_connect_wifi);
         httpd_register_uri_handler(server, &uri_disconnect_wifi);
         httpd_register_uri_handler(server, &uri_forget_wifi);
-        httpd_register_uri_handler(server, &uri_wifi_current);
+        httpd_register_uri_handler(server, &uri_scan_wifi);
+        httpd_register_uri_handler(server, &uri_scan_result);
+        httpd_register_uri_handler(server, &uri_exit_ap);
+
+        /* CUỐI CÙNG */
+
+
 
         ESP_LOGI(TAG, "HTTP server started");
     }
