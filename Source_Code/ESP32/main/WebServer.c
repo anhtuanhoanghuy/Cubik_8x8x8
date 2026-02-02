@@ -215,20 +215,6 @@ static esp_err_t disconnect_wifi_post_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
-static esp_err_t forget_wifi_post_handler(httpd_req_t *req)
-{
-    ESP_LOGI(TAG, "/forget_wifi");
-
-    wifi_forget();
-
-    httpd_resp_set_type(req, "application/json");
-    httpd_resp_send(req,
-        "{\"status\":\"ok\",\"message\":\"forgotten\"}",
-        HTTPD_RESP_USE_STRLEN
-    );
-    return ESP_OK;
-}
-
 static esp_err_t exit_ap_post_handler(httpd_req_t *req)
 {
     ESP_LOGI(TAG, "Exit AP mode");
@@ -327,12 +313,6 @@ static httpd_uri_t uri_disconnect_wifi = {
     .handler  = disconnect_wifi_post_handler
 };
 
-static httpd_uri_t uri_forget_wifi = {
-    .uri      = "/forget_wifi",
-    .method   = HTTP_POST,
-    .handler  = forget_wifi_post_handler
-};
-
 static httpd_uri_t uri_exit_ap = {
     .uri      = "/exit_ap",
     .method   = HTTP_POST,
@@ -365,7 +345,6 @@ httpd_handle_t wifi_start_webserver(void)
         httpd_register_uri_handler(server, &uri_connect_wifi);
         httpd_register_uri_handler(server, &uri_wifi_status);
         httpd_register_uri_handler(server, &uri_disconnect_wifi);
-        httpd_register_uri_handler(server, &uri_forget_wifi);
         httpd_register_uri_handler(server, &uri_wifi_current);
         httpd_register_uri_handler(server, &uri_exit_ap);
         httpd_register_uri_handler(server, &uri_dummy);
