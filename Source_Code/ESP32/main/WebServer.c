@@ -93,7 +93,7 @@ static esp_err_t scan_result_get_handler(httpd_req_t *req)
 static esp_err_t connect_wifi_post_handler(httpd_req_t *req)
 {
     ESP_LOGI(TAG, "/connect_wifi");
-
+    wifi_disconnect();
     if (req->content_len <= 0 || req->content_len > 512) {
         httpd_resp_send_err(req,
             HTTPD_400_BAD_REQUEST,
@@ -283,6 +283,11 @@ static esp_err_t wifi_current_get_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
+static esp_err_t dummy_handler(httpd_req_t *req)
+{
+    httpd_resp_send(req, "OK", HTTPD_RESP_USE_STRLEN);
+    return ESP_OK;
+}
 /* =========================================================
  * URI TABLE
  * ========================================================= */
@@ -340,6 +345,12 @@ static httpd_uri_t uri_wifi_current = {
     .handler= wifi_current_get_handler
 };
 
+static httpd_uri_t uri_dummy = {
+    .uri      = "/dummy",
+    .method   = HTTP_GET,
+    .handler  = dummy_handler,
+    .user_ctx = NULL
+};
 /* =========================================================
  * START / STOP SERVER
  * ========================================================= */
@@ -349,18 +360,17 @@ httpd_handle_t wifi_start_webserver(void)
 
     if (httpd_start(&server, &config) == ESP_OK) {
         httpd_register_uri_handler(server, &uri_root);
-        httpd_register_uri_handler(server, &uri_wifi_current);
-        httpd_register_uri_handler(server, &uri_wifi_status);
-        httpd_register_uri_handler(server, &uri_connect_wifi);
-        httpd_register_uri_handler(server, &uri_disconnect_wifi);
-        httpd_register_uri_handler(server, &uri_forget_wifi);
         httpd_register_uri_handler(server, &uri_scan_wifi);
         httpd_register_uri_handler(server, &uri_scan_result);
+        httpd_register_uri_handler(server, &uri_connect_wifi);
+        httpd_register_uri_handler(server, &uri_wifi_status);
+        httpd_register_uri_handler(server, &uri_disconnect_wifi);
+        httpd_register_uri_handler(server, &uri_forget_wifi);
+        httpd_register_uri_handler(server, &uri_wifi_current);
         httpd_register_uri_handler(server, &uri_exit_ap);
+        httpd_register_uri_handler(server, &uri_dummy);
 
         /* CUỐI CÙNG */
-
-
 
         ESP_LOGI(TAG, "HTTP server started");
     }

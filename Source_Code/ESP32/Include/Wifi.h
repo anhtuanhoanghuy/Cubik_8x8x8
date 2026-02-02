@@ -12,8 +12,8 @@
 #define WIFI_STA_FAIL_PASSWORD_BIT (1<<5) //bit5
 
 
-#define MAX_AP_NUM 30
-#define MAX_WIFI_SAVED 10
+#define MAX_AP_NUM 10 //số lượng Wifi tối đa được phép tìm thấy
+#define MAX_WIFI_SAVED 10 //số lượng wifi tối đa lưu vào eeprom
 #define WIFI_SSID_MAX  32
 #define WIFI_PASS_MAX  64
 
@@ -42,10 +42,6 @@ bool wifi_get_current_status(wifi_status_info_t *info);
 
 void wifi_init(void);
 
-void wifi_enter_station_mode(const char *, const char *);
-
-void wifi_enter_stationAP_mode(const char *, const char *);
-
 void wifi_scan_start(void);
 
 uint16_t wifi_get_record_count(void);
@@ -56,21 +52,15 @@ uint8_t wifi_get_scan_state(void);
 
 void wifi_connect(const char *, const char *);
 
-void wifi_connect_saved(const saved_wifi_t *);
-
 void wifi_disconnect(void);
-
-void wifi_forget(void);
 
 void wifi_off(void);
 
-void wifi_store_load(void);
+void wifi_store_init(void);
 
-void wifi_store_save(void);
+bool wifi_store_load(wifi_config_t *cfg); //load wifi từ flash lên RAM
 
-void wifi_store_add_or_update(const char *, const char *, int8_t );
-
-bool wifi_select_best(saved_wifi_t *);
+void wifi_store_save(const char *, const char *); //lưu wifi từ RAM vào flash
 
 EventGroupHandle_t wifi_get_event_group(void);
 

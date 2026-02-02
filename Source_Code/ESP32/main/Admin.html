@@ -356,10 +356,10 @@ function onWifiConnected() {
 
     isConnecting = false;
     stopWifiStatusPolling();
-    stopWifiCurrentPolling();
+    // stopWifiCurrentPolling();
 
     setTimeout(() => {
-        startWifiCurrentPolling();
+        // startWifiCurrentPolling();
     }, 500);
 
     document.getElementById("loadingBox").style.display = "none";
@@ -374,7 +374,7 @@ function onWifiConnectFail() {
     wifiState = "fail";
 
     stopWifiStatusPolling();
-    startWifiCurrentPolling();
+    // startWifiCurrentPolling();
 
     document.getElementById("loadingBox").style.display = "none";
     alert("Sai mật khẩu hoặc không kết nối được WiFi");
@@ -383,7 +383,8 @@ function onWifiConnectFail() {
 
 /* ================== SCAN ================== */
 function scanWifi() {
-    if (scanInProgress) return;
+    stopWifiCurrentPolling();
+    if (scanInProgress) return; //tránh user Scan liên tục
     scanInProgress = true;
 
     showScanHint("Đang quét WiFi...");
@@ -402,14 +403,16 @@ function scanWifi() {
                     lastScanResult = data.aps || [];
                     renderWifiList(lastScanResult);
                     showScanHint("");
+                    startWifiCurrentPolling();
                 }
             })
             .catch(() => {
-                scanInProgress = false;
-                clearInterval(timer);
-                showScanHint("Scan lỗi");
+                if (!scanInProgress) return;   // ⬅️ QUAN TRỌNG
+                    scanInProgress = false;
+                    clearInterval(timer);
+                    showScanHint("Scan lỗi");
             });
-    }, 2000);
+    }, 5000);
 }
 
 /* ================== UI ================== */
@@ -420,6 +423,7 @@ function renderWifiList(list = lastScanResult) {
     list.forEach(wifi => {
         const isThisSSID = wifi.ssid === connectedSSID;
         if (isThisSSID) hasConnectedInList = true;
+        let level = rssiToLevel(wifi.rssi);
 
         let statusText = "";
         if (isThisSSID) {
@@ -431,10 +435,16 @@ function renderWifiList(list = lastScanResult) {
         html += `
         <div class="wifi-item"
              onclick="wifiClicked('${escapeJS(wifi.ssid)}', ${wifi.secure})">
-            <div class="wifi-name">${wifi.ssid}</div>
+            <div class="wifi-name">${wifi.ssid === "" ? "[Hidden SSID]" : wifi.ssid}</div>
             <div class="icons">
                 ${statusText}
                 ${wifi.secure ? '🔒' : ''}
+                <div class="wifi-icon wifi-signal-${level}">
+                    <span class="bar1"></span>
+                    <span class="bar2"></span>
+                    <span class="bar3"></span>
+                    <span class="bar4"></span>
+                </div>
             </div>
         </div>`;
     });
@@ -445,7 +455,7 @@ function renderWifiList(list = lastScanResult) {
              onclick="wifiClicked('${escapeJS(connectedSSID)}', true)">
             <div class="wifi-name">${connectedSSID}</div>
             <div class="icons">
-                ${wifiState === "got_ip" ? "Đã kết nối" : "Mất kết nối"}
+                ${wifiState === "got_ip" ? '<span style="color:green">Đã kết nối</span>' : '<span style="color:orange">Mất kết nối</span>'}
                 ${wifiSecure ? '🔒' : ''}
             </div>
         </div>` + html;
@@ -477,7 +487,7 @@ function connectWifiDirect(ssid, password) {
     isConnecting = true;
     wifiState = "connecting";
 
-    stopWifiCurrentPolling();
+    // stopWifiCurrentPolling();
     startWifiStatusPolling();
 
     document.getElementById("loadingBox").style.display = "flex";
@@ -601,6 +611,13 @@ function exitAP() {
             console.error(err);
             alert("Không thể gửi lệnh thoát AP");
         });
+}
+
+function rssiToLevel(rssi) {
+    if (rssi > -50) return 4;
+    if (rssi > -65) return 3;
+    if (rssi > -75) return 2;
+    return 1;
 }
 </script>
 
