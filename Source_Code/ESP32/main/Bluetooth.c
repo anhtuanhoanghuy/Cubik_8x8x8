@@ -1,6 +1,7 @@
 #include "Bluetooth.h"
-
+#include "Wifi.h"
 #include <string.h>
+#include "Defines.h"
 #include "esp_log.h"
 #include "esp_err.h"
 
@@ -12,20 +13,11 @@
 #include "services/gatt/ble_svc_gatt.h"
 
 static const char *TAG = "BLUETOOTH";
-
-/* =========================================================
- * BLE STATE MACHINE
- * ========================================================= */
-typedef enum {
-    BLE_STATE_OFF = 0,
-    BLE_STATE_READY,
-    BLE_STATE_ADVERTISING,      // Advertising và có thể connect
-    BLE_STATE_CONNECTED,
-} ble_state_t;
-
+QueueHandle_t ble_rx_queue = NULL;
 static ble_state_t ble_state = BLE_STATE_OFF;
 static uint16_t conn_handle = BLE_HS_CONN_HANDLE_NONE;
 
+static uint8_t BLE_tx_buffer[256] = {0};
 /* =========================================================
  * FORWARD DECLARATIONS
  * ========================================================= */
@@ -33,6 +25,7 @@ static void ble_host_task(void *param);
 static void ble_on_sync(void);
 static void ble_on_reset(int reason);
 static int ble_gap_event_cb(struct ble_gap_event *event, void *arg);
+static void bluetooth_deinit(void);
 
 /* =========================================================
  * GATT SERVER - CUSTOM SERVICE
@@ -47,8 +40,6 @@ static const ble_uuid128_t gatt_svr_svc_uuid =
 static const ble_uuid128_t gatt_svr_chr_uuid =
     BLE_UUID128_INIT(0xf1, 0xde, 0xbc, 0x9a, 0x78, 0x56, 0x34, 0x12,
                      0x78, 0x56, 0x34, 0x12, 0x78, 0x56, 0x34, 0x12);
-
-static uint8_t gatt_svr_chr_val[32] = "Hello from CUBIK!";
 
 static int gatt_svr_chr_access(uint16_t conn_handle, uint16_t attr_handle,
                                 struct ble_gatt_access_ctxt *ctxt, void *arg);
@@ -78,21 +69,40 @@ static int gatt_svr_chr_access(uint16_t conn_handle, uint16_t attr_handle,
 {
     switch (ctxt->op) {
     case BLE_GATT_ACCESS_OP_READ_CHR:
-        ESP_LOGI(TAG, "READ characteristic");
-        os_mbuf_append(ctxt->om, gatt_svr_chr_val, sizeof(gatt_svr_chr_val));
+        os_mbuf_append(ctxt->om, BLE_tx_buffer, sizeof(BLE_tx_buffer));
+        ESP_LOGI(TAG, "BLE send:");
         return 0;
 
     case BLE_GATT_ACCESS_OP_WRITE_CHR:
-        ESP_LOGI(TAG, "WRITE characteristic");
-        
-        uint16_t om_len = OS_MBUF_PKTLEN(ctxt->om);
-        if (om_len > sizeof(gatt_svr_chr_val)) {
-            om_len = sizeof(gatt_svr_chr_val);
+        ble_command_t cmd = {0};
+
+        uint16_t total_len = OS_MBUF_PKTLEN(ctxt->om);
+
+        // Kiểm tra tối thiểu
+        if (total_len < 2) {
+            return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
         }
-        
-        os_mbuf_copydata(ctxt->om, 0, om_len, gatt_svr_chr_val);
-        
-        ESP_LOGI(TAG, "Received: %.*s", om_len, gatt_svr_chr_val);
+
+        uint8_t header[2];
+
+        // Copy command_id + len
+        os_mbuf_copydata(ctxt->om, 0, 2, header);
+
+        cmd.command_id = header[0];
+        cmd.len        = header[1];
+
+        // Validate len
+        if (total_len != (2 + cmd.len)) {
+            ESP_LOGI(TAG, "Size of packet is invalid.");
+            return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
+        }
+        // Copy payload
+        os_mbuf_copydata(ctxt->om, 2, cmd.len, cmd.data);
+        // Đẩy sang task xử lý
+        xQueueSendFromISR(ble_rx_queue, &cmd, NULL);
+        ESP_LOGI(TAG, "BLE receive:%d bytes", total_len);
+
+        // Return ngay!
         return 0;
 
     default:
@@ -185,7 +195,7 @@ static void ble_host_task(void *param)
  * PUBLIC API: INIT
  * ========================================================= */
 void bluetooth_init(void)
-{
+{   
     if (ble_state != BLE_STATE_OFF) {
         ESP_LOGW(TAG, "⚠️ Bluetooth already initialized");
         return;
@@ -212,8 +222,14 @@ void bluetooth_init(void)
 
     // Start NimBLE host task
     nimble_port_freertos_init(ble_host_task);
+    ble_rx_queue = xQueueCreate(
+        8,
+        sizeof(ble_command_t)
+    );
+    configASSERT(ble_rx_queue);
 
     ESP_LOGI(TAG, "✅ Bluetooth initialized successfully");
+    ESP_LOGI(TAG, "✅ Queue for Bluetooth initialized successfully");
 }
 
 /* =========================================================
@@ -334,4 +350,74 @@ void bluetooth_stop(void)
 bool bluetooth_is_connected(void)
 {
     return (ble_state == BLE_STATE_CONNECTED);
+}
+
+
+/* =========================================================
+ * COMMAND PROCESS
+ * ========================================================= */
+
+ void ble_process_task(void *param)
+{
+    ble_command_t cmd;
+    while (1) {
+        if (xQueueReceive(ble_rx_queue, &cmd, portMAX_DELAY)) {
+            process_ble_command(&cmd);
+        }
+    }
+}
+
+
+void process_ble_command(ble_command_t *cmd)
+{
+    ESP_LOGI("BLE", "CMD: 0x%02X, Len: %d", cmd->command_id, cmd->len);
+    
+    switch (cmd->command_id) {
+    
+    case CMD_BLE_WIFI_CONNECT: {
+        char ssid[WIFI_SSID_MAX] = {0};
+        char password[WIFI_PASS_MAX] = {0};
+
+        uint8_t ssid_len = cmd->data[0];
+        uint8_t pass_len = cmd->data[1];
+        ESP_LOGI("BLE", "ssid_len: %d",ssid_len);
+        ESP_LOGI("BLE", "pass_len %d",pass_len);
+        if (ssid_len > WIFI_SSID_MAX || pass_len > WIFI_PASS_MAX) return;
+
+        memcpy(ssid, &cmd->data[2], ssid_len);
+        memcpy(password, &cmd->data[2 + ssid_len], pass_len);        
+        wifi_connect(ssid, password);
+        ESP_LOGI("BLE", "CMD_BLE_WIFI_CONNECT");
+        ESP_LOGI("BLE", "Connect to %s : %s",ssid, password);
+        break;
+    }
+    
+    case CMD_BLE_WIFI_DISCONNECT: {
+        ESP_LOGI("BLE", "CMD_BLE_WIFI_DISCONNECT");
+        wifi_disconnect();
+        break;
+    }
+
+    case CMD_BLE_WIFI_ON_OFF:
+        ESP_LOGI("BLE", "CMD_BLE_WIFI_ON_OFF");
+        uint8_t state = cmd->data[0];
+        switch (state)
+        {
+            case OFF:
+                wifi_off();
+                break;
+            case ON:
+                wifi_init();
+                break;
+            default:
+                break;
+        }
+        break;
+
+    case CMD_BLE_TEST_MODE:
+        break;
+    
+    default:
+        ESP_LOGW("BLE", "⚠️ Unknown CMD: 0x%02X", cmd->command_id);
+    }
 }

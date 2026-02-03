@@ -3,7 +3,7 @@
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-
+#include "freertos/queue.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "nvs.h"
@@ -73,6 +73,7 @@ static void console_task(void *arg)
 void app_main(void)
 {
     ESP_LOGI("MAIN", "Boot");
+
 // ✅ BƯỚC 1: Khởi tạo NVS (BẮT BUỘC trước WiFi/BLE)
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || 
@@ -89,13 +90,24 @@ void app_main(void)
     wifi_start_webserver();
     bluetooth_init();
     /* Không AP – không Web */
+
     xTaskCreate(
         console_task,
         "console",
         4096,
         NULL,
-        5,
+        3,
         NULL
     );
+
+    xTaskCreate(
+        ble_process_task,
+        "ble_process",
+        4096,      // stack WORD → ~16 KB
+        NULL,
+        4,         // priority
+        NULL
+    );
+
 }
 

@@ -13,23 +13,14 @@
 
 
 #define MAX_AP_NUM 10 //số lượng Wifi tối đa được phép tìm thấy
-#define MAX_WIFI_SAVED 10 //số lượng wifi tối đa lưu vào eeprom
 #define WIFI_SSID_MAX  32
-#define WIFI_PASS_MAX  64
+#define WIFI_PASS_MAX  32
 
 typedef enum {
     WIFI_SCAN_IDLE = 0,
     WIFI_SCAN_RUNNING,
     WIFI_SCAN_DONE
 } wifi_scan_state_t;
-
-
-typedef struct {
-    char ssid[WIFI_SSID_MAX];
-    char password[WIFI_PASS_MAX];
-    int8_t last_rssi;
-    uint32_t last_used;   // unix time hoặc counter
-} saved_wifi_t;
 
 typedef struct {
     bool connected;
