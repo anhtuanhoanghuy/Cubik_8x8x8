@@ -1,6 +1,6 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'dart:math' as math;
 
 void main() {
   runApp(const CubikLEDApp());
@@ -600,7 +600,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                               controller: _textController,
                               style: TextStyle(color: _selectedColor, fontSize: 16),
                               decoration: InputDecoration(
-                                hintText: 'Nhập text hiển thị lên LED',
+                                hintText: 'Nhập text hiện thị lên LED',
                                 hintStyle: TextStyle(color: Colors.grey[600], fontSize: 16),
                                 border: InputBorder.none,
                               ),
