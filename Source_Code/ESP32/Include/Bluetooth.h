@@ -16,13 +16,6 @@ typedef enum {
     BLE_STATE_CONNECTED,
 } ble_state_t;
 
-enum {
-    CMD_BLE_WIFI_CONNECT    = 0x01,
-    CMD_BLE_WIFI_DISCONNECT = 0X02,
-    CMD_BLE_WIFI_ON_OFF     = 0X03,
-    CMD_BLE_TEST_MODE       = 0X04
-};
-
 typedef struct
 {
     uint8_t command_id;
