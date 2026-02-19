@@ -45,6 +45,8 @@ void wifi_connect(const char *, const char *);
 
 void wifi_disconnect(void);
 
+void wifi_on(void);
+
 void wifi_off(void);
 
 void wifi_store_init(void);

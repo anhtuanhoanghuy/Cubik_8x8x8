@@ -201,11 +201,7 @@ void wifi_init(void)
     ESP_ERROR_CHECK(esp_event_handler_register(
         IP_EVENT, IP_EVENT_STA_GOT_IP, wifi_event_handler, NULL));
 
-    // ⚠️ SET MODE DUY NHẤT Ở ĐÂY
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
-    ESP_ERROR_CHECK(esp_wifi_start());
-
-    ESP_LOGI(TAG, "WiFi APSTA initialized");
+    wifi_on();
 }
 
 /* =========================================================
@@ -281,6 +277,15 @@ void wifi_disconnect(void)
     esp_wifi_disconnect();
     xEventGroupClearBits(wifi_event_group,
     WIFI_STA_FAIL_PASSWORD_BIT | WIFI_STA_DISCONNECTED_BIT);
+}
+
+void wifi_on(void)
+{
+    // ⚠️ SET MODE DUY NHẤT Ở ĐÂY
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
+    ESP_ERROR_CHECK(esp_wifi_start());
+
+    ESP_LOGI(TAG, "WiFi APSTA initialized");
 }
 
 void wifi_off(void)

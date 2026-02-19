@@ -27,13 +27,13 @@ enum {
     CMD_WIFI_BLE_LED_MODE,
     CMD_WIFI_BLE_SPEED,
     CMD_WIFI_BLE_BRIGHTNESS,
-}
+};
 
 //command via wifi
 enum {
     CMD_WIFI_CHECK_UPDATE = 0X16,
     CMD_WIFI_MESSAGE,
-}
+};
 
 //LED mode
 enum {
@@ -44,5 +44,5 @@ enum {
     LED_MODE_HEART,
     LED_MODE_STAR,
     LED_MODE_CUSTOM,
-}
+};
 #endif

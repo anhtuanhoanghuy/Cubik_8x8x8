@@ -407,7 +407,7 @@ void process_ble_command(ble_command_t *cmd)
                 wifi_off();
                 break;
             case ON:
-                wifi_init();
+                wifi_on();
                 break;
             default:
                 break;
