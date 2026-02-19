@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'model/effect_card.dart';
-import 'controller/bluetooth.dart';
+import 'controller/bluetooth_controller.dart';
 
 class ModeContent extends StatefulWidget {
   const ModeContent({super.key});

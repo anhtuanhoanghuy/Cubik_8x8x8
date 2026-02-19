@@ -2,15 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'chat_content.dart';
-import 'controller/bluetooth.dart';
+import 'controller/bluetooth_controller.dart';
+import 'controller/command_controller.dart';
+import 'controller/mqtt_controller.dart';
 import 'mode_content.dart';
 import 'setting_content.dart';
 
+late MQTTClientWrapper newclient;
+late BluetoothController bleController;
+late QueueProcessor queue;
+bool wifiConnected = false;
+bool bleConnected = false;
+
 void main() {
   runApp(const CubikLEDApp());
+  bleController = BluetoothController();
+  newclient = MQTTClientWrapper();
+  newclient.prepareMqttClient();
+  queue = Get.put(QueueProcessor());
+  queue.init(
+      onWifi: newclient.publishBytes,
+      onBLE: bleController.sendCommand,
+      wifiCheck: () => wifiConnected,
+      bleCheck: () => bleConnected
+  );
 }
 
 class CubikLEDApp extends StatelessWidget {

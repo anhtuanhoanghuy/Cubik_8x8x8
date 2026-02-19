@@ -1,13 +1,22 @@
+import 'dart:typed_data';
+import 'dart:convert';
+import 'package:app/defines.dart';
 import 'package:flutter/material.dart';
+import './controller/command_controller.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 class SettingContent extends StatefulWidget {
   const SettingContent({super.key});
-
   @override
   State<SettingContent> createState() => _SettingContentState();
 }
 
 class _SettingContentState extends State<SettingContent> {
+  final queue = Get.find<QueueProcessor>();
+  String deviceName = 'Hoàng Huy Anh Tuấn';
+  String tagID = 'hoanghuyanhtuan';
   bool _ledPowerOn = true;
   bool _voiceNotify = true;
   bool _sleepTimerEnabled = false;
@@ -129,6 +138,7 @@ class _SettingContentState extends State<SettingContent> {
                 ),
                 TextButton(
                   onPressed: () {
+                    queue.addCommand(command_id: CommonCommand.AUTO_OFF_SET_TIME.value, command_value: [tempStart.hour,tempStart.minute,tempEnd.hour,tempEnd.minute], method: CommunicationMethod.SEND_BY_AUTO);
                     setState(() {
                       _sleepStartTime = tempStart;
                       _sleepEndTime = tempEnd;
@@ -146,12 +156,14 @@ class _SettingContentState extends State<SettingContent> {
   }
 
   void _showWifiDialog() {
+    queue.addCommand(command_id: BleCommand.WIFI_SCAN.value, command_value: [Status.ON.value], method: CommunicationMethod.SEND_BY_BLE);
     final List<Map<String, dynamic>> wifiNetworks = [
       {'name': 'My Network', 'signal': 4, 'secured': true},
       {'name': 'Office WiFi', 'signal': 3, 'secured': true},
       {'name': 'Guest Network', 'signal': 2, 'secured': false},
       {'name': 'Home 5G', 'signal': 4, 'secured': true},
       {'name': 'Public WiFi', 'signal': 1, 'secured': false},
+      {'name': 'ANH TUAN_2G', 'signal': 1, 'secured': true},
     ];
 
     showDialog(
@@ -181,6 +193,7 @@ class _SettingContentState extends State<SettingContent> {
                     if (network['secured']) {
                       _showPasswordDialog(network['name']);
                     } else {
+                      queue.addCommand(command_id: BleCommand.WIFI_CONNECT.value, command_value: List<int>.from(Uint8List.fromList(utf8.encode(network['name'])) as Iterable<dynamic>), method: CommunicationMethod.SEND_BY_BLE);
                       setState(() {
                         _wifiNetwork = network['name'];
                         _isWifiConnected = true;
@@ -253,6 +266,13 @@ class _SettingContentState extends State<SettingContent> {
                 ),
                 TextButton(
                   onPressed: () {
+                    List<int> wifiConnect = [];
+                    wifiConnect.add(networkName.length);
+                    wifiConnect.add(passwordController.text.length);
+                    wifiConnect.addAll(List<int>.from(Uint8List.fromList(utf8.encode(networkName)) as Iterable<dynamic>));
+                    wifiConnect.addAll(List<int>.from(Uint8List.fromList(utf8.encode(passwordController.text)) as Iterable<dynamic>));
+                    
+                    queue.addCommand(command_id: BleCommand.WIFI_CONNECT.value, command_value: wifiConnect, method: CommunicationMethod.SEND_BY_BLE);
                     setState(() {
                       _wifiNetwork = networkName;
                       _isWifiConnected = true;
@@ -268,7 +288,7 @@ class _SettingContentState extends State<SettingContent> {
       },
     );
   }
-  void _changeInfoDialog(String info) {
+  void _changeInfoDialog(String info,String cmd) {
     final TextEditingController infoController = TextEditingController(text: info);
 
     showDialog(
@@ -306,6 +326,17 @@ class _SettingContentState extends State<SettingContent> {
                 ),
                 TextButton(
                   onPressed: () {
+                    if (cmd == 'deviceName') {
+                      queue.addCommand(command_id: CommonCommand.NAME_CHANGE.value, command_value: List<int>.from(Uint8List.fromList(utf8.encode(infoController.text)) as Iterable<dynamic>), method: CommunicationMethod.SEND_BY_AUTO);
+                      setState(() {
+                        deviceName = infoController.text;
+                      });
+                    } else if (cmd == 'tagID') {
+                      queue.addCommand(command_id: CommonCommand.TAG_CHANGE.value, command_value: List<int>.from(Uint8List.fromList(utf8.encode(infoController.text)) as Iterable<dynamic>), method: CommunicationMethod.SEND_BY_AUTO);
+                      setState(() {
+                        tagID =  infoController.text;
+                      });
+                    }
                     Navigator.pop(context);
                   },
                   child: const Text('Đồng ý', style: TextStyle(color: Color(0xFF5B6EF5), fontSize: 16, fontWeight: FontWeight.bold)),
@@ -335,6 +366,19 @@ class _SettingContentState extends State<SettingContent> {
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context);
+                      switch (cmd) {
+                        case 'restart':
+                          queue.addCommand(command_id: CommonCommand.RESTART.value, command_value: [Status.ON.value], method: CommunicationMethod.SEND_BY_AUTO);
+                          break;
+                        case 'reset':
+                          queue.addCommand(command_id: CommonCommand.RESET.value, command_value: [Status.ON.value], method: CommunicationMethod.SEND_BY_AUTO);
+                          break;
+                        case 'delete':
+                          queue.addCommand(command_id: CommonCommand.DELETE.value, command_value: [Status.ON.value], method: CommunicationMethod.SEND_BY_AUTO);
+                          break;
+                        default:
+                          break;
+                      }
                     },
                     child: const Text('Đồng ý', style: TextStyle(color: Color(0xFF5B6EF5), fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
@@ -436,13 +480,13 @@ class _SettingContentState extends State<SettingContent> {
                         Text('Tên thiết bị', style: TextStyle(fontSize: 14, color: Colors.grey[400])),
                         Expanded(
                             child: InkWell(
-                              onTap: () => _changeInfoDialog('Cubik LED của Anh Tuấn'),
+                              onTap: () => _changeInfoDialog(deviceName,'deviceName'),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Flexible(
                                     child: Text(
-                                      'Cubik LED của Anh Tuấn',
+                                      deviceName,
                                       style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w600),
                                       textAlign: TextAlign.right,
                                       overflow: TextOverflow.ellipsis,
@@ -464,13 +508,13 @@ class _SettingContentState extends State<SettingContent> {
                         Text('Tag ID', style: TextStyle(fontSize: 14, color: Colors.grey[400])),
                         Expanded(
                           child: InkWell(
-                            onTap: () => _changeInfoDialog('hoanghuyanhtuan'),
+                            onTap: () => _changeInfoDialog(tagID,'tagID'),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Flexible(
                                   child: Text(
-                                    '#hoanghuyanhtuan',
+                                    '#${tagID}',
                                     style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w600),
                                     textAlign: TextAlign.right,
                                     overflow: TextOverflow.ellipsis,
@@ -588,6 +632,7 @@ class _SettingContentState extends State<SettingContent> {
                           Switch(
                             value: _isWifiConnected,
                             onChanged: (value) {
+                              queue.addCommand(command_id: BleCommand.WIFI_ON_OFF.value, command_value: value ? [Status.ON.value] : [Status.OFF.value], method: CommunicationMethod.SEND_BY_BLE);
                               setState(() {
                                 _isWifiConnected = value;
                               });
@@ -653,6 +698,7 @@ class _SettingContentState extends State<SettingContent> {
                         Switch(
                           value: _ledPowerOn,
                           onChanged: (value) {
+                            queue.addCommand(command_id: CommonCommand.LED_ON_OFF.value, command_value: value ? [Status.ON.value] : [Status.OFF.value], method: CommunicationMethod.SEND_BY_AUTO);
                             setState(() {
                               _ledPowerOn = value;
                             });
@@ -694,6 +740,7 @@ class _SettingContentState extends State<SettingContent> {
                         Switch(
                           value: _voiceNotify,
                           onChanged: (value) {
+                            queue.addCommand(command_id: CommonCommand.VOICE_ON_OFF.value, command_value: value ? [Status.ON.value] : [Status.OFF.value], method: CommunicationMethod.SEND_BY_AUTO);
                             setState(() {
                               _voiceNotify = value;
                             });
@@ -763,6 +810,7 @@ class _SettingContentState extends State<SettingContent> {
                           Switch(
                             value: _sleepTimerEnabled,
                             onChanged: (value) {
+                              queue.addCommand(command_id: CommonCommand.AUTO_OFF.value, command_value: value ? [Status.ON.value] : [Status.OFF.value], method: CommunicationMethod.SEND_BY_AUTO);
                               setState(() {
                                 _sleepTimerEnabled = value;
                               });
@@ -798,7 +846,43 @@ class _SettingContentState extends State<SettingContent> {
                     ],
                   ),
                   const SizedBox(height: 16),
+                  // Test Mode
+                  InkWell(
+                    // onTap: _testModeDialog,
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0A0E1A),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: Colors.purple.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(Icons.add_chart, color: Colors.purple, size: 24),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Chế độ Test', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white)),
+                                const SizedBox(height: 4),
+                                Text('Đưa về trạng thái trình diễn', style: TextStyle(fontSize: 13, color: Colors.grey[400])),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
 
+                  const SizedBox(height: 16),
                   // Check update
                   InkWell(
                     onTap: _checkUpdateDialog,
