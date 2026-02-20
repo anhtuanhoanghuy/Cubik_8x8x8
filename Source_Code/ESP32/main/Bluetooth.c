@@ -11,6 +11,7 @@
 #include "host/ble_uuid.h"
 #include "services/gap/ble_svc_gap.h"
 #include "services/gatt/ble_svc_gatt.h"
+#include "Utils.h"
 
 static const char *TAG = "BLUETOOTH";
 QueueHandle_t ble_rx_queue = NULL;
@@ -74,38 +75,64 @@ static int gatt_svr_chr_access(uint16_t conn_handle, uint16_t attr_handle,
         return 0;
 
     case BLE_GATT_ACCESS_OP_WRITE_CHR:
-        ble_command_t cmd = {0};
-
-        uint16_t total_len = OS_MBUF_PKTLEN(ctxt->om);
-
-        // Kiểm tra tối thiểu
-        if (total_len < 2) {
-            return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
-        }
-
-        uint8_t header[2];
-
+        uint8_t data_received[256];
+int test = 0;
+printf("Test = %d\n", test);    
         // Copy command_id + len
-        os_mbuf_copydata(ctxt->om, 0, 2, header);
+        os_mbuf_copydata(ctxt->om, 0, 3, data_received);
+        if (data_received[0] == 0xAA) {
 
-        cmd.command_id = header[0];
-        cmd.len        = header[1];
+            uint16_t total_len = OS_MBUF_PKTLEN(ctxt->om);
+test=1;
+printf("Test = %d\n", test);    
+            // Kiểm tra tối thiểu
+            if (total_len < 4) {
+test=2;
+printf("Test = %d\n", test);    
+                return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
+            }
+test=3;
+printf("Test = %d\n", test);    
+            ble_command_t cmd = {0};
+            cmd.command_id = data_received[1];
+            cmd.len        = data_received[2];
 
-        // Validate len
-        if (total_len != (2 + cmd.len)) {
-            ESP_LOGI(TAG, "Size of packet is invalid.");
-            return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
+
+            // Validate len
+            if (total_len != (4 + cmd.len)) {
+                ESP_LOGI(TAG, "Size of packet is invalid.");
+test=4;
+printf("Test = %d\n", test);    
+                return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
+            }
+test=5;
+printf("Test = %d\n", test);    
+            os_mbuf_copydata(ctxt->om, 3, total_len - 1, &data_received[3]);
+
+            // Validate Checksum
+            if (!validateChecksum(data_received, total_len - 2, data_received[total_len - 1])) {
+test=6;
+printf("Test = %d\n", test);    
+                return BLE_ATT_ERR_INVALID_PDU;
+            }
+test=7;     
+printf("Test = %d\n", test);    
+            memcpy(cmd.data,&data_received[3],cmd.len);
+            // Đẩy sang task xử lý
+            xQueueSendFromISR(ble_rx_queue, &cmd, NULL);
+            ESP_LOGI(TAG, "BLE receive:%d bytes", total_len);
+test=8;
+printf("Test = %d\n", test);    
+            // Return ngay!
+            return 0;
         }
-        // Copy payload
-        os_mbuf_copydata(ctxt->om, 2, cmd.len, cmd.data);
-        // Đẩy sang task xử lý
-        xQueueSendFromISR(ble_rx_queue, &cmd, NULL);
-        ESP_LOGI(TAG, "BLE receive:%d bytes", total_len);
+test=9;
+printf("Test = %d\n", test);    
+        return BLE_ATT_ERR_INVALID_PDU;
 
-        // Return ngay!
-        return 0;
-
-    default:
+    default:  
+test=10;
+printf("Test = %d\n", test);    
         return BLE_ATT_ERR_UNLIKELY;
     }
 }

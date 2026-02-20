@@ -8,7 +8,8 @@
 
 //command via Bluetooth
 enum {
-    CMD_BLE_WIFI_CONNECT    = 0x01,
+    CMD_BLE_WIFI_SCAN           = 0x00,
+    CMD_BLE_WIFI_CONNECT,
     CMD_BLE_WIFI_DISCONNECT,
     CMD_BLE_WIFI_ON_OFF,
     CMD_BLE_TEST_MODE
@@ -21,6 +22,7 @@ enum {
     CMD_WIFI_BLE_LED_ON_OFF,
     CMD_WIFI_BLE_VOICE_ON_OFF ,
     CMD_WIFI_BLE_AUTO_OFF,
+    CMD_WIFI_BLE_AUTO_OFF_SET_TIME,
     CMD_WIFI_BLE_RESTART,
     CMD_WIFI_BLE_RESET,
     CMD_WIFI_BLE_DELETE,
@@ -31,7 +33,7 @@ enum {
 
 //command via wifi
 enum {
-    CMD_WIFI_CHECK_UPDATE = 0X16,
+    CMD_WIFI_CHECK_UPDATE = 0X11,
     CMD_WIFI_MESSAGE,
 };
 
