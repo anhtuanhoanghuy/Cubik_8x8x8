@@ -64,6 +64,7 @@ class MQTTClientWrapper {
     client = MqttServerClient.withPort(mqttServerUrl, mqttServerName, 8883);
     // the next 2 lines are necessary to connect with tls, which is used by HiveMQ Cloud
     client.secure = true;
+    client.autoReconnect = true;
     client.securityContext = SecurityContext.defaultContext;
     client.keepAlivePeriod = 20;
     client.onDisconnected = _onDisconnected;
@@ -128,9 +129,14 @@ class MQTTClientWrapper {
         builder.addByte(byte);
       }
       final payload = builder.payload;
+
       if (payload != null) {
-        client.publishMessage(topicName, MqttQos.atLeastOnce, payload);
-        print('📤 MQTT Published: [$topicName] ${data.length} bytes');
+        if (client.connectionStatus?.state == MqttConnectionState.connected) {
+          client.publishMessage(topicName, MqttQos.atLeastOnce, payload);
+          print('📤 MQTT Published: [$topicName] ${data.length} bytes');
+        } else {
+          print("MQTT not connected");
+        }
       }
 
     } catch (e) {

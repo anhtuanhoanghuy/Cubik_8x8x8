@@ -9,12 +9,15 @@ import 'controller/command_controller.dart';
 import 'controller/mqtt_controller.dart';
 import 'mode_content.dart';
 import 'setting_content.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 late MQTTClientWrapper newclient;
 late BluetoothController bleController;
 late QueueProcessor queue;
-bool wifiConnected = false;
-bool bleConnected = false;
+
+Future<bool> checkInternet() async {
+  return await InternetConnectionChecker().hasConnection;
+}
 
 void main() {
   runApp(const CubikLEDApp());
@@ -25,8 +28,8 @@ void main() {
   queue.init(
       onWifi: newclient.publishBytes,
       onBLE: bleController.sendCommand,
-      wifiCheck: () => wifiConnected,
-      bleCheck: () => bleConnected
+      internetCheck: checkInternet,
+      bleCheck: () => bleController.isConnected.value
   );
 }
 

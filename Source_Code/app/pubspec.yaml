@@ -38,6 +38,10 @@ dependencies:
   get: ^4.6.5
   flutter_blue_plus: ^1.4.0
   permission_handler: ^11.0.0
+  mqtt_client: ^10.11.9
+  ini: '>=1.0.0'
+  test: '>=0.12.0'
+  internet_connection_checker: ^1.0.0
 
 dev_dependencies:
   flutter_test:

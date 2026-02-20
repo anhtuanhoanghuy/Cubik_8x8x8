@@ -12,9 +12,9 @@ class QueueProcessor extends GetxController {
   bool _isRunning = false; //create a task
 
   // Callbacks
-  Function(List<int>)? sendByWifi;
+  Function(List<int>)? sendByInternet;
   Function(List<int>)? sendByBLE;
-  Function()? checkWifi;
+  Function()? checkInternet;
   Function()? checkBle;
 
 
@@ -23,12 +23,12 @@ class QueueProcessor extends GetxController {
   void init({
     required Function(List<int>) onWifi,
     required Function(List<int>) onBLE,
-    required Function() wifiCheck,
+    required Function() internetCheck,
     required Function() bleCheck,
   }) {
-    sendByWifi = onWifi;
+    sendByInternet = onWifi;
     sendByBLE = onBLE;
-    checkWifi = wifiCheck;
+    checkInternet = internetCheck;
     checkBle = bleCheck;
     _isRunning = true;
     _process();
@@ -99,19 +99,21 @@ class QueueProcessor extends GetxController {
       switch (method) {
         case CommunicationMethod.SEND_BY_WIFI:
         // WiFi only
-          await sendByWifi?.call(command);
+          await sendByInternet?.call(command);
           break;
         case CommunicationMethod.SEND_BY_BLE:
           await sendByBLE?.call(command);
           break;
         case CommunicationMethod.SEND_BY_AUTO:
         // Auto: WiFi → BLE
-          bool wifiOk = checkWifi?.call();
+          bool internetOK = await checkInternet?.call();
 
-          if (wifiOk) {
-            await sendByWifi?.call(command);
+          if (internetOK) {
+            await sendByInternet?.call(command);
+            print('Internet is selected');
           } else {
             await sendByBLE?.call(command);
+            print('BLE is selected');
           }
           break;
         default:
