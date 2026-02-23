@@ -5,7 +5,9 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 const String mqttServerUrl = '35a196d8b54146f08f917c8c382e1c0a.s1.eu.hivemq.cloud';
 const String mqttServerName = 'HELLO_CUBIK_8X8X8';
 const String mqttServerPassword = 'hello_cubik_8X8X8';
-const String topicName = 'Cubik/30102002/Status';
+const String topicCommand = 'Cubik/30102002/Command';
+const String topicMonitoring = 'Cubik/30102002/Monitoring';
+
 // connection states for easy identification
 enum MqttCurrentConnectionState {
   IDLE,
@@ -31,7 +33,7 @@ class MQTTClientWrapper {
   void prepareMqttClient() async {
     _setupMqttClient();
     await _connectClient();
-    _subscribeToTopic(topicName);
+    _subscribeToTopic(topicMonitoring);
     publishMessage('Hello_Cubik');
   }
 
@@ -77,6 +79,10 @@ class MQTTClientWrapper {
     client.subscribe(topicName, MqttQos.atMostOnce);
   }
 
+  void _subscribeToManyTopics(List<BatchSubscription> subscriptions) {
+    client.subscribeBatch(subscriptions);
+  }
+
   void _setupMessageListener() {
     client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       try {
@@ -116,8 +122,8 @@ class MQTTClientWrapper {
     final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
     builder.addString(message);
 
-    print('Publishing message "$message" to topic $topicName');
-    client.publishMessage(topicName, MqttQos.atLeastOnce, builder.payload!);
+    print('Publishing message "$message" to topic $topicCommand');
+    client.publishMessage(topicCommand, MqttQos.atLeastOnce, builder.payload!);
   }
 
   // ✅ Publish raw bytes
@@ -132,8 +138,8 @@ class MQTTClientWrapper {
 
       if (payload != null) {
         if (client.connectionStatus?.state == MqttConnectionState.connected) {
-          client.publishMessage(topicName, MqttQos.atLeastOnce, payload);
-          print('📤 MQTT Published: [$topicName] ${data.length} bytes');
+          client.publishMessage(topicCommand, MqttQos.atLeastOnce, payload);
+          print('📤 MQTT Published: [$topicCommand] ${data.length} bytes');
         } else {
           print("MQTT not connected");
         }

@@ -21,7 +21,7 @@ Future<bool> checkInternet() async {
 
 void main() {
   runApp(const CubikLEDApp());
-  bleController = BluetoothController();
+  bleController = Get.put(BluetoothController());
   newclient = MQTTClientWrapper();
   newclient.prepareMqttClient();
   queue = Get.put(QueueProcessor());
