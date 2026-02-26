@@ -10,6 +10,7 @@
 #include "Wifi.h"
 #include "WebServer.h"
 #include "Bluetooth.h"
+#include "MQTT.h"
 
 const char ssid[32] = "HELLO_CUBIK";
 const char password[32] = "12345678";
@@ -89,7 +90,9 @@ void app_main(void)
     wifi_store_init();
     wifi_start_webserver();
     bluetooth_init();
+    mqtt_app_start();
     /* Không AP – không Web */
+
 
     xTaskCreate(
         console_task,
