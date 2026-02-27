@@ -16,6 +16,7 @@
 #define pass_word "hello_cubik_8X8X8"
 #define topic_command "Cubik/30102002/Command"
 #define topic_monitoring "Cubik/30102002/Monitoring"
+#define topic_status "Cubik/30102002/Status"
 
 
 static const char *TAG = "mqtts_example";
@@ -30,7 +31,8 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     switch ((esp_mqtt_event_id_t)event_id) {
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
-        esp_mqtt_client_subscribe_single(client, topic_command, 0);
+        esp_mqtt_client_publish(client, topic_status, "1", 0, 1, 1);
+        esp_mqtt_client_subscribe_single(client, topic_command, 1);
         break;
 
     case MQTT_EVENT_DISCONNECTED:
@@ -93,7 +95,7 @@ int mqtt_monitoring(const char *data) {
     return -1;
   }
   
-  int msg_id = esp_mqtt_client_publish(client, topic_monitoring, data, 0, 0, 0);
+  int msg_id = esp_mqtt_client_publish(client, topic_monitoring, data, 0, 1, 1);
   
   if (msg_id < 0) {
     ESP_LOGE(TAG, "Failed to publish");
@@ -109,11 +111,27 @@ void mqtt_app_start(void)
     const esp_mqtt_client_config_t mqtt_cfg = {
         .broker = {
             .address.uri = CONFIG_BROKER_URI,
-            .verification.crt_bundle_attach = esp_crt_bundle_attach,
+            .verification.crt_bundle_attach = esp_crt_bundle_attach
         },
         .credentials = {
             .username = user_name,
             .authentication.password = pass_word
+        },
+        .session = {
+            .keepalive = 30,
+            .last_will = {
+                .topic = topic_status,
+                .msg =  "0",
+                .qos = 1,
+                .retain = true
+                
+            }
+        },
+        .network = {
+            .reconnect_timeout_ms = 3000,
+            .timeout_ms = 10000,
+            .refresh_connection_after_ms = 0,
+            .disable_auto_reconnect = false
         }
     };
     client = esp_mqtt_client_init(&mqtt_cfg);
