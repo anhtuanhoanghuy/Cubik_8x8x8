@@ -6,6 +6,23 @@
 #define ON          1
 #define OFF         0
 
+#define MIN_PACKAGE_LENGTH 4
+#define WIFI_BLE_DATA_MAX_PACKET_LENGTH 255
+
+enum {
+    INVALID_ATTR_VALUE_LEN,
+    DATA_VALID,
+    MISTAKE_DATA,
+};
+
+typedef struct
+{
+    uint8_t command_id;
+    uint8_t len;
+    uint8_t data[WIFI_BLE_DATA_MAX_PACKET_LENGTH];
+} wifi_ble_command_t;
+
+
 //command via Bluetooth
 enum {
     CMD_BLE_WIFI_SCAN           = 0x00,

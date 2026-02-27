@@ -8,6 +8,8 @@
 #include "esp_log.h"
 #include "esp_tls.h"
 #include "esp_crt_bundle.h"
+#include "Defines.h"
+#include "Utils.h"
 
 #define CONFIG_BROKER_URI "mqtts://35a196d8b54146f08f917c8c382e1c0a.s1.eu.hivemq.cloud:8883"
 #define user_name "HELLO_CUBIK_8X8X8"
@@ -18,11 +20,7 @@
 
 static const char *TAG = "mqtts_example";
 static esp_mqtt_client_handle_t client = NULL;
-
-const esp_mqtt_topic_t topics[2] = {
-  {topic_command,0},
-  {topic_monitoring,0}
-};
+extern QueueHandle_t wifi_ble_rx_queue; 
 
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
 {
@@ -32,7 +30,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     switch ((esp_mqtt_event_id_t)event_id) {
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
-        esp_mqtt_client_subscribe_multiple(client, topics, 2);
+        esp_mqtt_client_subscribe_single(client, topic_command, 0);
         break;
 
     case MQTT_EVENT_DISCONNECTED:
@@ -54,7 +52,19 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     case MQTT_EVENT_DATA:
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
         printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
-        printf("DATA=%.*s\r\n", event->data_len, event->data);
+        // ---------------------------------------------------------
+        printf("DATA: ");
+        for (int i = 0; i < event->data_len; i++) {
+            printf("%02X ", event->data[i]);
+        }
+        printf("\n");
+        // ---------------------------------------------------------
+        wifi_ble_command_t cmd = {0};
+        if (decode_data(&cmd, (const uint8_t*) event->data, event->data_len) == DATA_VALID){
+            // Đẩy sang task xử lý
+            xQueueSendFromISR(wifi_ble_rx_queue, &cmd, NULL);
+            ESP_LOGI(TAG, "BLE receive:%d bytes", event->data_len);  
+        }
         break;
 
     case MQTT_EVENT_ERROR:

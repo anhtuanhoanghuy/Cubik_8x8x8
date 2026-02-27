@@ -3,8 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-
-#define BLE_DATA_MAX_PACKET_LENGTH 255
+#include "Defines.h"
 
 /* =========================================================
  * BLE STATE MACHINE
@@ -15,13 +14,6 @@ typedef enum {
     BLE_STATE_ADVERTISING,      // Advertising và có thể connect
     BLE_STATE_CONNECTED,
 } ble_state_t;
-
-typedef struct
-{
-    uint8_t command_id;
-    uint8_t len;
-    uint8_t data[BLE_DATA_MAX_PACKET_LENGTH];
-} ble_command_t;
 
 /**
  * @brief Khởi tạo Bluetooth stack
@@ -51,9 +43,5 @@ void bluetooth_stop(void);
  * @return true nếu có thiết bị đang kết nối, false nếu không
  */
 bool bluetooth_is_connected(void);
-
-void process_ble_command(ble_command_t *);
-
-void ble_process_task(void *);
 
 #endif // BLUETOOTH_H

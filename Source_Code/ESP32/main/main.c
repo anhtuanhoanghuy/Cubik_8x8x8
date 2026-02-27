@@ -11,10 +11,11 @@
 #include "WebServer.h"
 #include "Bluetooth.h"
 #include "MQTT.h"
-
+#include "Utils.h"
 const char ssid[32] = "HELLO_CUBIK";
 const char password[32] = "12345678";
 static bool apsta_active = false;
+QueueHandle_t wifi_ble_rx_queue = NULL; 
 
 static void console_task(void *arg)
 {
@@ -85,7 +86,10 @@ void app_main(void)
     ESP_ERROR_CHECK(ret);
     ESP_LOGI("NVS", "✅ NVS initialized");
 
-
+    wifi_ble_rx_queue = queue_init();
+    if (wifi_ble_rx_queue == NULL) {
+        ESP_LOGE("QUEUE", "Queue init failed!");
+    }
     wifi_init();
     wifi_store_init();
     wifi_start_webserver();
@@ -104,7 +108,7 @@ void app_main(void)
     );
 
     xTaskCreate(
-        ble_process_task,
+        data_received_process_task,
         "ble_process",
         4096,      // stack WORD → ~16 KB
         NULL,

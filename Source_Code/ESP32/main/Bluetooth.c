@@ -1,7 +1,6 @@
 #include "Bluetooth.h"
 #include "Wifi.h"
 #include <string.h>
-#include "Defines.h"
 #include "esp_log.h"
 #include "esp_err.h"
 
@@ -14,10 +13,9 @@
 #include "Utils.h"
 
 static const char *TAG = "BLUETOOTH";
-QueueHandle_t ble_rx_queue = NULL;
 static ble_state_t ble_state = BLE_STATE_OFF;
 static uint16_t conn_handle = BLE_HS_CONN_HANDLE_NONE;
-
+extern QueueHandle_t wifi_ble_rx_queue;
 static uint8_t BLE_tx_buffer[256] = {0};
 /* =========================================================
  * FORWARD DECLARATIONS
@@ -69,61 +67,37 @@ static int gatt_svr_chr_access(uint16_t conn_handle, uint16_t attr_handle,
                                 struct ble_gatt_access_ctxt *ctxt, void *arg)
 {
     switch (ctxt->op) {
-    case BLE_GATT_ACCESS_OP_READ_CHR:
-        os_mbuf_append(ctxt->om, BLE_tx_buffer, sizeof(BLE_tx_buffer));
-        ESP_LOGI(TAG, "BLE send:");
-        return 0;
+        case BLE_GATT_ACCESS_OP_READ_CHR:
+            os_mbuf_append(ctxt->om, BLE_tx_buffer, sizeof(BLE_tx_buffer));
+            ESP_LOGI(TAG, "BLE send:");
+            return 0;
 
-    case BLE_GATT_ACCESS_OP_WRITE_CHR:
-        uint8_t data_received[256]; 
+        case BLE_GATT_ACCESS_OP_WRITE_CHR:
+            uint8_t data_received[256]; 
+            uint16_t total_len = OS_MBUF_PKTLEN(ctxt->om);
+            os_mbuf_copydata(ctxt->om, 0, total_len, data_received);
+
         // ---------------------------------------------------------
-        uint16_t total_len = OS_MBUF_PKTLEN(ctxt->om);
         uint8_t buffer[256];
-
         os_mbuf_copydata(ctxt->om, 0, total_len, buffer);
-
         printf("Packet: ");
         for (int i = 0; i < total_len; i++) {
             printf("%02X ", buffer[i]);
         }
         printf("\n");
         // ---------------------------------------------------------
+            wifi_ble_command_t cmd = {0};
+            if (decode_data(&cmd, data_received, total_len) == DATA_VALID){
+                // Đẩy sang task xử lý
+                xQueueSendFromISR(wifi_ble_rx_queue, &cmd, NULL);
+                ESP_LOGI(TAG, "BLE receive:%d bytes", total_len);  
+                // Return ngay!
+                return 0;
+            }
+            return BLE_ATT_ERR_INVALID_PDU;
 
-        // Copy command_id + len
-        os_mbuf_copydata(ctxt->om, 0, 3, data_received);
-        if (data_received[0] == 0xAA) {
-
-            uint16_t total_len = OS_MBUF_PKTLEN(ctxt->om);
-            // Kiểm tra tối thiểu
-            if (total_len < 4) {   
-                return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
-            } 
-            ble_command_t cmd = {0};
-            cmd.command_id = data_received[1];
-            cmd.len        = data_received[2];
-
-            // Validate len
-            if (total_len != (4 + cmd.len)) {
-                ESP_LOGI(TAG, "Size of packet is invalid.");   
-                return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
-            } 
-            os_mbuf_copydata(ctxt->om, 3, total_len - 1, &data_received[3]);
-
-            // Validate Checksum
-            if (!validateChecksum(data_received, total_len - 1, data_received[total_len - 1])) {         
-                return BLE_ATT_ERR_INVALID_PDU;
-            } 
-            memcpy(cmd.data,&data_received[3],cmd.len);
-            // Đẩy sang task xử lý
-            xQueueSendFromISR(ble_rx_queue, &cmd, NULL);
-            ESP_LOGI(TAG, "BLE receive:%d bytes", total_len);  
-            // Return ngay!
-            return 0;
-        }
-        return BLE_ATT_ERR_INVALID_PDU;
-
-    default:  
-        return BLE_ATT_ERR_UNLIKELY;
+        default:  
+            return BLE_ATT_ERR_UNLIKELY;
     }
 }
 
@@ -239,11 +213,6 @@ void bluetooth_init(void)
 
     // Start NimBLE host task
     nimble_port_freertos_init(ble_host_task);
-    ble_rx_queue = xQueueCreate(
-        8,
-        sizeof(ble_command_t)
-    );
-    configASSERT(ble_rx_queue);
 
     ESP_LOGI(TAG, "✅ Bluetooth initialized successfully");
     ESP_LOGI(TAG, "✅ Queue for Bluetooth initialized successfully");
@@ -370,71 +339,3 @@ bool bluetooth_is_connected(void)
 }
 
 
-/* =========================================================
- * COMMAND PROCESS
- * ========================================================= */
-
- void ble_process_task(void *param)
-{
-    ble_command_t cmd;
-    while (1) {
-        if (xQueueReceive(ble_rx_queue, &cmd, portMAX_DELAY)) {
-            process_ble_command(&cmd);
-        }
-    }
-}
-
-
-void process_ble_command(ble_command_t *cmd)
-{
-    ESP_LOGI("BLE", "CMD: 0x%02X, Len: %d", cmd->command_id, cmd->len);
-    
-    switch (cmd->command_id) {
-    
-    case CMD_BLE_WIFI_CONNECT: {
-        char ssid[WIFI_SSID_MAX] = {0};
-        char password[WIFI_PASS_MAX] = {0};
-
-        uint8_t ssid_len = cmd->data[0];
-        uint8_t pass_len = cmd->data[1];
-        ESP_LOGI("BLE", "ssid_len: %d",ssid_len);
-        ESP_LOGI("BLE", "pass_len %d",pass_len);
-        if (ssid_len > WIFI_SSID_MAX || pass_len > WIFI_PASS_MAX) return;
-
-        memcpy(ssid, &cmd->data[2], ssid_len);
-        memcpy(password, &cmd->data[2 + ssid_len], pass_len);        
-        wifi_connect(ssid, password);
-        ESP_LOGI("BLE", "CMD_BLE_WIFI_CONNECT");
-        ESP_LOGI("BLE", "Connect to %s : %s",ssid, password);
-        break;
-    }
-    
-    case CMD_BLE_WIFI_DISCONNECT: {
-        ESP_LOGI("BLE", "CMD_BLE_WIFI_DISCONNECT");
-        wifi_disconnect();
-        break;
-    }
-
-    case CMD_BLE_WIFI_ON_OFF:
-        ESP_LOGI("BLE", "CMD_BLE_WIFI_ON_OFF");
-        uint8_t state = cmd->data[0];
-        switch (state)
-        {
-            case OFF:
-                wifi_off();
-                break;
-            case ON:
-                wifi_on();
-                break;
-            default:
-                break;
-        }
-        break;
-
-    case CMD_BLE_TEST_MODE:
-        break;
-    
-    default:
-        ESP_LOGW("BLE", "⚠️ Unknown CMD: 0x%02X", cmd->command_id);
-    }
-}
