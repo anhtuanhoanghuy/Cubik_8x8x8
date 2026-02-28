@@ -1,6 +1,8 @@
 enum Status {
   OFF(0x00),
-  ON(0X01);
+  ON(0X01),
+  OFFLINE(0X30),
+  ONLINE(0X31);
 
   final int value;
   const Status(this.value);

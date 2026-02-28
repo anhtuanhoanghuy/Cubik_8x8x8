@@ -61,6 +61,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+  bool isOnline = false;
   void _showBluetoothDialog() {
     final BluetoothController btController = Get.put(BluetoothController());
 
@@ -470,7 +471,7 @@ class _MainScreenState extends State<MainScreen> {
                     Container(
                       width: 12,
                       height: 12,
-                      decoration: const BoxDecoration(color: Color(0xFF4ADE80), shape: BoxShape.circle),
+                      decoration: BoxDecoration(color: isOnline ? Color(0xFF4ADE80) : Colors.grey[400], shape: BoxShape.circle),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -479,7 +480,7 @@ class _MainScreenState extends State<MainScreen> {
                         children: [
                           const Text('Cubik LED #001', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white)),
                           const SizedBox(height: 4),
-                          Text('Đã kết nối', style: TextStyle(fontSize: 14, color: Colors.grey[400])),
+                          Text(isOnline ? 'Đã kết nối MQTT tới thiết bị' : 'Chưa được kết nối MQTT tới thiết bị', style: TextStyle(fontSize: 14, color: Colors.grey[400])),
                         ],
                       ),
                     ),

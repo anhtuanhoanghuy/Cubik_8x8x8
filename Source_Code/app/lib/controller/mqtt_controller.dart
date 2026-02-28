@@ -2,11 +2,15 @@ import 'dart:io';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
+import 'topic_handler.dart';
+
 const String mqttServerUrl = '35a196d8b54146f08f917c8c382e1c0a.s1.eu.hivemq.cloud';
 const String mqttServerName = 'HELLO_CUBIK_8X8X8';
 const String mqttServerPassword = 'hello_cubik_8X8X8';
 const String topicCommand = 'Cubik/30102002/Command';
 const String topicMonitoring = 'Cubik/30102002/Monitoring';
+const String topicStatus = 'Cubik/30102002/Status';
+final List<BatchSubscription> subcriptions = [BatchSubscription(topicMonitoring, MqttQos.atLeastOnce), BatchSubscription(topicStatus, MqttQos.atLeastOnce)];
 
 // connection states for easy identification
 enum MqttCurrentConnectionState {
@@ -33,7 +37,7 @@ class MQTTClientWrapper {
   void prepareMqttClient() async {
     _setupMqttClient();
     await _connectClient();
-    _subscribeToTopic(topicMonitoring);
+    _subscribeToManyTopics(subcriptions);
     publishMessage('Hello_Cubik');
   }
 
@@ -76,7 +80,7 @@ class MQTTClientWrapper {
 
   void _subscribeToTopic(String topicName) {
     print('Subscribing to the $topicName topic');
-    client.subscribe(topicName, MqttQos.atMostOnce);
+    client.subscribe(topicName, MqttQos.atLeastOnce);
   }
 
   void _subscribeToManyTopics(List<BatchSubscription> subscriptions) {
@@ -108,10 +112,7 @@ class MQTTClientWrapper {
             recMess.payload.message
         );
         print('   String: $message');
-
-        // Handle message
-        // _handleMessage(topic, bytes);
-
+        handleTopic(topic, bytes);
       } catch (e) {
         print('❌ Error handling message: $e');
       }
