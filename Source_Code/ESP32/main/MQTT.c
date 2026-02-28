@@ -11,17 +11,13 @@
 #include "Defines.h"
 #include "Utils.h"
 
-#define CONFIG_BROKER_URI "mqtts://35a196d8b54146f08f917c8c382e1c0a.s1.eu.hivemq.cloud:8883"
-#define user_name "HELLO_CUBIK_8X8X8"
-#define pass_word "hello_cubik_8X8X8"
-#define topic_command "Cubik/30102002/Command"
-#define topic_monitoring "Cubik/30102002/Monitoring"
-#define topic_status "Cubik/30102002/Status"
-
-
 static const char *TAG = "mqtts_example";
 static esp_mqtt_client_handle_t client = NULL;
 extern QueueHandle_t wifi_ble_rx_queue; 
+
+esp_mqtt_client_handle_t getMQTTClient(void) {
+    return client;
+}
 
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
 {
@@ -87,23 +83,6 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         ESP_LOGI(TAG, "Other event id:%d", event->event_id);
         break;
     }
-}
-
-int mqtt_monitoring(const char *data) {
-  if (client == NULL) {
-    ESP_LOGE(TAG, "MQTT client not initialized");
-    return -1;
-  }
-  
-  int msg_id = esp_mqtt_client_publish(client, topic_monitoring, data, 0, 1, 1);
-  
-  if (msg_id < 0) {
-    ESP_LOGE(TAG, "Failed to publish");
-  } else {
-    ESP_LOGI(TAG, "Published to %s, msg_id=%d", topic_monitoring, msg_id);
-  }
-  
-  return msg_id;
 }
 
 void mqtt_app_start(void)

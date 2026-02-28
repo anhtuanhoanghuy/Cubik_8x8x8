@@ -6,6 +6,7 @@
 #include "Defines.h"
 #include "Wifi.h"
 #include "Bluetooth.h"
+#include "Monitoring.h"
 
 
 static const char *TAG = "DATA_RECEIVED";
@@ -119,6 +120,7 @@ void process_command(wifi_ble_command_t *cmd)
 
     case CMD_WIFI_BLE_LED_ON_OFF:
         ESP_LOGI("COMMAND", "CMD_WIFI_BLE_LED_ON_OFF");
+        mqtt_monitoring("test");
         break;
     
     default:
