@@ -1,0 +1,482 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
+  <diagram name="Page-1" id="hYvOsNZgACx2i_jT48cq">
+    <mxGraphModel dx="2377" dy="2515" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="0quf2sxkui7ML0wmcIWk-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-1" target="0quf2sxkui7ML0wmcIWk-13" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-1" value="STA mode" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="225" y="340" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="0quf2sxkui7ML0wmcIWk-2" target="0quf2sxkui7ML0wmcIWk-7" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-2" value="Kết nối đến Wifi tốt nhất" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="235" y="820" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-3" target="0quf2sxkui7ML0wmcIWk-42" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-3" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#ff0000;" parent="1" vertex="1">
+          <mxGeometry x="270" y="150" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-5" target="0quf2sxkui7ML0wmcIWk-23" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-5" value="Kiểm tra danh sách wifi đã lưu" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="155" y="540" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-6" value="Thông báo kết nối thất bại" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="500" y="820" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-7" target="0quf2sxkui7ML0wmcIWk-25" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-27" value="Fail" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0quf2sxkui7ML0wmcIWk-26" vertex="1" connectable="0">
+          <mxGeometry x="-0.25" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-7" target="0quf2sxkui7ML0wmcIWk-32" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-34" value="Success" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0quf2sxkui7ML0wmcIWk-33" vertex="1" connectable="0">
+          <mxGeometry x="-0.0462" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-7" value="Kiểm tra kết nối" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="165" y="910" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-13" target="0quf2sxkui7ML0wmcIWk-5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-13" value="Qu챕t wifi" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="210" y="440" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-20" target="0quf2sxkui7ML0wmcIWk-21" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-20" target="0quf2sxkui7ML0wmcIWk-38" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-20" value="Nhận command từ STM32" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="850" y="230" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-21" target="0quf2sxkui7ML0wmcIWk-35" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-21" value="Command == &quot;Setup Wifi&quot;" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="780" y="340" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-23" target="0quf2sxkui7ML0wmcIWk-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-30" value="False" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0quf2sxkui7ML0wmcIWk-24" vertex="1" connectable="0">
+          <mxGeometry x="-0.1667" y="5" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-23" target="0quf2sxkui7ML0wmcIWk-6" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="510" y="820" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="575" y="720" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-23" value="Wifi[index] == WifiList.size" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="155" y="680" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-25" target="0quf2sxkui7ML0wmcIWk-23" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="70" y="1060" />
+              <mxPoint x="70" y="720" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-25" value="index++" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="220" y="1030" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-121" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-32" target="0quf2sxkui7ML0wmcIWk-120" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-32" value="wifi connected" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="500" y="920" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-117" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-35" target="0quf2sxkui7ML0wmcIWk-116" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-35" value="APSTA mode" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="850" y="460" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-38" target="0quf2sxkui7ML0wmcIWk-40" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-38" value="Command == &quot;Enable/Disable Wifi&quot;" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="1080" y="340" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-40" value="Wifi ON/OFF" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="1150" y="460" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-43" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-42" target="0quf2sxkui7ML0wmcIWk-1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-44" value="Enable" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0quf2sxkui7ML0wmcIWk-43" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-42" value="Kiểm tra Wifi Enable/Disable ?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="155" y="220" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-46" value="ESP32 interrupt" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="550" y="-20" width="200" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-19" value="UART interrupt" style="rounded=0;whiteSpace=wrap;html=1;" parent="0quf2sxkui7ML0wmcIWk-46" vertex="1">
+          <mxGeometry x="40" y="70" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-49" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-47" target="0quf2sxkui7ML0wmcIWk-48" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-55" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-47" target="0quf2sxkui7ML0wmcIWk-54" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-70" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-47" target="0quf2sxkui7ML0wmcIWk-60" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-71" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-47" target="0quf2sxkui7ML0wmcIWk-65" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-77" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-47" target="0quf2sxkui7ML0wmcIWk-73" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-95" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-47" target="0quf2sxkui7ML0wmcIWk-91" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-118" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-47" target="0quf2sxkui7ML0wmcIWk-99" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-119" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-47" target="0quf2sxkui7ML0wmcIWk-108" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-47" value="Xử lý request" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="1530" y="240" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-52" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-48" target="0quf2sxkui7ML0wmcIWk-50" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-48" value="Request == &quot;Scan Wifi&quot; ?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="1460" y="340" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-50" target="0quf2sxkui7ML0wmcIWk-51" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-50" value="Quét wifi" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="1530" y="460" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-51" value="Trả reponse ACK" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="1500" y="570" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-57" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-54" target="0quf2sxkui7ML0wmcIWk-56" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-54" value="Request == &quot;Scan Result&quot; ?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="1750" y="340" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-56" value="Kiểm tra dữ liệu wifi scan" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="1820" y="460" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-58" value="Trả reponse chứa wifi list" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="1800" y="570" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.461;entryY=0.017;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-56" target="0quf2sxkui7ML0wmcIWk-58" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-62" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-60" target="0quf2sxkui7ML0wmcIWk-61" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-60" value="Request == &quot;Connect Wifi&quot; ?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2070" y="340" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-64" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-61" target="0quf2sxkui7ML0wmcIWk-63" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-61" value="Kết nối wifi" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2140" y="460" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-79" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-63" target="0quf2sxkui7ML0wmcIWk-78" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-63" value="Trả reponse ACK" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2110" y="570" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-69" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-65" target="0quf2sxkui7ML0wmcIWk-66" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-65" value="Request == &quot;Wifi Status&quot; ?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2390" y="340" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-66" value="Kiểm tra trạng thái kết nối" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2460" y="460" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-67" value="Trả response chứa trạng thái kết nối" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2430" y="570" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-68" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.451;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-66" target="0quf2sxkui7ML0wmcIWk-67" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-72" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-73" target="0quf2sxkui7ML0wmcIWk-74" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-73" value="Request == &quot;Wifi Current&quot; ?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2700" y="340" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-74" value="Kiểm tra trạng thái wifi hiện tại" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2770" y="460" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-75" value="Trả reponse chứa trạng thái wifi hiện tại" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2720" y="570" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-76" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.451;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-74" target="0quf2sxkui7ML0wmcIWk-75" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-85" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-78" target="0quf2sxkui7ML0wmcIWk-82" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-130" value="Success" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0quf2sxkui7ML0wmcIWk-85" vertex="1" connectable="0">
+          <mxGeometry x="-0.144" y="3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-129" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-78" target="0quf2sxkui7ML0wmcIWk-132" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2420" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-131" value="Fail" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0quf2sxkui7ML0wmcIWk-129" vertex="1" connectable="0">
+          <mxGeometry x="-0.1733" y="2" relative="1" as="geometry">
+            <mxPoint x="50" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-78" value="Kết nối thành công ?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2070" y="690" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-80" value="Lưu vào flash + tần suất sử dụng" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2100" y="1070" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-84" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-82" target="0quf2sxkui7ML0wmcIWk-83" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-86" value="Đầy" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0quf2sxkui7ML0wmcIWk-84" vertex="1" connectable="0">
+          <mxGeometry x="-0.2957" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-88" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-82" target="0quf2sxkui7ML0wmcIWk-80" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-89" value="Chưa đầy" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0quf2sxkui7ML0wmcIWk-88" vertex="1" connectable="0">
+          <mxGeometry x="-0.2578" relative="1" as="geometry">
+            <mxPoint y="-5" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-82" value="Kiểm tra bộ nhớ wifi list" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2070" y="820" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-87" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-83" target="0quf2sxkui7ML0wmcIWk-80" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-83" value="Xóa wifi ít sử dụng nhất" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2100" y="960" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-90" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-91" target="0quf2sxkui7ML0wmcIWk-92" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-91" value="Request == &quot;Disconnect Wifi&quot; ?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="3040" y="340" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-92" value="Ngắt kết nối" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="3110" y="460" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-97" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-93" target="0quf2sxkui7ML0wmcIWk-96" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-93" value="Không reconnect" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="3060" y="570" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-94" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.451;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-92" target="0quf2sxkui7ML0wmcIWk-93" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-96" value="Trả response ACK" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="3060" y="670" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-98" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-99" target="0quf2sxkui7ML0wmcIWk-100" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-99" value="Request == &quot;Forget Wifi&quot; ?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="3360" y="340" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-100" value="Ngắt kết nối" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="3430" y="460" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-101" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-102" target="0quf2sxkui7ML0wmcIWk-104" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-102" value="Không reconnect" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="3380" y="570" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-103" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.451;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-100" target="0quf2sxkui7ML0wmcIWk-102" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-106" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-104" target="0quf2sxkui7ML0wmcIWk-105" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-104" value="Xóa trong bộ nhớ wifi list" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="3380" y="670" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-105" value="Trả response ACK" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="3380" y="780" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-107" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-108" target="0quf2sxkui7ML0wmcIWk-109" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-108" value="Request == &quot;Exit AP&quot; ?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="3700" y="340" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-109" value="Trả response ACK" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="3770" y="460" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-110" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-111" target="0quf2sxkui7ML0wmcIWk-114" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-111" value="stop webserver" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="3720" y="570" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-112" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.451;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-109" target="0quf2sxkui7ML0wmcIWk-111" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-114" value="set mode STA" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="3720" y="670" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-116" value="start webserver" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="850" y="560" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-123" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-120" target="0quf2sxkui7ML0wmcIWk-122" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-120" value="index = 0" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="500" y="1020" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-124" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="0quf2sxkui7ML0wmcIWk-122" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70" y="1010" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-125" value="Fail" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0quf2sxkui7ML0wmcIWk-124" vertex="1" connectable="0">
+          <mxGeometry x="-0.5078" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-126" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-122" target="0quf2sxkui7ML0wmcIWk-32" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-127" value="Success" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0quf2sxkui7ML0wmcIWk-126" vertex="1" connectable="0">
+          <mxGeometry x="-0.0774" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-122" value="Kiểm tra kết nối" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="445" y="1120" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-134" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-132" target="0quf2sxkui7ML0wmcIWk-133" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-136" value="Fail" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0quf2sxkui7ML0wmcIWk-134" vertex="1" connectable="0">
+          <mxGeometry x="-0.3067" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-137" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-132" target="0quf2sxkui7ML0wmcIWk-135" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-138" value="True" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0quf2sxkui7ML0wmcIWk-137" vertex="1" connectable="0">
+          <mxGeometry x="-0.09" y="-1" relative="1" as="geometry">
+            <mxPoint x="21" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-132" value="Check password" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2470" y="690" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-133" value="Không reconnect" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2710" y="700" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-140" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-135" target="0quf2sxkui7ML0wmcIWk-139" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-148" value="True" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0quf2sxkui7ML0wmcIWk-140" vertex="1" connectable="0">
+          <mxGeometry x="-0.17" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-150" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-135" target="0quf2sxkui7ML0wmcIWk-149" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-151" value="Fail" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0quf2sxkui7ML0wmcIWk-150" vertex="1" connectable="0">
+          <mxGeometry x="-0.3257" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-135" value="count &amp;lt;=3" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2470" y="810" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-142" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-139" target="0quf2sxkui7ML0wmcIWk-141" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-139" value="Reconnect" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2450" y="930" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-144" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-141" target="0quf2sxkui7ML0wmcIWk-143" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-145" value="Fail" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="0quf2sxkui7ML0wmcIWk-144" vertex="1" connectable="0">
+          <mxGeometry x="-0.19" y="3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-153" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-141" target="0quf2sxkui7ML0wmcIWk-152" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-141" value="Kết nối thành công ?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2420" y="1020" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-147" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="0quf2sxkui7ML0wmcIWk-143" target="0quf2sxkui7ML0wmcIWk-135" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2400" y="1170" />
+              <mxPoint x="2400" y="850" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-143" value="count++" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2450" y="1140" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-149" value="Kết nối thất bại" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2700" y="820" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-155" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="0quf2sxkui7ML0wmcIWk-152" target="0quf2sxkui7ML0wmcIWk-154" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-152" value="Kết nối thành công" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2720" y="1030" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0quf2sxkui7ML0wmcIWk-154" value="count = 0" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="2720" y="1140" width="200" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

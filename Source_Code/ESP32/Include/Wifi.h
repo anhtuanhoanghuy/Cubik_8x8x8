@@ -1,0 +1,60 @@
+#if !defined(__WIFI_H__)
+#define __WIFI_H__
+
+#include "esp_wifi.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/event_groups.h"
+
+#define WIFI_STA_GOT_IP_BIT  (1<<1) //bit1
+#define WIFI_STA_CONNECTED_BIT  (1<<2) //bit2
+#define WIFI_STA_DISCONNECTED_BIT (1<<3) //bit3
+#define WIFI_STA_USER_DISCONNECT_BIT (1<<4) //bit4
+#define WIFI_STA_FAIL_PASSWORD_BIT (1<<5) //bit5
+
+
+#define MAX_AP_NUM 10 //số lượng Wifi tối đa được phép tìm thấy
+#define WIFI_SSID_MAX  32
+#define WIFI_PASS_MAX  32
+
+typedef enum {
+    WIFI_SCAN_IDLE = 0,
+    WIFI_SCAN_RUNNING,
+    WIFI_SCAN_DONE
+} wifi_scan_state_t;
+
+typedef struct {
+    bool connected;
+    char ssid[WIFI_SSID_MAX];
+    int8_t rssi;
+    bool secure;
+} wifi_status_info_t;
+
+bool wifi_get_current_status(wifi_status_info_t *info);
+
+void wifi_init(void);
+
+void wifi_scan_start(void);
+
+uint16_t wifi_get_record_count(void);
+
+wifi_ap_record_t *wifi_get_record_list(void);
+
+uint8_t wifi_get_scan_state(void);
+
+void wifi_connect(const char *, const char *);
+
+void wifi_disconnect(void);
+
+void wifi_on(void);
+
+void wifi_off(void);
+
+void wifi_store_init(void);
+
+bool wifi_store_load(wifi_config_t *cfg); //load wifi từ flash lên RAM
+
+void wifi_store_save(const char *, const char *); //lưu wifi từ RAM vào flash
+
+EventGroupHandle_t wifi_get_event_group(void);
+
+#endif // __WIFICONNECT_H__
