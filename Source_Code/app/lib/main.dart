@@ -1,3 +1,4 @@
+import 'package:app/controller/monitoring_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -7,13 +8,17 @@ import 'chat_content.dart';
 import 'controller/bluetooth_controller.dart';
 import 'controller/command_controller.dart';
 import 'controller/mqtt_controller.dart';
+import 'defines.dart';
 import 'mode_content.dart';
+import 'model/monitoring.dart';
 import 'setting_content.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 late MQTTClientWrapper newclient;
 late BluetoothController bleController;
 late QueueProcessor queue;
+late Monitoring monitoring;
+late MonitoringController monitoringController;
 
 Future<bool> checkInternet() async {
   return await InternetConnectionChecker().hasConnection;
@@ -24,6 +29,8 @@ void main() {
   bleController = Get.put(BluetoothController());
   newclient = MQTTClientWrapper();
   newclient.prepareMqttClient();
+  monitoring = Get.put(Monitoring());
+  monitoringController = Get.put(MonitoringController());
   queue = Get.put(QueueProcessor());
   queue.init(
       onWifi: newclient.publishBytes,
@@ -356,7 +363,6 @@ class _MainScreenState extends State<MainScreen> {
       ],
     );
   }
-
   void _showNotifications(BuildContext context) {
     showMenu(
       context: context,
@@ -468,10 +474,11 @@ class _MainScreenState extends State<MainScreen> {
                 ),
                 child: Row(
                   children: [
-                    Container(
-                      width: 12,
-                      height: 12,
-                      decoration: BoxDecoration(color: isOnline ? Color(0xFF4ADE80) : Colors.grey[400], shape: BoxShape.circle),
+                    Obx(() => Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(color: monitoringController.isOnline.value == Status.ONLINE.value ? Color(0xFF4ADE80) : Colors.grey[400], shape: BoxShape.circle),
+                      )
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -480,7 +487,10 @@ class _MainScreenState extends State<MainScreen> {
                         children: [
                           const Text('Cubik LED #001', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white)),
                           const SizedBox(height: 4),
-                          Text(isOnline ? 'Đã kết nối MQTT tới thiết bị' : 'Chưa được kết nối MQTT tới thiết bị', style: TextStyle(fontSize: 14, color: Colors.grey[400])),
+                          Obx(() => Text(monitoringController.isOnline.value == Status.ONLINE.value ?
+                          'Đã kết nối MQTT tới thiết bị' :
+                          'Chưa được kết nối MQTT tới thiết bị',
+                              style: TextStyle(fontSize: 14, color: Colors.grey[400]))),
                         ],
                       ),
                     ),
