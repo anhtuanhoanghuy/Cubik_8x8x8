@@ -9,6 +9,27 @@
 #define MIN_PACKAGE_LENGTH 4
 #define WIFI_BLE_DATA_MAX_PACKET_LENGTH 255
 
+typedef struct {
+    uint8_t device_name[30];
+    uint8_t device_tag[30];
+    uint8_t wifiInfo[32];
+    uint8_t sleepStartHour;
+    uint8_t sleepStartMinute;
+    uint8_t sleepEndHour;
+    uint8_t sleepEndMinute;
+    uint8_t ledMode;
+    uint8_t brightness;
+    uint8_t speed;
+    uint8_t isOnline : 1; //MQTT connected
+    uint8_t bleStatus : 1;
+    uint8_t wifiStatus : 1;
+    uint8_t isBLEConnected : 1;
+    uint8_t isWiFiConnected : 1;
+    uint8_t LEDStatus : 1;
+    uint8_t voiceMessageStatus : 1;
+    uint8_t autoOff : 1;
+} System_Variable;
+
 enum {
     INVALID_ATTR_VALUE_LEN,
     DATA_VALID,

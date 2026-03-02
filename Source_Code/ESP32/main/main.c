@@ -12,10 +12,15 @@
 #include "Bluetooth.h"
 #include "MQTT.h"
 #include "Utils.h"
+#include "Monitoring.h"
+
 const char ssid[32] = "HELLO_CUBIK";
 const char password[32] = "12345678";
 static bool apsta_active = false;
 QueueHandle_t wifi_ble_rx_queue = NULL; 
+TimerHandle_t debounce_timer;
+TimerHandle_t periodic_timer;
+System_Variable system_Variable = {0};
 
 static void console_task(void *arg)
 {
@@ -109,12 +114,32 @@ void app_main(void)
 
     xTaskCreate(
         data_received_process_task,
-        "ble_process",
+        "wifi_ble_process",
         4096,      // stack WORD → ~16 KB
         NULL,
         4,         // priority
         NULL
     );
+
+        // Debounce 1 giây (one-shot)
+    debounce_timer = xTimerCreate(
+        "debounce_timer",
+        pdMS_TO_TICKS(1000),
+        pdFALSE,      // one-shot
+        NULL,
+        publish_monitoring_callback
+    );
+
+    // Periodic 15 giây
+    periodic_timer = xTimerCreate(
+        "periodic_timer",
+        pdMS_TO_TICKS(15000),
+        pdTRUE,       // auto-reload
+        NULL,
+        publish_monitoring_callback
+    );
+
+    xTimerStart(periodic_timer, 0);
 
 }
 

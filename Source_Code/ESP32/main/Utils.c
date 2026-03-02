@@ -7,10 +7,11 @@
 #include "Wifi.h"
 #include "Bluetooth.h"
 #include "Monitoring.h"
-
+#include "freertos/timers.h"
 
 static const char *TAG = "DATA_RECEIVED";
 extern QueueHandle_t wifi_ble_rx_queue; 
+extern TimerHandle_t debounce_timer;
 
 bool validateChecksum(const uint8_t *data, uint8_t len, uint8_t checksum) {
     uint8_t calc_checksum = 0;
@@ -65,8 +66,64 @@ QueueHandle_t queue_init(void) {
     while (1) {
         if (xQueueReceive(wifi_ble_rx_queue, &cmd, portMAX_DELAY)) {
             process_command(&cmd);
+            xTimerReset(debounce_timer,0);
         }
     }
+}
+
+uint8_t* encode_monitoring(System_Variable *system_Variable)
+{
+    static uint8_t data_monitoring[255] = {0};
+    uint16_t index = 0;
+    // Pack flags
+    uint8_t flags = 0;
+
+    // Header
+    data_monitoring[index++] = 0xAA;
+
+    data_monitoring[index++] = 100;  
+
+    // ===== Payload =====
+
+    memcpy(&data_monitoring[index], system_Variable->device_name, 30);
+    index += 30;
+
+    memcpy(&data_monitoring[index], system_Variable->device_tag, 30);
+    index += 30;
+
+    memcpy(&data_monitoring[index], system_Variable->wifiInfo, 32);
+    index += 32;
+
+    data_monitoring[index++] = system_Variable->sleepStartHour;
+    data_monitoring[index++] = system_Variable->sleepStartMinute;
+    data_monitoring[index++] = system_Variable->sleepEndHour;
+    data_monitoring[index++] = system_Variable->sleepEndMinute;
+
+    data_monitoring[index++] = system_Variable->ledMode;
+    data_monitoring[index++] = system_Variable->brightness;
+    data_monitoring[index++] = system_Variable->speed;
+
+
+    flags |= (system_Variable->isOnline           & 1) << 0;
+    flags |= (system_Variable->bleStatus          & 1) << 1;
+    flags |= (system_Variable->wifiStatus         & 1) << 2;
+    flags |= (system_Variable->isBLEConnected     & 1) << 3;
+    flags |= (system_Variable->isWiFiConnected    & 1) << 4;
+    flags |= (system_Variable->LEDStatus          & 1) << 5;
+    flags |= (system_Variable->voiceMessageStatus & 1) << 6;
+    flags |= (system_Variable->autoOff            & 1) << 7;
+
+    data_monitoring[index++] = flags;
+    // ===== Checksum (XOR) =====
+    uint8_t checksum = 0;
+    for (int i = 1; i < index; i++)
+    {
+        checksum ^= data_monitoring[i];
+    }
+
+    data_monitoring[index++] = checksum;
+
+    return data_monitoring;
 }
 
 void process_command(wifi_ble_command_t *cmd)
@@ -120,7 +177,6 @@ void process_command(wifi_ble_command_t *cmd)
 
     case CMD_WIFI_BLE_LED_ON_OFF:
         ESP_LOGI("COMMAND", "CMD_WIFI_BLE_LED_ON_OFF");
-        mqtt_monitoring("test");
         break;
     
     default:

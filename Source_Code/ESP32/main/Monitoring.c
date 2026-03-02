@@ -2,25 +2,13 @@
 #include <string.h>
 #include "esp_log.h"
 #include "esp_err.h"
-// struct Monitoring {
-//   int isOnline;
-//   int isConnectedBLE;
-//   String device_name;
-//   String device_tag;
-//   int wifiConnected;
-//   String wifiInfo;
-//   int LED;
-//   int voiceMessage;
-//   int autoOff;
-//   TimeOfDay sleepStartTime = TimeOfDay(hour: 22, minute: 00);
-//   TimeOfDay sleepEndTime = TimeOfDay(hour: 6, minute: 00);
-//   int ledMode = LedMode.RAINBOW.value;
-//   int brightness = 50;
-//   int speed = 50;
-// }
+#include "Utils.h"
+#include "Defines.h"
 
-int mqtt_monitoring(const char *data) {
-    uint8_t data1[] = {0xAA, 0x07, 0x01, 0x3A, 0x01, 0x2c, 0x02, 0x3A, 0x00,0X83};
+extern TimerHandle_t periodic_timer;
+extern System_Variable system_Variable;
+
+int mqtt_monitoring(const char *data, uint16_t len) {
   if (getMQTTClient() == NULL) {
     ESP_LOGE("MQTT", "MQTT client not initialized");
     return -1;
@@ -28,8 +16,8 @@ int mqtt_monitoring(const char *data) {
    int msg_id = esp_mqtt_client_publish(
         getMQTTClient(),
         topic_monitoring,
-        (const char *)data1,   // cast sang char*
-        sizeof(data1),         // length chính xác
+        data,
+        len,
         1,                    // QoS
         1                     // retain
     );
@@ -40,4 +28,12 @@ int mqtt_monitoring(const char *data) {
   }
   
   return msg_id;
+}
+
+void publish_monitoring_callback(TimerHandle_t xTimer)
+{
+  mqtt_monitoring((char*)encode_monitoring(&system_Variable),sizeof(System_Variable));
+  if (xTimer != periodic_timer) {
+    xTimerReset(periodic_timer,0);
+  }
 }
