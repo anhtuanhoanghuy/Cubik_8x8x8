@@ -79,9 +79,9 @@ uint8_t* encode_monitoring(System_Variable *system_Variable)
     uint8_t flags = 0;
 
     // Header
-    data_monitoring[index++] = 0xAA;
+    data_monitoring[index++] = 0xAA; //start package
 
-    data_monitoring[index++] = 100;  
+    data_monitoring[index++] = 100;  //datalength
 
     // ===== Payload =====
 
@@ -116,13 +116,18 @@ uint8_t* encode_monitoring(System_Variable *system_Variable)
     data_monitoring[index++] = flags;
     // ===== Checksum (XOR) =====
     uint8_t checksum = 0;
-    for (int i = 1; i < index; i++)
+    for (int i = 0; i < index; i++)
     {
         checksum ^= data_monitoring[i];
     }
 
     data_monitoring[index++] = checksum;
+    printf("%d\n",sizeof(data_monitoring));
+    for(int i =0;i < 255;i++) {
 
+        printf("%02X ", data_monitoring[i]);
+    }
+    printf("\n");
     return data_monitoring;
 }
 

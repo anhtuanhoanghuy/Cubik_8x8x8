@@ -32,7 +32,7 @@ int mqtt_monitoring(const char *data, uint16_t len) {
 
 void publish_monitoring_callback(TimerHandle_t xTimer)
 {
-  mqtt_monitoring((char*)encode_monitoring(&system_Variable),sizeof(System_Variable));
+  mqtt_monitoring((char*)encode_monitoring(&system_Variable),sizeof(System_Variable) + 3);
   if (xTimer != periodic_timer) {
     xTimerReset(periodic_timer,0);
   }
