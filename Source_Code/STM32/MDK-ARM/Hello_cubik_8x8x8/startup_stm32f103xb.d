@@ -1,0 +1,1 @@
+hello_cubik_8x8x8\startup_stm32f103xb.o: startup_stm32f103xb.s
