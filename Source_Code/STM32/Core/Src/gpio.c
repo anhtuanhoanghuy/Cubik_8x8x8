@@ -54,7 +54,7 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(sensor_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(led_test_GPIO_Port, &GPIO_InitStruct);
 
 }
 

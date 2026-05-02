@@ -400,6 +400,11 @@
               <FilePath>..\Core\Src\app.c</FilePath>
             </File>
             <File>
+              <FileName>Utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\Utils.c</FilePath>
+            </File>
+            <File>
               <FileName>DHT22.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Core\Src\DHT22.c</FilePath>
@@ -555,6 +560,11 @@
               <FileName>PL9823.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Core\Src\PL9823.c</FilePath>
+            </File>
+            <File>
+              <FileName>control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\control.c</FilePath>
             </File>
           </Files>
         </Group>

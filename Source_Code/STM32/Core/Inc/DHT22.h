@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+#define sensor_Pin          GPIO_PIN_0
+#define sensor_GPIO_Port    GPIOA
+
 typedef enum {
     DHT22_OK = 0,
     DHT22_ERROR,

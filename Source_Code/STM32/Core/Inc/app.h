@@ -1,6 +1,9 @@
 #ifndef __APP_H__
 #define __APP_H__
-void sensor_task_handler(void);
 
+void sensor_task_handler(void);
 void led_task_handler(void);
+void uart_task_handler(void);
+void control_task_handler(void);
+
 #endif

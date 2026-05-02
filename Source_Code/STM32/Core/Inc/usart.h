@@ -26,22 +26,69 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
 
 /* USER CODE BEGIN Includes */
+#include <stdbool.h>
+#include "main.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
 
 /* USER CODE END Includes */
 
-extern UART_HandleTypeDef huart1;
-
 /* USER CODE BEGIN Private defines */
+#define UART_BUFFER_SIZE  256 
+#define UART_MIN_PACKAGE_LENGTH 4
+#define UART_DATA_MAX_PACKET_LENGTH 32
 
+typedef enum {
+  UART_RING_BUFFER_OK = 0,
+  UART_RING_BUFFER_OVERFLOW,
+  UART_RING_BUFFER_EMPTY,
+} UART_Ring_Buffer_Status_t;
+
+typedef enum {
+  WAIT_HEADER,
+  WAIT_CMD_KEY,
+  WAIT_LEN,
+  WAIT_CMD_DATA,
+  WAIT_CRC,
+} parser_state_t;
+
+typedef struct {
+  volatile uint16_t head;
+  volatile uint16_t tail;
+  uint8_t data_buffer[UART_BUFFER_SIZE];
+  volatile uint8_t overflow_flag; // Flag to indicate buffer overflow
+} ring_buffer_t;
+
+typedef struct {
+  uint8_t commandID;
+  uint8_t length;
+  uint8_t commandData[UART_DATA_MAX_PACKET_LENGTH];
+} command_packet_t;
+
+typedef struct {
+    command_packet_t command;
+    uint8_t data_index;
+    parser_state_t state;
+} parser_context_t;
+
+extern TaskHandle_t uart_task_t;
+extern UART_HandleTypeDef huart1;
+extern QueueHandle_t received_commandHandle;
+extern uint8_t rx_byte;
+extern ring_buffer_t ring_buffer;
 /* USER CODE END Private defines */
 
 void MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
+UART_Ring_Buffer_Status_t uart_rb_pop(ring_buffer_t *, uint8_t *);
 
+bool parse_byte(parser_context_t *, uint8_t);
+
+void parser_reset(parser_context_t *);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

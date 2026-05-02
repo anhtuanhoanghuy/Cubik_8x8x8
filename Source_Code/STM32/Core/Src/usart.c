@@ -19,14 +19,23 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "usart.h"
+#include "main.h"
+#include "defines.h"
 
 /* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
 UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_rx;
 DMA_HandleTypeDef hdma_usart1_tx;
+TaskHandle_t uart_task_t;
+QueueHandle_t received_commandHandle;
+static volatile uint16_t rx_size = 0;
+uint8_t rx_byte;
+ring_buffer_t ring_buffer = {0};
+
+
+static void uart_rb_push(ring_buffer_t *, uint8_t);
+
+/* USER CODE END 0 */
 
 /* USART1 init function */
 
@@ -157,6 +166,89 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+  if(huart->Instance == USART1) {
+    uart_rb_push(&ring_buffer, rx_byte);
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    if (uart_task_t != NULL) {
+      vTaskNotifyGiveFromISR(uart_task_t, &xHigherPriorityTaskWoken);
+    }
+    HAL_UART_Receive_IT(&huart1, &rx_byte, sizeof(uint8_t));
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+  }
+}
+
+static void uart_rb_push(ring_buffer_t *ring_buffer, uint8_t byte) {
+  uint16_t next = (ring_buffer->head + 1) % UART_BUFFER_SIZE;
+  if(next != ring_buffer->tail)
+  {
+    ring_buffer->data_buffer[ring_buffer->head] = byte;
+    ring_buffer->head = next;
+  } else {
+    // Buffer is full, drop the new byte and set flag
+    ring_buffer->overflow_flag = SET;
+  }
+}
+
+UART_Ring_Buffer_Status_t uart_rb_pop(ring_buffer_t *ring_buffer, uint8_t *byte) {
+  if(ring_buffer->tail == ring_buffer->head) {
+    return UART_RING_BUFFER_EMPTY;
+  }
+  *byte = ring_buffer->data_buffer[ring_buffer->tail];
+  ring_buffer->tail = (ring_buffer->tail + 1) % UART_BUFFER_SIZE;
+  return UART_RING_BUFFER_OK;
+}
+
+bool parse_byte(parser_context_t *parser, uint8_t byte) {
+    switch (parser->state) {
+        case WAIT_HEADER:
+            if (byte == 0xAA)
+                parser->state = WAIT_CMD_KEY;
+            break;
+
+        case WAIT_CMD_KEY:
+            parser->command.commandID = byte;
+            parser->state = WAIT_LEN;
+            break;
+
+        case WAIT_LEN:
+            if (byte <= UART_DATA_MAX_PACKET_LENGTH) {
+                parser->command.length = byte;
+                parser->data_index = 0;
+                parser->state = (parser->command.length == 0) ? WAIT_CRC : WAIT_CMD_DATA;
+            } else {
+                parser->state = WAIT_HEADER;
+            }
+            break;
+
+        case WAIT_CMD_DATA:
+            if (parser->data_index < UART_DATA_MAX_PACKET_LENGTH) {
+                parser->command.commandData[parser->data_index++] = byte;
+                if (parser->data_index >= parser->command.length)
+                    parser->state = WAIT_CRC;
+            } else {
+                parser->state = WAIT_HEADER;
+            }
+            break;
+
+        case WAIT_CRC:
+        {
+            uint8_t checksum = byte;
+            if (validateChecksum(&parser->command, checksum)) {
+                return true;
+            }
+            parser_reset(parser);
+            break;
+        }
+    }
+    return false;
+}
+
+void parser_reset(parser_context_t *parser) {
+    memset(&parser->command, 0, sizeof(parser->command));
+    parser->data_index = 0;
+    parser->state = WAIT_HEADER;
+}
 
 /* USER CODE END 1 */
 

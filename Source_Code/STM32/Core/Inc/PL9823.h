@@ -3,6 +3,11 @@
 
 #include <stdint.h>
 #include "tim.h"
+#include "FreeRTOS.h"
+#include "task.h"
+
+#define led_pl9823_Pin          GPIO_PIN_2
+#define led_pl9823_GPIO_Port    GPIOA
 
 #define TOTAL_LED_NUMBERS   3
 #define LED_BITS            24
@@ -18,12 +23,15 @@
 #define SPEED_TO_DELAY(speed) \
     ((SPEED_MIN_DELAY_MS - ((uint32_t)(speed) * SPEED_RANGE_MS) / 100))
 
+extern TaskHandle_t led_task_t;
 typedef struct {
     uint8_t status;
     uint8_t mode;
     uint8_t speed;
     uint8_t brightness;
 } PL9823_config_t;
+
+void PL9823_Init(void);
 
 void PL9823_show(uint32_t*);
 

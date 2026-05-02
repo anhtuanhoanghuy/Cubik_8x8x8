@@ -56,12 +56,6 @@ void delay_us(uint32_t);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define sensor_Pin GPIO_PIN_0
-#define sensor_GPIO_Port GPIOA
-#define led_pl9823_Pin GPIO_PIN_2
-#define led_pl9823_GPIO_Port GPIOA
-#define led_test_Pin   GPIO_PIN_13
-#define led_test_GPIO_Port GPIOC
 
 /* USER CODE BEGIN Private defines */
 

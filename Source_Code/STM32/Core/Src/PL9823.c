@@ -5,6 +5,14 @@ PL9823_config_t pl9823 = {
     .brightness = BRIGHTNESS_DEFAULT,
 };
 
+void PL9823_Init(void) {
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    GPIO_InitStruct.Pin = led_pl9823_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(led_pl9823_GPIO_Port, &GPIO_InitStruct);
+}
+
 void PL9823_show(uint32_t* leds) {
     static uint16_t pwm_buffer[TOTAL_LED_NUMBERS * LED_BITS + RESET_SLOTS] = {0};
     for (uint16_t led = 0; led < TOTAL_LED_NUMBERS; led++) {

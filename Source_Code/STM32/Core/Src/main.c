@@ -29,7 +29,9 @@
 #include "FreeRTOS.h"
 #include "defines.h"
 #include "task.h"
+#include "queue.h"
 #include "DHT22.h"
+#include "PL9823.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -64,16 +66,20 @@ void delay_us(uint32_t);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void uart_task(void) {
+  uart_task_handler();
+}
+
+// void control_task(void) {
+//   control_task_handler();
+// }
+
 void sensor_task(void) {
   sensor_task_handler();
 }
 
 void led_task(void) {
   led_task_handler();
-}
-
-void uart_task(void) {
-  uart_task_handler();
 }
 /* USER CODE END 0 */
 
@@ -110,21 +116,20 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-  HAL_UARTEx_ReceiveToIdle_DMA(&huart1, rx_buf, BUFFER_SIZE);
-  __HAL_DMA_DISABLE_IT(huart1.hdmarx, DMA_IT_HT);
-
+  received_commandHandle = xQueueCreate(10, sizeof(command_packet_t));
   xTaskCreate(uart_task,
               "uart_task",
-              configMINIMAL_STACK_SIZE,
+              configMINIMAL_STACK_SIZE * 2,
               NULL,
               PRIORITY_HIGH,
-              NULL);
-  xTaskCreate(sensor_task,
-              "sensor_task",
-              configMINIMAL_STACK_SIZE,
-              NULL,
-              PRIORITY_LOW,
-              NULL);
+              &uart_task_t);
+
+  // xTaskCreate(control_task,
+  //             "control_task",
+  //             configMINIMAL_STACK_SIZE,
+  //             NULL,
+  //             PRIORITY_HIGH,
+  //             NULL);
 
   TaskHandle_t led_task_t;
   xTaskCreate(led_task,
@@ -134,6 +139,13 @@ int main(void)
               PRIORITY_MEDIUM,
               &led_task_t);
 
+  xTaskCreate(sensor_task,
+              "sensor_task",
+              configMINIMAL_STACK_SIZE,
+              NULL,
+              PRIORITY_LOW,
+              NULL);
+  HAL_UART_Receive_IT(&huart1, &rx_byte, sizeof(uint8_t));
   vTaskStartScheduler();
   /* USER CODE END 2 */
 
