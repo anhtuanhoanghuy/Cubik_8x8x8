@@ -12,16 +12,17 @@
 #include "LED_mode.h"
 #include "Utils.h"
 #include <string.h>
-
+#include "control.h"
+long int encoder_value = 0;
 void sensor_task_handler(void) {
 	DHT22_t dht22 = {0};
-    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13,1);
+    HAL_GPIO_WritePin(led_test_GPIO_Port, led_test_Pin, GPIO_PIN_SET);
     TickType_t xSensorTime = xTaskGetTickCount();
     while (1) {
         if (DHT22_ReadValue(&dht22) == DHT22_OK) {
             ;
         }
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+        HAL_GPIO_TogglePin(led_test_GPIO_Port, led_test_Pin);
         vTaskDelayUntil(&xSensorTime, pdMS_TO_TICKS(5000));
     }
 }
@@ -63,12 +64,11 @@ void uart_task_handler(void)
                 continue;
             }
 
-            if (parse_byte(&parser, byte)) {
+            if (parse_byte(&parser, byte) == UART_PARSER_SUCCESS) {
                 xQueueSend(received_commandHandle, &parser.command, portMAX_DELAY);
                 parser_reset(&parser);
             }
         }
-        UBaseType_t watermark = uxTaskGetStackHighWaterMark(NULL);
     }
 }
 
@@ -77,6 +77,16 @@ void control_task_handler(void) {
     while (1) {
         if (xQueueReceive(received_commandHandle, &command, portMAX_DELAY) == pdPASS) {
             process_command(&command);
+            vTaskDelay(10);
         }
+    }
+}
+
+void input_task_handler(void) {
+//    uint16_t encoder_value = 0;
+    while (1) {
+        encoder_value = __HAL_TIM_GET_COUNTER(&htim3);
+        if(encoder_value != 0) {;}
+        vTaskDelay(10);
     }
 }

@@ -70,9 +70,13 @@ void uart_task(void) {
   uart_task_handler();
 }
 
-// void control_task(void) {
-//   control_task_handler();
-// }
+void control_task(void) {
+  control_task_handler();
+}
+
+void input_task(void) {
+  input_task_handler();
+}
 
 void sensor_task(void) {
   sensor_task_handler();
@@ -115,38 +119,71 @@ int main(void)
   MX_DMA_Init();
   MX_USART1_UART_Init();
   MX_TIM2_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
+
+  //Start encoder
+  HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_1|TIM_CHANNEL_2);
+  
+  // Create queue
   received_commandHandle = xQueueCreate(10, sizeof(command_packet_t));
-  xTaskCreate(uart_task,
-              "uart_task",
-              configMINIMAL_STACK_SIZE * 2,
-              NULL,
-              PRIORITY_HIGH,
-              &uart_task_t);
+  configASSERT(received_commandHandle != NULL);
 
-  // xTaskCreate(control_task,
-  //             "control_task",
-  //             configMINIMAL_STACK_SIZE,
-  //             NULL,
-  //             PRIORITY_HIGH,
-  //             NULL);
+  // Create UART task
+  BaseType_t ret;
 
+  ret = xTaskCreate(uart_task,
+                    "uart_task",
+                    configMINIMAL_STACK_SIZE * 2,
+                    NULL,
+                    PRIORITY_HIGH,
+                    &uart_task_t);
+  configASSERT(ret == pdPASS);
+
+  // Create control task
+  ret = xTaskCreate(control_task,
+                    "control_task",
+                    configMINIMAL_STACK_SIZE,
+                    NULL,
+                    PRIORITY_HIGH,
+                    NULL);
+  configASSERT(ret == pdPASS);
+
+  //Create input task
+  ret = xTaskCreate(input_task,
+                    "input_task",
+                    configMINIMAL_STACK_SIZE,
+                    NULL,
+                    PRIORITY_MEDIUM_HIGH,
+                    NULL);
+  configASSERT(ret == pdPASS);
+
+  // Create LED task
   TaskHandle_t led_task_t;
-  xTaskCreate(led_task,
-              "led_task",
-              configMINIMAL_STACK_SIZE * 2,
-              NULL,
-              PRIORITY_MEDIUM,
-              &led_task_t);
+  ret = xTaskCreate(led_task,
+                    "led_task",
+                    configMINIMAL_STACK_SIZE * 2,
+                    NULL,
+                    PRIORITY_MEDIUM,
+                    &led_task_t);
+  configASSERT(ret == pdPASS);
 
-  xTaskCreate(sensor_task,
-              "sensor_task",
-              configMINIMAL_STACK_SIZE,
-              NULL,
-              PRIORITY_LOW,
-              NULL);
-  HAL_UART_Receive_IT(&huart1, &rx_byte, sizeof(uint8_t));
+  // Create sensor task
+  ret = xTaskCreate(sensor_task,
+                    "sensor_task",
+                    configMINIMAL_STACK_SIZE,
+                    NULL,
+                    PRIORITY_LOW,
+                    NULL);
+  configASSERT(ret == pdPASS);
+
+  // Start UART interrupt
+  HAL_StatusTypeDef uart_ret = HAL_UART_Receive_IT(&huart1, &rx_byte, sizeof(uint8_t));
+  configASSERT(uart_ret == HAL_OK);
+
+  // Start scheduler
   vTaskStartScheduler();
+  configASSERT(0);
   /* USER CODE END 2 */
 
   /* Init scheduler */
