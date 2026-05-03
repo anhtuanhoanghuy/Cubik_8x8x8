@@ -21,13 +21,14 @@
 #include "usart.h"
 #include "main.h"
 #include "defines.h"
+#include "Utils.h"
 
 /* USER CODE BEGIN 0 */
 UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_rx;
 DMA_HandleTypeDef hdma_usart1_tx;
 TaskHandle_t uart_task_t;
-QueueHandle_t received_commandHandle;
+QueueHandle_t received_commandHandle = NULL;
 static volatile uint16_t rx_size = 0;
 uint8_t rx_byte;
 ring_buffer_t ring_buffer = {0};
@@ -36,6 +37,9 @@ ring_buffer_t ring_buffer = {0};
 static void uart_rb_push(ring_buffer_t *, uint8_t);
 
 /* USER CODE END 0 */
+
+UART_HandleTypeDef huart1;
+DMA_HandleTypeDef hdma_usart1_rx;
 
 /* USART1 init function */
 
@@ -111,22 +115,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
 
     __HAL_LINKDMA(uartHandle,hdmarx,hdma_usart1_rx);
 
-    /* USART1_TX Init */
-    hdma_usart1_tx.Instance = DMA1_Channel4;
-    hdma_usart1_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    hdma_usart1_tx.Init.PeriphInc = DMA_PINC_DISABLE;
-    hdma_usart1_tx.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_usart1_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    hdma_usart1_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    hdma_usart1_tx.Init.Mode = DMA_NORMAL;
-    hdma_usart1_tx.Init.Priority = DMA_PRIORITY_LOW;
-    if (HAL_DMA_Init(&hdma_usart1_tx) != HAL_OK)
-    {
-      Error_Handler();
-    }
-
-    __HAL_LINKDMA(uartHandle,hdmatx,hdma_usart1_tx);
-
     /* USART1 interrupt Init */
     HAL_NVIC_SetPriority(USART1_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(USART1_IRQn);
@@ -155,7 +143,6 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 
     /* USART1 DMA DeInit */
     HAL_DMA_DeInit(uartHandle->hdmarx);
-    HAL_DMA_DeInit(uartHandle->hdmatx);
 
     /* USART1 interrupt Deinit */
     HAL_NVIC_DisableIRQ(USART1_IRQn);
@@ -199,7 +186,7 @@ UART_Ring_Buffer_Status_t uart_rb_pop(ring_buffer_t *ring_buffer, uint8_t *byte)
   return UART_RING_BUFFER_OK;
 }
 
-bool parse_byte(parser_context_t *parser, uint8_t byte) {
+UART_Parser_Status_t parse_byte(parser_context_t *parser, uint8_t byte) {
     switch (parser->state) {
         case WAIT_HEADER:
             if (byte == 0xAA)
@@ -234,14 +221,14 @@ bool parse_byte(parser_context_t *parser, uint8_t byte) {
         case WAIT_CRC:
         {
             uint8_t checksum = byte;
-            if (validateChecksum(&parser->command, checksum)) {
-                return true;
+            if (validateChecksum(&parser->command, checksum) == CHECKSUM_OK) {
+                return UART_PARSER_SUCCESS;
             }
             parser_reset(parser);
             break;
         }
     }
-    return false;
+    return UART_PARSER_FAILURE;
 }
 
 void parser_reset(parser_context_t *parser) {

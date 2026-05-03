@@ -1,14 +1,14 @@
 #include "Utils.h"
 #include "gpio.h"
 
-bool validateChecksum(command_packet_t *cmd, uint8_t checksum) {
+checksum_status_t validateChecksum(command_packet_t *cmd, uint8_t checksum) {
     uint8_t calc_checksum = 0;
     calc_checksum ^= cmd->commandID;
     calc_checksum ^= cmd->length;
     for (uint8_t i = 0; i < cmd->length; i++) {
         calc_checksum ^= cmd->commandData[i];
     }
-    return calc_checksum == checksum;
+    return calc_checksum == checksum ? CHECKSUM_OK : CHECKSUM_ERROR;
 }
 
 void led_test(led_test_mode_t mode) {

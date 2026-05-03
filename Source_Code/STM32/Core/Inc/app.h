@@ -5,5 +5,6 @@ void sensor_task_handler(void);
 void led_task_handler(void);
 void uart_task_handler(void);
 void control_task_handler(void);
+void input_task_handler(void);
 
 #endif

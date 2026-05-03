@@ -26,15 +26,16 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "main.h"
 
 /* USER CODE BEGIN Includes */
-#include <stdbool.h>
-#include "main.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 
 /* USER CODE END Includes */
+
+extern UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN Private defines */
 #define UART_BUFFER_SIZE  256 
@@ -46,6 +47,11 @@ typedef enum {
   UART_RING_BUFFER_OVERFLOW,
   UART_RING_BUFFER_EMPTY,
 } UART_Ring_Buffer_Status_t;
+
+typedef enum {
+  UART_PARSER_SUCCESS = 0,
+  UART_PARSER_FAILURE,
+} UART_Parser_Status_t;
 
 typedef enum {
   WAIT_HEADER,
@@ -86,7 +92,7 @@ void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN Prototypes */
 UART_Ring_Buffer_Status_t uart_rb_pop(ring_buffer_t *, uint8_t *);
 
-bool parse_byte(parser_context_t *, uint8_t);
+UART_Parser_Status_t parse_byte(parser_context_t *, uint8_t);
 
 void parser_reset(parser_context_t *);
 /* USER CODE END Prototypes */

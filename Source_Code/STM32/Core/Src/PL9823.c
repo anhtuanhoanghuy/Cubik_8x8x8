@@ -1,7 +1,9 @@
 #include "PL9823.h"
 
+TaskHandle_t led_task_t;
+
 PL9823_config_t pl9823 = {
-    .speed = 100,
+    .speed = 80,
     .brightness = BRIGHTNESS_DEFAULT,
 };
 
