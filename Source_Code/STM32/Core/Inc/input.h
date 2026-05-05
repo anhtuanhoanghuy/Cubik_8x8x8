@@ -2,6 +2,8 @@
 #define __INPUT_H__
 
 #include "main.h"
+#include <FreeRTOS.h>
+#include <queue.h>
 
 #define btn_Port                            GPIOB
 #define back_btn_Pin                        GPIO_PIN_0
@@ -17,6 +19,17 @@
 #define encoder_A_GPIO_Port                 GPIOA
 #define encoder_B_Pin                       GPIO_PIN_7
 #define encoder_B_GPIO_Port                 GPIOA
+
+typedef enum {
+    EVT_NONE = 0x01,
+    EVT_BTN_BACK,
+    EVT_BTN_CONFIRM,
+    EVT_BTN_LED,
+    EVT_ENC_PREV,
+    EVT_ENC_NEXT
+} input_event_t;
+
+extern QueueHandle_t input_Handle;
 
 void button_process(uint16_t GPIO_Pin);
 

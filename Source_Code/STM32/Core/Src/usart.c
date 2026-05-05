@@ -28,7 +28,7 @@ UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_rx;
 DMA_HandleTypeDef hdma_usart1_tx;
 TaskHandle_t uart_task_t;
-QueueHandle_t received_commandHandle;
+QueueHandle_t received_commandHandle = NULL;
 static volatile uint16_t rx_size = 0;
 uint8_t rx_byte;
 ring_buffer_t ring_buffer = {0};

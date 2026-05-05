@@ -10,10 +10,11 @@
 #include "DHT22.h"
 #include "PL9823.h"
 #include "LED_mode.h"
+#include "input.h"
 #include "Utils.h"
 #include <string.h>
 #include "control.h"
-long int encoder_value = 0;
+int index_value = 0;
 void sensor_task_handler(void) {
 	DHT22_t dht22 = {0};
     HAL_GPIO_WritePin(led_test_GPIO_Port, led_test_Pin, GPIO_PIN_SET);
@@ -78,6 +79,71 @@ void control_task_handler(void) {
         if (xQueueReceive(received_commandHandle, &command, portMAX_DELAY) == pdPASS) {
             process_command(&command);
             vTaskDelay(10);
+        }
+    }
+}
+
+void input_task_handler(void) {
+    int16_t last = __HAL_TIM_GET_COUNTER(&htim3);
+    int16_t accum = 0;
+
+    while (1)
+    {
+        int16_t current = __HAL_TIM_GET_COUNTER(&htim3);
+        int16_t diff = (int16_t)(current - last);
+        uint8_t event;
+
+        if (diff != 0)
+        {
+            last = current;
+            accum += diff;
+        }
+
+        if (accum >= 4)
+        {
+            accum -= 4;
+            event = EVT_ENC_NEXT;
+            xQueueSend(input_Handle, &event, 0);
+        }
+        else if (accum <= -4)
+        {
+            accum += 4;
+            event = EVT_ENC_PREV;
+            xQueueSend(input_Handle, &event, 0);
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
+}
+
+void ui_task_handler(void) {
+    input_event_t event;
+
+    while (1) {
+        xQueueReceive(input_Handle, &event, portMAX_DELAY);
+        switch (event) {
+            case EVT_BTN_BACK:
+                index_value--;
+                break;
+
+            case EVT_BTN_CONFIRM:
+                index_value = 100;    
+                break;
+
+            case EVT_BTN_LED:
+                index_value++;
+                break;
+                
+            case EVT_ENC_PREV:
+                index_value-=10;
+                break;
+            
+            case EVT_ENC_NEXT:
+                index_value+=10;
+                break;
+
+            default:
+                break;
         }
     }
 }

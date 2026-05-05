@@ -32,6 +32,7 @@
 #include "queue.h"
 #include "DHT22.h"
 #include "PL9823.h"
+#include "input.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -76,6 +77,10 @@ void control_task(void) {
 
 void input_task(void) {
   input_task_handler();
+}
+
+void ui_task(void) {
+  ui_task_handler();
 }
 
 void sensor_task(void) {
@@ -129,6 +134,9 @@ int main(void)
   received_commandHandle = xQueueCreate(10, sizeof(command_packet_t));
   configASSERT(received_commandHandle != NULL);
 
+  input_Handle = xQueueCreate(50, sizeof(uint8_t));
+  configASSERT(input_Handle != NULL);
+
   // Create UART task
   BaseType_t ret;
 
@@ -153,6 +161,15 @@ int main(void)
   ret = xTaskCreate(input_task,
                     "input_task",
                     configMINIMAL_STACK_SIZE,
+                    NULL,
+                    PRIORITY_MEDIUM_HIGH,
+                    NULL);
+  configASSERT(ret == pdPASS);
+
+  //Creat UI task
+  ret = xTaskCreate(ui_task,
+                    "ui_task",
+                    configMINIMAL_STACK_SIZE * 2,
                     NULL,
                     PRIORITY_MEDIUM_HIGH,
                     NULL);
