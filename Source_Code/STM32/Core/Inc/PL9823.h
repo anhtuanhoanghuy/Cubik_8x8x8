@@ -31,8 +31,6 @@ typedef struct {
     uint8_t brightness;
 } PL9823_config_t;
 
-void PL9823_Init(void);
-
 void PL9823_show(uint32_t*);
 
 void PL9823_set_speed(uint8_t);

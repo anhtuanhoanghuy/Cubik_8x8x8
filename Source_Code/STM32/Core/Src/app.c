@@ -10,7 +10,10 @@
 #include "DHT22.h"
 #include "PL9823.h"
 #include "LED_mode.h"
+#include "SH1106.h"
 #include "input.h"
+#include "bitmap.h"
+#include "menu_control.h"
 #include "Utils.h"
 #include <string.h>
 #include "control.h"
@@ -91,7 +94,7 @@ void input_task_handler(void) {
     {
         int16_t current = __HAL_TIM_GET_COUNTER(&htim3);
         int16_t diff = (int16_t)(current - last);
-        uint8_t event;
+        input_event_t event;
 
         if (diff != 0)
         {
@@ -116,43 +119,160 @@ void input_task_handler(void) {
     }
 }
 
-void ui_task_handler(void) {
+void ui_task_handler(void)
+{
     input_event_t event;
+    cmd_lcd_t cmd_tx;
 
-    while (1) {
+    while (1)
+    {
         xQueueReceive(input_Handle, &event, portMAX_DELAY);
-        switch (event) {
+
+        uint8_t old_top = menu.top;
+        menu.old_selected_option = menu.selected_option;
+
+        switch (event)
+        {
             case EVT_BTN_BACK:
-                index_value--;
-                break;
+                if (current_page == SETTING_PAGE) {
+                    if (menu.selected_active == false) {
+                        current_page = HOME_PAGE;
+                        cmd_tx = CMD_LCD_RENDER_FULL_PAGE;
+                    } else {
+                        menu.selected_active = false;
+                        cmd_tx = CMD_LCD_RENDER_DEACTIVE_SETTING;
+                    }
+                }
 
+                break;
             case EVT_BTN_CONFIRM:
-                index_value = 100;    
+                if (current_page != HOME_PAGE) {
+
+                    if (menu.selected_active == false) {
+                        menu.selected_active = true;
+                        cmd_tx = CMD_LCD_RENDER_ACTIVE_SETTING;
+                    } else {
+                        menu.selected_active = false;
+                        cmd_tx = CMD_LCD_RENDER_DEACTIVE_SETTING;
+                    }
+                }
+                break;
+            case EVT_BTN_LED:
+                
+                break;
+            case EVT_ENC_NEXT:
+                if (menu.selected_active == false) {
+                    if (current_page == HOME_PAGE)   {
+                        current_page = SETTING_PAGE;
+
+                        menu.selected_option = 0;
+                        menu.top = 0;
+
+                        cmd_tx = CMD_LCD_RENDER_FULL_PAGE;
+                    } else {
+
+                        if (menu.selected_option < MENU_COUNT - 1)
+                        {
+                            menu.selected_option++;
+
+                            if (menu.selected_option >= menu.top + VISIBLE_LINES)
+                            {
+                                menu.top+= VISIBLE_LINES;
+                            }
+                            if (old_top != menu.top)
+                            {
+                                cmd_tx = CMD_LCD_RENDER_FULL_PAGE;
+                            }
+                            else
+                            {
+                                cmd_tx = CMD_LCD_RENDER_UPDATE_FRAME;
+                            }
+
+                        }
+                    }
+                } else {
+                    cmd_tx = CMD_LCD_RENDER_ACTIVE_SETTING;
+                }
+
                 break;
 
-            case EVT_BTN_LED:
-                index_value++;
-                break;
-                
             case EVT_ENC_PREV:
-                index_value-=10;
-                break;
-            
-            case EVT_ENC_NEXT:
-                index_value+=10;
+                if (menu.selected_active == false) {
+                    if (current_page == HOME_PAGE) {
+                        current_page = SETTING_PAGE;
+
+                        menu.selected_option = 0;
+                        menu.old_selected_option = 0;
+
+                        menu.top = 0;
+
+                        cmd_tx = CMD_LCD_RENDER_FULL_PAGE;
+                    } else {
+                        if (menu.selected_option > 0) {
+                            menu.old_selected_option =
+                                menu.selected_option;
+
+                            menu.selected_option--;
+
+                            if (menu.selected_option < menu.top)
+                            {
+                                menu.top -= VISIBLE_LINES;
+                            }
+
+                            if (old_top != menu.top)
+                            {
+                                cmd_tx = CMD_LCD_RENDER_FULL_PAGE;
+                            }
+                            else
+                            {
+                                cmd_tx = CMD_LCD_RENDER_UPDATE_FRAME;
+                            }
+                        }
+                    }
+                }
                 break;
 
             default:
                 break;
         }
+        if (cmd_tx != CMD_LCD_DUMMY) {
+
+            xQueueSend(lcd_commandHandle, &cmd_tx, pdMS_TO_TICKS(10));
+            cmd_tx = CMD_LCD_DUMMY; 
+        }
+
+        
     }
 }
 
-void input_task_handler(void) {
-//    uint16_t encoder_value = 0;
-    while (1) {
-        encoder_value = __HAL_TIM_GET_COUNTER(&htim3);
-        if(encoder_value != 0) {;}
-        vTaskDelay(10);
-    }
+void lcd_task_handler(void)
+{
+    vTaskDelay(pdMS_TO_TICKS(2000));    
+    cmd_lcd_t cmd_rx;
+    int value = 0;
+    char buffer[6];
+    char buffer1[4];
+    char buffer2[30];
+    render_home_page();
+    
+    while (1)
+    {   
+        xQueueReceive(lcd_commandHandle, &cmd_rx, portMAX_DELAY);
+        switch (cmd_rx) {
+            case CMD_LCD_RENDER_FULL_PAGE:
+                menu_render();
+                break;
+            case CMD_LCD_RENDER_UPDATE_FRAME:
+                frame_render();
+                break;
+            case CMD_LCD_RENDER_ACTIVE_SETTING:
+                active_setting_render();
+                break;
+            case CMD_LCD_RENDER_DEACTIVE_SETTING:
+                deactive_setting_render();
+                break;
+            default:
+                break;    
+        }
+    }   
 }

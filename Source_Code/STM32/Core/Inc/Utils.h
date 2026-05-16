@@ -18,4 +18,6 @@ typedef enum {
 checksum_status_t validateChecksum(command_packet_t *cmd, uint8_t checksum);
 
 void led_test(led_test_mode_t mode);
+
+int count_digits(int);
 #endif

@@ -1,0 +1,234 @@
+#include "menu_control.h"
+#include "bitmap.h"
+
+menu_item_t menu_items[] = {
+    {"1.LED Mode", action_mode},
+    {"2.Brightness", action_brightness},
+    {"3.LED Speed", action_speed},
+    {"4.Notification", action_notify},
+    {"5.Auto sleep", action_sleep},
+    {"6.DispAutoOff", action_display_off},
+    {"7.AI Realtime", action_AI},
+    {"8.Volumn", action_volume},
+    {"9.Wifi", action_wifi},
+    {"10.Check Update", action_check_update},
+    {"11.Reset Device", action_factory_reset}
+};
+
+menu_state_t menu = {
+    .selected_option = 0,
+    .old_selected_option = 0,    
+    .selected_active = false,
+    .top = 0
+};
+
+page_t current_page = HOME_PAGE;
+const uint8_t MENU_COUNT =
+    sizeof(menu_items) / sizeof(menu_items[0]);
+
+void action_mode(void) { /* xử lý Chế độ */ }
+
+void action_brightness(void) { /* chỉnh độ sáng */ }
+
+void action_speed(void) { /* chỉnh tốc độ */ }
+
+void action_notify(void) { /* bật/tắt thông báo */ }
+
+void action_sleep(void) { /* tự động ngủ */ }
+
+void action_display_off(void) { /* tắt màn */ }
+
+void action_AI(void) { /* AI realtime */ }
+
+void action_volume(void) { /* âm lượng */ }
+
+void action_wifi(void) { /* wifi */ }
+
+void action_check_update(void) { /* cập nhật */ }
+
+void action_factory_reset(void) { /* reset */ }
+
+void menu_render(void)
+{
+    switch (current_page)
+    {
+        case HOME_PAGE:
+            render_home_page();
+            break;
+
+        case SETTING_PAGE:
+            render_setting_page();
+            break;
+
+        default:
+            break;
+    }
+}
+
+void render_home_page(void)
+{   int value = 58;
+    char buffer[6];
+    char buffer1[4];
+    char buffer2[30];
+    SH1106_ShowFixedInfo();
+    sprintf(buffer, "%d*C", value);
+    sprintf(buffer1, "%d%%", value/2);
+    sprintf(buffer2, "%d new messages", value);
+    SH1106_Clear_Range(0, NOTIFY_DIALOG_POSITION_Y, 127, NOTIFY_DIALOG_POSITION_Y+10);
+    SH1106_GotoXY(NOTIFY_DIALOG_POSITION_X - count_digits(value), NOTIFY_DIALOG_POSITION_Y);
+    SH1106_Puts(buffer2, &Font_7x10, SH1106_COLOR_WHITE);
+    // // ---- TEMP ----
+    SH1106_Clear_Range(TEMPERATURE_VALUE_POSITION_X, TEMPERATURE_VALUE_POSITION_Y,TEMPERATURE_VALUE_POSITION_X + VALUE_W,TEMPERATURE_VALUE_POSITION_Y + VALUE_H);
+    SH1106_GotoXY(TEMPERATURE_VALUE_POSITION_X,TEMPERATURE_VALUE_POSITION_Y);
+    SH1106_Puts(buffer, &Font_7x10, SH1106_COLOR_WHITE);
+    
+    // // ---- HUMI ----
+    SH1106_Clear_Range(HUMIDITY_VALUE_POSITION_X, HUMIDITY_VALUE_POSITION_Y, HUMIDITY_VALUE_POSITION_X + VALUE_W, HUMIDITY_VALUE_POSITION_Y + VALUE_H);
+    SH1106_GotoXY(HUMIDITY_VALUE_POSITION_X,HUMIDITY_VALUE_POSITION_Y);
+    SH1106_Puts(buffer1, &Font_7x10, SH1106_COLOR_WHITE);
+    
+    // // ---- UPDATE ONLY REGION
+    SH1106_Update_Range(TEMPERATURE_VALUE_POSITION_X, TEMPERATURE_VALUE_POSITION_Y, TEMPERATURE_VALUE_POSITION_X + VALUE_W, TEMPERATURE_VALUE_POSITION_Y + VALUE_H);
+    SH1106_Update_Range(HUMIDITY_VALUE_POSITION_X, HUMIDITY_VALUE_POSITION_Y, HUMIDITY_VALUE_POSITION_X + VALUE_W, HUMIDITY_VALUE_POSITION_Y + VALUE_H);
+    SH1106_Update_Range(0,NOTIFY_DIALOG_POSITION_Y,127,NOTIFY_DIALOG_POSITION_Y+10);
+}
+
+void render_setting_page(void)
+{
+    SH1106_Clear();
+
+    for (uint8_t i = 0; i < VISIBLE_LINES; i++)
+    {
+        uint8_t idx = menu.top + i;
+
+        if (idx >= MENU_COUNT)
+            break;
+
+        uint8_t y = i * LINE_HEIGHT;
+
+        // highlight
+        if (idx == menu.selected_option)
+        {
+            SH1106_DrawFilledRectangle(
+                0,
+                y,
+                SH1106_WIDTH,
+                LINE_HEIGHT - 1,
+                SH1106_COLOR_WHITE
+            );
+
+            SH1106_GotoXY(0, y + TEXT_PADDING_Y);
+
+            SH1106_Puts(
+                menu_items[idx].label,
+                &Font_7x10,
+                SH1106_COLOR_BLACK
+            );
+        }
+        else
+        {
+            SH1106_GotoXY(0, y + TEXT_PADDING_Y);
+
+            SH1106_Puts(
+                menu_items[idx].label,
+                &Font_7x10,
+                SH1106_COLOR_WHITE
+            );
+        }
+    }
+
+    SH1106_UpdateScreen();
+}
+
+void frame_render(void)
+{
+    uint8_t old_y =
+        (menu.old_selected_option % VISIBLE_LINES)
+        * LINE_HEIGHT;
+
+    uint8_t new_y =
+        (menu.selected_option % VISIBLE_LINES)
+        * LINE_HEIGHT;
+
+    //
+    // redraw old line
+    //
+    SH1106_Clear_Range(
+        0,
+        old_y,
+        SH1106_WIDTH,
+        old_y + LINE_HEIGHT
+    );
+
+    SH1106_GotoXY(0, old_y + TEXT_PADDING_Y);
+
+    SH1106_Puts(
+        menu_items[menu.old_selected_option].label,
+        &Font_7x10,
+        SH1106_COLOR_WHITE
+    );
+
+    //
+    // redraw new line
+    //
+    SH1106_Clear_Range(
+        0,
+        new_y,
+        SH1106_WIDTH,
+        new_y + LINE_HEIGHT
+    );
+
+    SH1106_DrawFilledRectangle(
+        0,
+        new_y,
+        SH1106_WIDTH,
+        LINE_HEIGHT - 1,
+        SH1106_COLOR_WHITE
+    );
+
+    SH1106_GotoXY(0, new_y + TEXT_PADDING_Y);
+
+    SH1106_Puts(
+        menu_items[menu.selected_option].label,
+        &Font_7x10,
+        SH1106_COLOR_BLACK
+    );
+
+    uint8_t min_y =
+        (old_y < new_y) ? old_y : new_y;
+
+    uint8_t max_y =
+        (old_y > new_y) ? old_y : new_y;
+
+    SH1106_Update_Range(
+        0,
+        min_y,
+        SH1106_WIDTH,
+        max_y + LINE_HEIGHT
+    );
+}
+
+uint8_t test = 0;
+
+void active_setting_render(void) {
+    uint8_t y = (menu.selected_option % VISIBLE_LINES) * LINE_HEIGHT;
+    SH1106_Clear_Range(SH1106_WIDTH - 24, y, SH1106_WIDTH, y + LINE_HEIGHT);
+    SH1106_GotoXY(SETTING_TOGGLE_POSITION_X, y + TEXT_PADDING_Y);
+    SH1106_Puts(test ? "ON" : "OFF",&Font_7x10, SH1106_COLOR_WHITE);
+    test++;
+    // SH1106_DrawBitmap(SETTING_TOGGLE_POSITION_X, y, test ? icons8_toggle_on_16 : icons8_toggle_off_16, 16, 16, SH1106_COLOR_WHITE);
+    SH1106_Update_Range(SH1106_WIDTH - 24, y, SH1106_WIDTH, y + LINE_HEIGHT);
+}
+
+void deactive_setting_render(void) {
+    uint8_t y = (menu.selected_option % VISIBLE_LINES) * LINE_HEIGHT;
+    SH1106_Clear_Range(SH1106_WIDTH - 24, y, SH1106_WIDTH, y + LINE_HEIGHT);
+    SH1106_DrawFilledRectangle(
+        SH1106_WIDTH - 24,
+        y,
+        SH1106_WIDTH,
+        LINE_HEIGHT - 1,
+        SH1106_COLOR_WHITE
+    );
+    SH1106_Update_Range(SH1106_WIDTH - 24, y, SH1106_WIDTH, y + LINE_HEIGHT);
+}

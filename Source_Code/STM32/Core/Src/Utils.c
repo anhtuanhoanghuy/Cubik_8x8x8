@@ -29,3 +29,19 @@ void led_test(led_test_mode_t mode) {
             break;
     }
 }
+
+int count_digits(int n)
+{
+    int count = 0;
+
+    if (n == 0) return 1;
+
+    if (n < 0) n = -n; // xử lý số âm
+
+    while (n > 0) {
+        n /= 10;
+        count++;
+    }
+
+    return count;
+}

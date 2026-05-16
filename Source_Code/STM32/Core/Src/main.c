@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "dma.h"
+#include "i2c.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -32,7 +33,10 @@
 #include "queue.h"
 #include "DHT22.h"
 #include "PL9823.h"
+#include "SH1106.h"
 #include "input.h"
+#include "menu_control.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -83,6 +87,10 @@ void ui_task(void) {
   ui_task_handler();
 }
 
+void lcd_task(void) {
+  lcd_task_handler();
+}
+
 void sensor_task(void) {
   sensor_task_handler();
 }
@@ -125,17 +133,30 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
   //Start encoder
   HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_1|TIM_CHANNEL_2);
-  
-  // Create queue
+  SH1106_Init();
+  SH1106_GotoXY(WELCOME_TEXT_POSITION);
+  SH1106_Puts("HELLO CUBIK", &Font_11x18, 1);
+  SH1106_UpdateScreen();
+
+  // Create queue from uart task to control task
   received_commandHandle = xQueueCreate(10, sizeof(command_packet_t));
   configASSERT(received_commandHandle != NULL);
 
-  input_Handle = xQueueCreate(50, sizeof(uint8_t));
+  // Create queue from input task to ui task
+  input_Handle = xQueueCreate(50, sizeof(input_event_t));
   configASSERT(input_Handle != NULL);
+
+  //Create queue from ui task to lcd task
+  lcd_commandHandle = xQueueCreate(50, sizeof(cmd_lcd_t));
+  configASSERT(lcd_commandHandle != NULL);
+
+  lcd_dataHandle = xQueueCreate(50, sizeof(uint8_t));
+  configASSERT(lcd_dataHandle != NULL)
 
   // Create UART task
   BaseType_t ret;
@@ -173,6 +194,15 @@ int main(void)
                     NULL,
                     PRIORITY_MEDIUM_HIGH,
                     NULL);
+  configASSERT(ret == pdPASS);
+
+  //Create LCD task
+  ret = xTaskCreate(lcd_task,
+                    "lcd_task",
+                    configMINIMAL_STACK_SIZE * 2,
+                    NULL,
+                    PRIORITY_MEDIUM,
+                    &lcd_task_t);
   configASSERT(ret == pdPASS);
 
   // Create LED task

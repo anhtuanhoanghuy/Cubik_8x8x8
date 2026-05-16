@@ -16,7 +16,7 @@ void button_process(uint16_t GPIO_Pin)
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     uint32_t now = xTaskGetTickCountFromISR();
 
-    if ((now - last_btn_press_time) < pdMS_TO_TICKS(500))
+    if ((now - last_btn_press_time) < pdMS_TO_TICKS(200))
         return;
 
     last_btn_press_time = now;
