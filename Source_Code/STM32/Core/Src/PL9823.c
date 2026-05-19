@@ -33,7 +33,7 @@ uint8_t PL9823_get_status(void) {
     return pl9823.status;
 }
 
-void PL9823_set_mode(uint8_t mode) {
+void PL9823_set_mode(PL9823_led_mode_t mode) {
     pl9823.mode = mode;
 }
 

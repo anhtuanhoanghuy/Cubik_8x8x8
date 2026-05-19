@@ -1,4 +1,4 @@
-hello_cubik_8x8x8\system_stm32f1xx.o: ../Core/Src/system_stm32f1xx.c
+hello_cubik_8x8x8\system_stm32f1xx.o: ..\Core\Src\system_stm32f1xx.c
 hello_cubik_8x8x8\system_stm32f1xx.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h
 hello_cubik_8x8x8\system_stm32f1xx.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h
 hello_cubik_8x8x8\system_stm32f1xx.o: ../Drivers/CMSIS/Include/core_cm3.h
@@ -23,6 +23,7 @@ hello_cubik_8x8x8\system_stm32f1xx.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f
 hello_cubik_8x8x8\system_stm32f1xx.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_cortex.h
 hello_cubik_8x8x8\system_stm32f1xx.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h
 hello_cubik_8x8x8\system_stm32f1xx.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h
+hello_cubik_8x8x8\system_stm32f1xx.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h
 hello_cubik_8x8x8\system_stm32f1xx.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h
 hello_cubik_8x8x8\system_stm32f1xx.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 hello_cubik_8x8x8\system_stm32f1xx.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h

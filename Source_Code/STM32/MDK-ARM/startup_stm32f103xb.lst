@@ -480,9 +480,8 @@ ares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3 -I../Drivers/CMSIS/Devic
 e/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I.\RTE\_Hello_cubik_8x8x8 -I
 C:\Users\hoang\AppData\Local\Arm\Packs\ARM\CMSIS\6.3.0\CMSIS\Core\Include -IC:\
 Users\hoang\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.4.1\Device\Include --p
-redefine="__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 543" --predefine="
-STM32F10X_MD SETA 1" --predefine="_RTE_ SETA 1" --list=startup_stm32f103xb.lst 
-startup_stm32f103xb.s
+redefine="__UVISION_VERSION SETA 543" --predefine="STM32F10X_MD SETA 1" --prede
+fine="_RTE_ SETA 1" --list=startup_stm32f103xb.lst startup_stm32f103xb.s
 
 
 
@@ -1208,4 +1207,4 @@ Symbol: __use_two_region_memory
       None
 Comment: __use_two_region_memory unused
 3 symbols
-410 symbols in table
+409 symbols in table

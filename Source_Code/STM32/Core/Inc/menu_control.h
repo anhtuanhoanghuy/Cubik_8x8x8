@@ -13,11 +13,35 @@
 #define VISIBLE_LINES (SH1106_HEIGHT/LINE_HEIGHT)
 #define TEXT_PADDING_Y 4
 
-typedef void (*menu_action_t)(void);
+#define INCREASE_TO_MAX(value, max, step) \
+    if ((value) < (max)) {             \
+        (value) += (step);            \
+        if ((value) > (max)) {         \
+            (value) = (max);           \
+        }                              \
+    }                                  \
+
+#define DECREASE_TO_MIN(value, min, step) \
+   if ((value) > (min)) {             \
+        (value) -= (step);            \
+        if ((value) < (min)) {         \
+            (value) = (min);           \
+        }                              \
+    }                                  \
+
+typedef uint8_t (*menu_get_value_func_t)(void);
+typedef void (*menu_action_func_t)(void);
+typedef struct {
+    uint8_t min_value;
+    uint8_t max_value;
+    uint8_t step;
+} value_range_t;
 
 typedef struct {
     const char *label;
-    menu_action_t action;
+    menu_get_value_func_t get_value;
+    value_range_t value_range;
+    menu_action_func_t action;
 } menu_item_t;
 
 
@@ -38,7 +62,9 @@ typedef enum {
     CMD_LCD_RENDER_FULL_PAGE,
     CMD_LCD_RENDER_UPDATE_FRAME,
     CMD_LCD_RENDER_ACTIVE_SETTING,
-    CMD_LCD_RENDER_DEACTIVE_SETTING
+    CMD_LCD_RENDER_DEACTIVE_SETTING,
+    CMD_LCD_RENDER_INCREASE_VALUE_SETTING,
+    CMD_LCD_RENDER_DECREASE_VALUE_SETTING,
 } cmd_lcd_t;
 
 extern menu_item_t menu_items[];
@@ -79,5 +105,9 @@ void render_setting_page(void);
 void active_setting_render(void);
 
 void deactive_setting_render(void);
+
+void increase_value_setting_render(void);
+
+void increase_value_setting_render(void);
 
 #endif

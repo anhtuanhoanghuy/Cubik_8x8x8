@@ -1,18 +1,79 @@
 #include "menu_control.h"
+#include "PL9823.h"
 #include "bitmap.h"
 
+
 menu_item_t menu_items[] = {
-    {"1.LED Mode", action_mode},
-    {"2.Brightness", action_brightness},
-    {"3.LED Speed", action_speed},
-    {"4.Notification", action_notify},
-    {"5.Auto sleep", action_sleep},
-    {"6.DispAutoOff", action_display_off},
-    {"7.AI Realtime", action_AI},
-    {"8.Volumn", action_volume},
-    {"9.Wifi", action_wifi},
-    {"10.Check Update", action_check_update},
-    {"11.Reset Device", action_factory_reset}
+    {
+        .label = "1.LED Mode",
+        .value_range = {
+            .min_value = 0,
+            .max_value = 10,
+            .step = 1,
+        },
+        .get_value = &PL9823_get_mode,
+        .action = &action_mode
+    },
+    {
+        .label = "2.Brightness",
+        .value_range = {
+            .min_value = 0,
+            .max_value = 100,
+            .step = 10,
+        },
+        .get_value = &PL9823_get_brightness,
+        .action = &action_brightness
+    },
+    {
+        .label = "3.LED Speed",
+         .value_range = {
+            .min_value = 0,
+            .max_value = 100,
+            .step = 10,
+        },
+        .get_value = &PL9823_get_speed,
+        .action = &action_speed
+    },
+    // {
+    //     .label = "4.Notification",
+    //     .get_value = NULL,
+    //     .action = &action_notify
+    // },
+    // {
+    //     .label = "5.Auto sleep",
+    //     .get_value = NULL,
+    //     .action = &action_sleep
+    // },
+    // {
+    //     .label = "6.DispAutoOff",
+    //     .get_value = NULL,
+    //     .action = &action_display_off
+    // },
+    // {
+    //     .label = "7.AI Realtime",
+    //     .get_value = NULL,
+    //     .action = &action_AI
+    // },
+    // {
+    //     .label = "8.Volumn",
+    //     .get_value = NULL,
+    //     .action = &action_volume
+    // },
+    // {
+    //     .label = "9.Wifi",
+    //     .get_value = NULL,
+    //     .action = &action_wifi
+    // },
+    // {
+    //     .label = "10.Check Update",
+    //     .get_value = NULL,
+    //     .action = &action_check_update
+    // },
+    // {
+    //     .label = "11.Reset Device",
+    //     .get_value = NULL,
+    //     .action = &action_factory_reset
+    // }
 };
 
 menu_state_t menu = {
@@ -23,6 +84,8 @@ menu_state_t menu = {
 };
 
 page_t current_page = HOME_PAGE;
+static uint8_t temp_value = 0;
+
 const uint8_t MENU_COUNT =
     sizeof(menu_items) / sizeof(menu_items[0]);
 
@@ -208,16 +271,39 @@ void frame_render(void)
     );
 }
 
-uint8_t test = 0;
-
-void active_setting_render(void) {
+static void render_setting_value(uint8_t value)
+{
     uint8_t y = (menu.selected_option % VISIBLE_LINES) * LINE_HEIGHT;
-    SH1106_Clear_Range(SH1106_WIDTH - 24, y, SH1106_WIDTH, y + LINE_HEIGHT);
-    SH1106_GotoXY(SETTING_TOGGLE_POSITION_X, y + TEXT_PADDING_Y);
-    SH1106_Puts(test ? "ON" : "OFF",&Font_7x10, SH1106_COLOR_WHITE);
-    test++;
-    // SH1106_DrawBitmap(SETTING_TOGGLE_POSITION_X, y, test ? icons8_toggle_on_16 : icons8_toggle_off_16, 16, 16, SH1106_COLOR_WHITE);
-    SH1106_Update_Range(SH1106_WIDTH - 24, y, SH1106_WIDTH, y + LINE_HEIGHT);
+
+    char str[5];
+    sprintf(str, "%d", value);
+
+    SH1106_Clear_Range(
+        SH1106_WIDTH - 24,
+        y,
+        SH1106_WIDTH,
+        y + LINE_HEIGHT);
+
+    SH1106_GotoXY(
+        SETTING_TOGGLE_POSITION_X,
+        y + TEXT_PADDING_Y);
+
+    SH1106_Puts(
+        str,
+        &Font_7x10,
+        SH1106_COLOR_WHITE);
+
+    SH1106_Update_Range(
+        SH1106_WIDTH - 24,
+        y,
+        SH1106_WIDTH,
+        y + LINE_HEIGHT);
+}
+
+void active_setting_render(void)
+{   
+    temp_value = menu_items[menu.selected_option].get_value();
+    render_setting_value(temp_value);
 }
 
 void deactive_setting_render(void) {
@@ -231,4 +317,24 @@ void deactive_setting_render(void) {
         SH1106_COLOR_WHITE
     );
     SH1106_Update_Range(SH1106_WIDTH - 24, y, SH1106_WIDTH, y + LINE_HEIGHT);
+}
+
+void increase_value_setting_render(void)
+{
+    INCREASE_TO_MAX(
+        temp_value,
+        menu_items[menu.selected_option].value_range.max_value,
+        menu_items[menu.selected_option].value_range.step);
+
+    render_setting_value(temp_value);
+}
+
+void decrease_value_setting_render(void)
+{
+    DECREASE_TO_MIN(
+        temp_value,
+        menu_items[menu.selected_option].value_range.min_value,
+        menu_items[menu.selected_option].value_range.step);
+
+    render_setting_value(temp_value);
 }

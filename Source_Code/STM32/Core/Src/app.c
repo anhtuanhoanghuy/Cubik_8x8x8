@@ -191,7 +191,7 @@ void ui_task_handler(void)
                         }
                     }
                 } else {
-                    cmd_tx = CMD_LCD_RENDER_ACTIVE_SETTING;
+                    cmd_tx = CMD_LCD_RENDER_INCREASE_VALUE_SETTING;
                 }
 
                 break;
@@ -229,6 +229,8 @@ void ui_task_handler(void)
                             }
                         }
                     }
+                } else {
+                    cmd_tx = CMD_LCD_RENDER_DECREASE_VALUE_SETTING;
                 }
                 break;
 
@@ -270,6 +272,12 @@ void lcd_task_handler(void)
                 break;
             case CMD_LCD_RENDER_DEACTIVE_SETTING:
                 deactive_setting_render();
+                break;
+            case CMD_LCD_RENDER_INCREASE_VALUE_SETTING:
+                increase_value_setting_render();
+                break;
+            case CMD_LCD_RENDER_DECREASE_VALUE_SETTING:
+                decrease_value_setting_render();
                 break;
             default:
                 break;    

@@ -24,14 +24,26 @@
     ((SPEED_MIN_DELAY_MS - ((uint32_t)(speed) * SPEED_RANGE_MS) / 100))
 
 extern TaskHandle_t led_task_t;
+
+typedef enum {
+    NORMAL_MODE = 0,
+    RAINBOW_MODE,
+    CUSTOM_MODE
+} PL9823_led_mode_t;
+
 typedef struct {
     uint8_t status;
-    uint8_t mode;
+    PL9823_led_mode_t mode;
     uint8_t speed;
     uint8_t brightness;
 } PL9823_config_t;
 
+
 void PL9823_show(uint32_t*);
+
+void PL9823_set_mode(PL9823_led_mode_t);
+
+uint8_t PL9823_get_mode(void);
 
 void PL9823_set_speed(uint8_t);
 
