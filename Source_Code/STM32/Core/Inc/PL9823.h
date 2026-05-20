@@ -41,6 +41,11 @@ typedef struct {
 
 void PL9823_show(uint32_t*);
 
+
+void PL9823_set_status(uint8_t);
+
+uint8_t PL9823_get_status(void);
+
 void PL9823_set_mode(PL9823_led_mode_t);
 
 uint8_t PL9823_get_mode(void);
@@ -52,7 +57,5 @@ uint8_t PL9823_get_speed(void);
 void PL9823_set_brightness(uint8_t);
 
 uint8_t PL9823_get_brightness(void);
-
-void PL9823_frame_interval_ms(void);
 
 #endif

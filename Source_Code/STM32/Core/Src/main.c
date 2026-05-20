@@ -36,7 +36,7 @@
 #include "SH1106.h"
 #include "input.h"
 #include "menu_control.h"
-
+#include "data.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,7 +57,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+global_data_t global_data;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -155,9 +155,6 @@ int main(void)
   lcd_commandHandle = xQueueCreate(50, sizeof(cmd_lcd_t));
   configASSERT(lcd_commandHandle != NULL);
 
-  lcd_dataHandle = xQueueCreate(50, sizeof(uint8_t));
-  configASSERT(lcd_dataHandle != NULL)
-
   // Create UART task
   BaseType_t ret;
 
@@ -206,7 +203,6 @@ int main(void)
   configASSERT(ret == pdPASS);
 
   // Create LED task
-  TaskHandle_t led_task_t;
   ret = xTaskCreate(led_task,
                     "led_task",
                     configMINIMAL_STACK_SIZE * 2,

@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "SH1106.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
 
 #define ARROW_X (SH1106_WIDTH - 8 - 2)  // = 118
 #define TEXT_X 0
@@ -69,10 +72,13 @@ typedef enum {
 
 extern menu_item_t menu_items[];
 
-extern const uint8_t MENU_COUNT;
+page_t get_current_page(void);
 
-extern menu_state_t menu;
-extern page_t current_page;
+void set_current_page(page_t);
+
+menu_state_t* get_menu(void);
+
+uint8_t get_menu_count(void);
 
 void action_mode(void);
 
@@ -109,5 +115,7 @@ void deactive_setting_render(void);
 void increase_value_setting_render(void);
 
 void increase_value_setting_render(void);
+
+
 
 #endif

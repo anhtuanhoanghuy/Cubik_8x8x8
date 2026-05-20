@@ -1,7 +1,8 @@
 #include "menu_control.h"
 #include "PL9823.h"
 #include "bitmap.h"
-
+#include "command.h"
+#include <usart.h>
 
 menu_item_t menu_items[] = {
     {
@@ -76,24 +77,57 @@ menu_item_t menu_items[] = {
     // }
 };
 
-menu_state_t menu = {
+static menu_state_t menu = {
     .selected_option = 0,
     .old_selected_option = 0,    
     .selected_active = false,
     .top = 0
 };
 
-page_t current_page = HOME_PAGE;
+static page_t current_page = HOME_PAGE;
 static uint8_t temp_value = 0;
 
-const uint8_t MENU_COUNT =
-    sizeof(menu_items) / sizeof(menu_items[0]);
+const uint8_t MENU_COUNT = sizeof(menu_items) / sizeof(menu_items[0]);
 
-void action_mode(void) { /* xử lý Chế độ */ }
+page_t get_current_page(void) {
+    return current_page;
+}
 
-void action_brightness(void) { /* chỉnh độ sáng */ }
+void set_current_page(page_t page) {
+    current_page = page;
+} 
 
-void action_speed(void) { /* chỉnh tốc độ */ }
+menu_state_t* get_menu(void) {
+    return &menu;
+}
+
+uint8_t get_menu_count(void) {
+    return MENU_COUNT;
+}
+
+void action_mode(void) {
+     /* xử lý Chế độ */ 
+    command_packet_t command;
+    command.commandID = CMD_LED_MODE;
+    command.commandData[0] = temp_value;
+    xQueueSend(received_commandHandle, &command, portMAX_DELAY);
+}
+
+void action_brightness(void) { 
+    /* chỉnh độ sáng */ 
+    command_packet_t command;
+    command.commandID = CMD_LED_BRIGHTNESS;
+    command.commandData[0] = temp_value;
+    xQueueSend(received_commandHandle, &command, portMAX_DELAY);
+}
+
+void action_speed(void) { 
+    /* chỉnh tốc độ */ 
+    command_packet_t command;
+    command.commandID = CMD_LED_SPEED;
+    command.commandData[0] = temp_value;
+    xQueueSend(received_commandHandle, &command, portMAX_DELAY);
+}
 
 void action_notify(void) { /* bật/tắt thông báo */ }
 

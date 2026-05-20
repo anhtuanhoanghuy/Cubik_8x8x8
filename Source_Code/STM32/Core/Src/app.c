@@ -17,7 +17,9 @@
 #include "Utils.h"
 #include <string.h>
 #include "control.h"
-int index_value = 0;
+#include "data.h"
+#include "command.h"
+
 void sensor_task_handler(void) {
 	DHT22_t dht22 = {0};
     HAL_GPIO_WritePin(led_test_GPIO_Port, led_test_Pin, GPIO_PIN_SET);
@@ -34,6 +36,11 @@ void sensor_task_handler(void) {
 void led_task_handler(void) {
     TickType_t xFrameInterval_ms = xTaskGetTickCount();
     while(1) {
+        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        HAL_TIM_PWM_Stop_DMA(&htim2, TIM_CHANNEL_3);
+        if(PL9823_get_status() == RESET) {
+            vTaskSuspend(NULL);
+        }
         for(int frame = 0; frame < 14; frame++) {
             if (PL9823_get_speed() == 0) {
                 vTaskDelay(pdMS_TO_TICKS(20));
@@ -127,19 +134,19 @@ void ui_task_handler(void)
     while (1)
     {
         xQueueReceive(input_Handle, &event, portMAX_DELAY);
+        page_t current_page = get_current_page();
+        menu_state_t *menu = get_menu();
+        uint8_t old_top = menu->top;
+        menu->old_selected_option = menu->selected_option;
 
-        uint8_t old_top = menu.top;
-        menu.old_selected_option = menu.selected_option;
-
-        switch (event)
-        {
+        switch (event){
             case EVT_BTN_BACK:
                 if (current_page == SETTING_PAGE) {
-                    if (menu.selected_active == false) {
-                        current_page = HOME_PAGE;
+                    if (menu->selected_active == false) {
+                        set_current_page(HOME_PAGE);
                         cmd_tx = CMD_LCD_RENDER_FULL_PAGE;
                     } else {
-                        menu.selected_active = false;
+                        menu->selected_active = false;
                         cmd_tx = CMD_LCD_RENDER_DEACTIVE_SETTING;
                     }
                 }
@@ -148,38 +155,43 @@ void ui_task_handler(void)
             case EVT_BTN_CONFIRM:
                 if (current_page != HOME_PAGE) {
 
-                    if (menu.selected_active == false) {
-                        menu.selected_active = true;
+                    if (menu->selected_active == false) {
+                        menu->selected_active = true;
                         cmd_tx = CMD_LCD_RENDER_ACTIVE_SETTING;
                     } else {
-                        menu.selected_active = false;
+                        menu->selected_active = false;
                         cmd_tx = CMD_LCD_RENDER_DEACTIVE_SETTING;
+                        menu_items[menu->selected_option].action();
                     }
                 }
                 break;
             case EVT_BTN_LED:
-                
+                uint8_t led_state = !(global_data.LED.status);
+                command_packet_t command;
+                command.commandID = CMD_LED_ON_OFF;
+                command.commandData[0] = led_state;
+                xQueueSend(received_commandHandle, &command, portMAX_DELAY);
                 break;
             case EVT_ENC_NEXT:
-                if (menu.selected_active == false) {
+                if (menu->selected_active == false) {
                     if (current_page == HOME_PAGE)   {
-                        current_page = SETTING_PAGE;
+                        set_current_page(SETTING_PAGE);
 
-                        menu.selected_option = 0;
-                        menu.top = 0;
+                        menu->selected_option = 0;
+                        menu->top = 0;
 
                         cmd_tx = CMD_LCD_RENDER_FULL_PAGE;
                     } else {
 
-                        if (menu.selected_option < MENU_COUNT - 1)
+                        if (menu->selected_option < (get_menu_count() - 1))
                         {
-                            menu.selected_option++;
+                            menu->selected_option++;
 
-                            if (menu.selected_option >= menu.top + VISIBLE_LINES)
+                            if (menu->selected_option >= menu->top + VISIBLE_LINES)
                             {
-                                menu.top+= VISIBLE_LINES;
+                                menu->top+= VISIBLE_LINES;
                             }
-                            if (old_top != menu.top)
+                            if (old_top != menu->top)
                             {
                                 cmd_tx = CMD_LCD_RENDER_FULL_PAGE;
                             }
@@ -197,29 +209,27 @@ void ui_task_handler(void)
                 break;
 
             case EVT_ENC_PREV:
-                if (menu.selected_active == false) {
+                if (menu->selected_active == false) {
                     if (current_page == HOME_PAGE) {
-                        current_page = SETTING_PAGE;
+                        set_current_page(SETTING_PAGE);
 
-                        menu.selected_option = 0;
-                        menu.old_selected_option = 0;
-
-                        menu.top = 0;
+                        menu->selected_option = 0;
+                        menu->old_selected_option = 0;
+                        menu->top = 0;
 
                         cmd_tx = CMD_LCD_RENDER_FULL_PAGE;
                     } else {
-                        if (menu.selected_option > 0) {
-                            menu.old_selected_option =
-                                menu.selected_option;
+                        if (menu->selected_option > 0) {
+                            menu->old_selected_option = menu->selected_option;
 
-                            menu.selected_option--;
+                            menu->selected_option--;
 
-                            if (menu.selected_option < menu.top)
+                            if (menu->selected_option < menu->top)
                             {
-                                menu.top -= VISIBLE_LINES;
+                                menu->top -= VISIBLE_LINES;
                             }
 
-                            if (old_top != menu.top)
+                            if (old_top != menu->top)
                             {
                                 cmd_tx = CMD_LCD_RENDER_FULL_PAGE;
                             }
@@ -247,8 +257,7 @@ void ui_task_handler(void)
     }
 }
 
-void lcd_task_handler(void)
-{
+void lcd_task_handler(void) {
     vTaskDelay(pdMS_TO_TICKS(2000));    
     cmd_lcd_t cmd_rx;
     int value = 0;

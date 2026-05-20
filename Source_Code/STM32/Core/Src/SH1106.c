@@ -26,7 +26,6 @@
 
 TaskHandle_t lcd_task_t;
 QueueHandle_t lcd_commandHandle = NULL;
-QueueHandle_t lcd_dataHandle = NULL;
 
 #define SH1106_I2C &hi2c1
 

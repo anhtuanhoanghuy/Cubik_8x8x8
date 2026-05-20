@@ -89,6 +89,12 @@ typedef enum {
 	SH1106_COLOR_WHITE = 0x01  /*!< Pixel is set. Color depends on LCD */
 } SH1106_COLOR_t;
 
+typedef struct
+{
+  uint8_t status;
+  uint8_t disp_auto_off;
+} SH1106_config_t;
+
 extern TaskHandle_t lcd_task_t;
 extern QueueHandle_t lcd_commandHandle;
 extern QueueHandle_t lcd_dataHandle;
