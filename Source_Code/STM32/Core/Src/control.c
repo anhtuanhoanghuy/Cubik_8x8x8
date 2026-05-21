@@ -9,27 +9,36 @@
 #include "DHT22.h"
 #include "PL9823.h"
 #include "Utils.h"
+#include "monitoring.h"
 
 void process_command(command_packet_t *cmd) {
     switch (cmd->commandID) {
         case CMD_LED_ON_OFF:
-            global_data.LED.status = cmd->commandData[0];
-            PL9823_set_status(global_data.LED.status);
-            if(global_data.LED.status == SET) {
+            LOCK();
+            global_system_data.LED.status = cmd->commandData[0];
+            UNLOCK();
+            PL9823_set_status(global_system_data.LED.status);
+            if(global_system_data.LED.status == SET) {
                 vTaskResume(led_task_t);
             }
             break;
         case CMD_LED_MODE:
-            global_data.LED.mode = cmd->commandData[0];
-            PL9823_set_mode(global_data.LED.mode);
+            LOCK();
+            global_system_data.LED.mode = cmd->commandData[0];
+            UNLOCK();
+            PL9823_set_mode(global_system_data.LED.mode);
             break;
         case CMD_LED_BRIGHTNESS:
-            global_data.LED.brightness = cmd->commandData[0];
-            PL9823_set_brightness( global_data.LED.brightness);
+            LOCK();
+            global_system_data.LED.brightness = cmd->commandData[0];
+            UNLOCK();
+            PL9823_set_brightness( global_system_data.LED.brightness);
             break;
         case CMD_LED_SPEED:
-            global_data.LED.speed = cmd->commandData[0];
-            PL9823_set_speed( global_data.LED.speed);
+            LOCK();
+            global_system_data.LED.speed = cmd->commandData[0];
+            UNLOCK();
+            PL9823_set_speed( global_system_data.LED.speed);
             break;
         default:
             break;

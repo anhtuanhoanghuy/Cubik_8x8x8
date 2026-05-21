@@ -12,11 +12,12 @@ typedef struct {
     SH1106_config_t LCD;
     uint8_t wifi_status;
     uint8_t notification;
+    uint8_t disp_auto_off;
     uint8_t auto_sleep;
     uint8_t ai_realtime;
-    uint8_t volumn;
-} global_data_t;
+    uint8_t volume;
+} global_system_data_t;
 
-extern global_data_t global_data;
+extern global_system_data_t global_system_data;
 
 #endif
