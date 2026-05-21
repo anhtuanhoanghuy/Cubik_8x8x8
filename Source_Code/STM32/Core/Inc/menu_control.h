@@ -68,6 +68,7 @@ typedef enum {
     CMD_LCD_RENDER_DEACTIVE_SETTING,
     CMD_LCD_RENDER_INCREASE_VALUE_SETTING,
     CMD_LCD_RENDER_DECREASE_VALUE_SETTING,
+    CMD_LCD_RENDER_UPDATE_AMBIENT
 } cmd_lcd_t;
 
 extern menu_item_t menu_items[];
@@ -116,6 +117,6 @@ void increase_value_setting_render(void);
 
 void increase_value_setting_render(void);
 
-
+void update_ambient_info(void);
 
 #endif

@@ -7,6 +7,7 @@ typedef enum {
     CMD_LED_MODE,
     CMD_LED_BRIGHTNESS,
     CMD_LED_SPEED,
+    CMD_AMBIENT_UPDATE,
 
 } command_t;
 

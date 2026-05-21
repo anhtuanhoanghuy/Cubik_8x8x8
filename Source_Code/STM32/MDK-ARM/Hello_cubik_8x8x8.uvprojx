@@ -425,6 +425,11 @@
               <FilePath>..\Core\Src\menu_control.c</FilePath>
             </File>
             <File>
+              <FileName>monitoring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\monitoring.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/main.c</FilePath>
