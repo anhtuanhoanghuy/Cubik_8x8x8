@@ -31,11 +31,13 @@
 #include "defines.h"
 #include "task.h"
 #include "queue.h"
+#include "semphr.h"
 #include "DHT22.h"
 #include "PL9823.h"
 #include "SH1106.h"
 #include "input.h"
 #include "menu_control.h"
+#include "monitoring.h"
 #include "data.h"
 /* USER CODE END Includes */
 
@@ -57,7 +59,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-global_data_t global_data;
+global_system_data_t global_system_data;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -95,6 +97,9 @@ void sensor_task(void) {
   sensor_task_handler();
 }
 
+void monitoring_task(void) {
+  monitoring_task_handler();
+}
 void led_task(void) {
   led_task_handler();
 }
@@ -143,17 +148,29 @@ int main(void)
   SH1106_Puts("HELLO CUBIK", &Font_11x18, 1);
   SH1106_UpdateScreen();
 
+  // Create event group for UART TX and RX
+  uart_event_group = xEventGroupCreate();
+  configASSERT(uart_event_group != NULL);
+  
   // Create queue from uart task to control task
   received_commandHandle = xQueueCreate(10, sizeof(command_packet_t));
   configASSERT(received_commandHandle != NULL);
+
+  // Create queue form monitoring task to uart task
+  transmit_Handle = xQueueCreate(10,sizeof(uart_tx_monitoring_packet_t));
+  configASSERT(transmit_Handle != NULL);
 
   // Create queue from input task to ui task
   input_Handle = xQueueCreate(50, sizeof(input_event_t));
   configASSERT(input_Handle != NULL);
 
-  //Create queue from ui task to lcd task
+  // Create queue from ui task to lcd task
   lcd_commandHandle = xQueueCreate(50, sizeof(cmd_lcd_t));
   configASSERT(lcd_commandHandle != NULL);
+
+  // Create mutex for global system data
+  global_system_mutex = xSemaphoreCreateMutex();
+  configASSERT(global_system_mutex != NULL);
 
   // Create UART task
   BaseType_t ret;
@@ -210,6 +227,15 @@ int main(void)
                     PRIORITY_MEDIUM,
                     &led_task_t);
   configASSERT(ret == pdPASS);
+
+  //Create monitoring task
+ ret = xTaskCreate(monitoring_task,
+                   "monitoring_task",
+                   configMINIMAL_STACK_SIZE * 2,
+                   NULL,
+                   PRIORITY_LOW_MEDIUM,
+                   NULL);
+ configASSERT(ret == pdPASS);
 
   // Create sensor task
   ret = xTaskCreate(sensor_task,

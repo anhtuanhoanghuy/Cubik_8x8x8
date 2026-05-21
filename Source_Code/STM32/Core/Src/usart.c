@@ -29,12 +29,15 @@ DMA_HandleTypeDef hdma_usart1_rx;
 DMA_HandleTypeDef hdma_usart1_tx;
 TaskHandle_t uart_task_t;
 QueueHandle_t received_commandHandle = NULL;
+QueueHandle_t transmit_Handle = NULL;
+EventGroupHandle_t uart_event_group;
 static volatile uint16_t rx_size = 0;
+volatile bool uart_tx_busy = false;
 uint8_t rx_byte;
 ring_buffer_t ring_buffer = {0};
 
 
-static void uart_rb_push(ring_buffer_t *, uint8_t);
+static void uart_rb_push(ring_buffer_t *, uint8_t, BaseType_t *);
 
 /* USER CODE END 0 */
 
@@ -155,25 +158,35 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 /* USER CODE BEGIN 1 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
   if(huart->Instance == USART1) {
-    uart_rb_push(&ring_buffer, rx_byte);
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    uart_rb_push(&ring_buffer, rx_byte, &xHigherPriorityTaskWoken);
     if (uart_task_t != NULL) {
-      vTaskNotifyGiveFromISR(uart_task_t, &xHigherPriorityTaskWoken);
+      xEventGroupSetBitsFromISR(uart_event_group, UART_EVENT_RX, &xHigherPriorityTaskWoken);
     }
     HAL_UART_Receive_IT(&huart1, &rx_byte, sizeof(uint8_t));
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
   }
 }
 
-static void uart_rb_push(ring_buffer_t *ring_buffer, uint8_t byte) {
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if (huart == &huart1)
+    {
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        uart_tx_busy = false;
+        xEventGroupSetBitsFromISR(uart_event_group, UART_EVENT_TX_COMPLETE, &xHigherPriorityTaskWoken);
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    }
+}
+
+static void uart_rb_push(ring_buffer_t *ring_buffer, uint8_t byte, BaseType_t *xHigherPriorityTaskWoken) {
   uint16_t next = (ring_buffer->head + 1) % UART_BUFFER_SIZE;
   if(next != ring_buffer->tail)
   {
     ring_buffer->data_buffer[ring_buffer->head] = byte;
     ring_buffer->head = next;
   } else {
-    // Buffer is full, drop the new byte and set flag
-    ring_buffer->overflow_flag = SET;
+    xEventGroupSetBitsFromISR(uart_event_group,UART_EVENT_OVERFLOW,xHigherPriorityTaskWoken);
   }
 }
 

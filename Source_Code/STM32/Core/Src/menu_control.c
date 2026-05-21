@@ -56,7 +56,7 @@ menu_item_t menu_items[] = {
     //     .action = &action_AI
     // },
     // {
-    //     .label = "8.Volumn",
+    //     .label = "8.Volume",
     //     .get_value = NULL,
     //     .action = &action_volume
     // },

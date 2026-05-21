@@ -4,6 +4,7 @@
 #include "defines.h"
 #include "task.h"
 #include "queue.h"
+#include "semphr.h"
 #include "gpio.h"
 #include "tim.h"
 #include "usart.h"
@@ -17,6 +18,7 @@
 #include "Utils.h"
 #include <string.h>
 #include "control.h"
+#include "monitoring.h"
 #include "data.h"
 #include "command.h"
 
@@ -55,29 +57,57 @@ void led_task_handler(void) {
 
 void uart_task_handler(void)
 {
+    EventBits_t events;
     uint8_t byte = 0;
     parser_context_t parser = {0};
     parser.state = WAIT_HEADER;
+    uart_tx_monitoring_packet_t monitoring_packet;
     while (1) {
-        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-        if (ring_buffer.overflow_flag == SET)
+        events = xEventGroupWaitBits(
+            uart_event_group,
+
+            UART_EVENT_RX |
+            UART_EVENT_TX_REQUEST |
+            UART_EVENT_TX_COMPLETE |
+            UART_EVENT_OVERFLOW,
+
+            pdTRUE,        // clear bits
+            pdFALSE,       // wait any
+            portMAX_DELAY
+        );
+
+        // ===== TX =====
+        if ((events & UART_EVENT_TX_REQUEST) ||
+            (events & UART_EVENT_TX_COMPLETE))
         {
-            ring_buffer.overflow_flag = RESET;
+            if (!uart_tx_busy) {
+                if (xQueueReceive(transmit_Handle, &monitoring_packet, 0) == pdPASS) {
+                    uart_tx_busy = true;
+                    HAL_UART_Transmit_IT(&huart1, monitoring_packet.data, monitoring_packet.length);
+                }
+            }
+        }
+
+        // ===== OVERFLOW =====
+        if (events & UART_EVENT_OVERFLOW) {
             ring_buffer.tail = ring_buffer.head;
             parser_reset(&parser);
         }
 
-        while (uart_rb_pop(&ring_buffer, &byte) == UART_RING_BUFFER_OK) {
-            if (byte == 0xAA && parser.state != WAIT_HEADER)
-            {
-                parser_reset(&parser);
-                parser.state = WAIT_CMD_KEY;
-                continue;
-            }
-
-            if (parse_byte(&parser, byte) == UART_PARSER_SUCCESS) {
-                xQueueSend(received_commandHandle, &parser.command, portMAX_DELAY);
-                parser_reset(&parser);
+        // ===== RX WAIT =====
+        if (events & UART_EVENT_RX) {
+            while (uart_rb_pop(&ring_buffer, &byte) == UART_RING_BUFFER_OK) {
+                if (byte == 0xAA && parser.state != WAIT_HEADER)
+                {
+                    parser_reset(&parser);
+                    parser.state = WAIT_CMD_KEY;
+                    continue;
+                }
+    
+                if (parse_byte(&parser, byte) == UART_PARSER_SUCCESS) {
+                    xQueueSend(received_commandHandle, &parser.command, portMAX_DELAY);
+                    parser_reset(&parser);
+                }
             }
         }
     }
@@ -88,7 +118,6 @@ void control_task_handler(void) {
     while (1) {
         if (xQueueReceive(received_commandHandle, &command, portMAX_DELAY) == pdPASS) {
             process_command(&command);
-            vTaskDelay(10);
         }
     }
 }
@@ -166,7 +195,7 @@ void ui_task_handler(void)
                 }
                 break;
             case EVT_BTN_LED:
-                uint8_t led_state = !(global_data.LED.status);
+                uint8_t led_state = !(global_system_data.LED.status);
                 command_packet_t command;
                 command.commandID = CMD_LED_ON_OFF;
                 command.commandData[0] = led_state;
@@ -292,4 +321,22 @@ void lcd_task_handler(void) {
                 break;    
         }
     }   
+}
+
+void monitoring_task_handler(void)
+{
+    TickType_t xMonitoringTime = xTaskGetTickCount();
+    global_system_data_t data;
+    uart_tx_monitoring_packet_t monitoring_packet;
+
+    while (1)
+    {
+        LOCK();
+        data = global_system_data;
+        UNLOCK();
+        monitoring_packet.length = encode_monitoring_data(monitoring_packet.data, &data);
+        xQueueSend(transmit_Handle, &monitoring_packet, portMAX_DELAY);
+        xEventGroupSetBits(uart_event_group, UART_EVENT_TX_REQUEST);
+        vTaskDelayUntil(&xMonitoringTime, pdMS_TO_TICKS(1000));
+    }
 }
