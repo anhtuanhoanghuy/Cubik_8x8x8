@@ -40,6 +40,11 @@ void process_command(command_packet_t *cmd) {
             UNLOCK();
             PL9823_set_speed( global_system_data.LED.speed);
             break;
+        case CMD_AMBIENT_UPDATE:
+            LOCK();
+            global_system_data.DHT22.temperature = cmd->commandData[0];
+            global_system_data.DHT22.humidity = cmd->commandData[1];
+            UNLOCK();
         default:
             break;
     }

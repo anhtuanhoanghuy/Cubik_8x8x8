@@ -3,6 +3,8 @@
 #include "bitmap.h"
 #include "command.h"
 #include <usart.h>
+#include "data.h"
+#include "monitoring.h"
 
 menu_item_t menu_items[] = {
     {
@@ -163,30 +165,16 @@ void menu_render(void)
 }
 
 void render_home_page(void)
-{   int value = 58;
-    char buffer[6];
-    char buffer1[4];
+{   
+    uint8_t value;
     char buffer2[30];
-    SH1106_ShowFixedInfo();
-    sprintf(buffer, "%d*C", value);
-    sprintf(buffer1, "%d%%", value/2);
     sprintf(buffer2, "%d new messages", value);
     SH1106_Clear_Range(0, NOTIFY_DIALOG_POSITION_Y, 127, NOTIFY_DIALOG_POSITION_Y+10);
     SH1106_GotoXY(NOTIFY_DIALOG_POSITION_X - count_digits(value), NOTIFY_DIALOG_POSITION_Y);
     SH1106_Puts(buffer2, &Font_7x10, SH1106_COLOR_WHITE);
-    // // ---- TEMP ----
-    SH1106_Clear_Range(TEMPERATURE_VALUE_POSITION_X, TEMPERATURE_VALUE_POSITION_Y,TEMPERATURE_VALUE_POSITION_X + VALUE_W,TEMPERATURE_VALUE_POSITION_Y + VALUE_H);
-    SH1106_GotoXY(TEMPERATURE_VALUE_POSITION_X,TEMPERATURE_VALUE_POSITION_Y);
-    SH1106_Puts(buffer, &Font_7x10, SH1106_COLOR_WHITE);
-    
-    // // ---- HUMI ----
-    SH1106_Clear_Range(HUMIDITY_VALUE_POSITION_X, HUMIDITY_VALUE_POSITION_Y, HUMIDITY_VALUE_POSITION_X + VALUE_W, HUMIDITY_VALUE_POSITION_Y + VALUE_H);
-    SH1106_GotoXY(HUMIDITY_VALUE_POSITION_X,HUMIDITY_VALUE_POSITION_Y);
-    SH1106_Puts(buffer1, &Font_7x10, SH1106_COLOR_WHITE);
-    
-    // // ---- UPDATE ONLY REGION
-    SH1106_Update_Range(TEMPERATURE_VALUE_POSITION_X, TEMPERATURE_VALUE_POSITION_Y, TEMPERATURE_VALUE_POSITION_X + VALUE_W, TEMPERATURE_VALUE_POSITION_Y + VALUE_H);
-    SH1106_Update_Range(HUMIDITY_VALUE_POSITION_X, HUMIDITY_VALUE_POSITION_Y, HUMIDITY_VALUE_POSITION_X + VALUE_W, HUMIDITY_VALUE_POSITION_Y + VALUE_H);
+
+    update_ambient_info();
+   
     SH1106_Update_Range(0,NOTIFY_DIALOG_POSITION_Y,127,NOTIFY_DIALOG_POSITION_Y+10);
 }
 
@@ -371,4 +359,30 @@ void decrease_value_setting_render(void)
         menu_items[menu.selected_option].value_range.step);
 
     render_setting_value(temp_value);
+}
+
+void update_ambient_info(void) {
+    LOCK();
+    uint8_t temperature = global_system_data.DHT22.temperature;
+    uint8_t humidity = global_system_data.DHT22.humidity;
+    UNLOCK();
+    char buffer[10];
+    char buffer1[10];
+
+    SH1106_ShowFixedInfo();
+    sprintf(buffer, "%d*C", temperature);
+    sprintf(buffer1, "%d%%", humidity);
+     // // ---- TEMP ----
+    SH1106_Clear_Range(TEMPERATURE_VALUE_POSITION_X, TEMPERATURE_VALUE_POSITION_Y,TEMPERATURE_VALUE_POSITION_X + VALUE_W,TEMPERATURE_VALUE_POSITION_Y + VALUE_H);
+    SH1106_GotoXY(TEMPERATURE_VALUE_POSITION_X,TEMPERATURE_VALUE_POSITION_Y);
+    SH1106_Puts(buffer, &Font_7x10, SH1106_COLOR_WHITE);
+    
+    // // ---- HUMI ----
+    SH1106_Clear_Range(HUMIDITY_VALUE_POSITION_X, HUMIDITY_VALUE_POSITION_Y, HUMIDITY_VALUE_POSITION_X + VALUE_W, HUMIDITY_VALUE_POSITION_Y + VALUE_H);
+    SH1106_GotoXY(HUMIDITY_VALUE_POSITION_X,HUMIDITY_VALUE_POSITION_Y);
+    SH1106_Puts(buffer1, &Font_7x10, SH1106_COLOR_WHITE);
+    
+    // // ---- UPDATE ONLY REGION
+    SH1106_Update_Range(TEMPERATURE_VALUE_POSITION_X, TEMPERATURE_VALUE_POSITION_Y, TEMPERATURE_VALUE_POSITION_X + VALUE_W, TEMPERATURE_VALUE_POSITION_Y + VALUE_H);
+    SH1106_Update_Range(HUMIDITY_VALUE_POSITION_X, HUMIDITY_VALUE_POSITION_Y, HUMIDITY_VALUE_POSITION_X + VALUE_W, HUMIDITY_VALUE_POSITION_Y + VALUE_H);
 }

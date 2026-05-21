@@ -22,13 +22,34 @@
 #include "data.h"
 #include "command.h"
 
-void sensor_task_handler(void) {
-	DHT22_t dht22 = {0};
+void sensor_task_handler(void)
+{
+    DHT22_t dht22 = {0};
+
+    uint8_t last_temperature = 0;
+    uint8_t last_humidity    = 0;
+
     HAL_GPIO_WritePin(led_test_GPIO_Port, led_test_Pin, GPIO_PIN_SET);
+
     TickType_t xSensorTime = xTaskGetTickCount();
-    while (1) {
-        if (DHT22_ReadValue(&dht22) == DHT22_OK) {
-            ;
+
+    while (1)
+    {
+        if (DHT22_ReadValue(&dht22) == DHT22_OK)
+        {
+            if ((dht22.temperature != last_temperature) ||
+                (dht22.humidity    != last_humidity))
+            {
+                command_packet_t command = {0};
+                cmd_lcd_t cmd_tx = CMD_LCD_RENDER_UPDATE_AMBIENT;
+                xQueueSend(lcd_commandHandle, &cmd_tx, pdMS_TO_TICKS(10));
+                command.commandID = CMD_AMBIENT_UPDATE;
+                command.commandData[0] = dht22.temperature;
+                command.commandData[1] = dht22.humidity;
+                xQueueSend(received_commandHandle, &command, pdMS_TO_TICKS(10));
+                last_temperature = dht22.temperature;
+                last_humidity = dht22.humidity;
+            }
         }
         HAL_GPIO_TogglePin(led_test_GPIO_Port, led_test_Pin);
         vTaskDelayUntil(&xSensorTime, pdMS_TO_TICKS(5000));
@@ -142,13 +163,13 @@ void input_task_handler(void) {
         {
             accum -= 4;
             event = EVT_ENC_NEXT;
-            xQueueSend(input_Handle, &event, 0);
+            xQueueSend(input_Handle, &event, pdMS_TO_TICKS(10));
         }
         else if (accum <= -4)
         {
             accum += 4;
             event = EVT_ENC_PREV;
-            xQueueSend(input_Handle, &event, 0);
+            xQueueSend(input_Handle, &event, pdMS_TO_TICKS(10));
         }
 
         vTaskDelay(pdMS_TO_TICKS(10));
@@ -317,6 +338,8 @@ void lcd_task_handler(void) {
             case CMD_LCD_RENDER_DECREASE_VALUE_SETTING:
                 decrease_value_setting_render();
                 break;
+            case CMD_LCD_RENDER_UPDATE_AMBIENT:
+                update_ambient_info();
             default:
                 break;    
         }

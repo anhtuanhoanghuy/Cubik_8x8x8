@@ -14,7 +14,7 @@ typedef enum {
 } DHT22_Status_t;
 
 typedef struct {
-    int8_t temperature;
+    uint8_t temperature;
     uint8_t humidity;
 } DHT22_t;
 
