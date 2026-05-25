@@ -45,3 +45,13 @@ int count_digits(int n)
 
     return count;
 }
+
+uint8_t calculate_checksum(uint8_t *data, uint8_t size) {
+    uint8_t checksum = 0;
+
+    for (uint8_t i = 0; i < size; i++) {
+        checksum ^= data[i];
+    }
+
+    return checksum;
+}

@@ -110,7 +110,7 @@ uint8_t get_menu_count(void) {
 void action_mode(void) {
      /* xử lý Chế độ */ 
     command_packet_t command;
-    command.commandID = CMD_LED_MODE;
+    command.commandID = CMD_LED_MODE_ID;
     command.commandData[0] = temp_value;
     xQueueSend(received_commandHandle, &command, portMAX_DELAY);
 }
@@ -118,7 +118,7 @@ void action_mode(void) {
 void action_brightness(void) { 
     /* chỉnh độ sáng */ 
     command_packet_t command;
-    command.commandID = CMD_LED_BRIGHTNESS;
+    command.commandID = CMD_LED_BRIGHTNESS_ID;
     command.commandData[0] = temp_value;
     xQueueSend(received_commandHandle, &command, portMAX_DELAY);
 }
@@ -126,7 +126,7 @@ void action_brightness(void) {
 void action_speed(void) { 
     /* chỉnh tốc độ */ 
     command_packet_t command;
-    command.commandID = CMD_LED_SPEED;
+    command.commandID = CMD_LED_SPEED_ID;
     command.commandData[0] = temp_value;
     xQueueSend(received_commandHandle, &command, portMAX_DELAY);
 }
@@ -172,7 +172,7 @@ void render_home_page(void)
     SH1106_Clear_Range(0, NOTIFY_DIALOG_POSITION_Y, 127, NOTIFY_DIALOG_POSITION_Y+10);
     SH1106_GotoXY(NOTIFY_DIALOG_POSITION_X - count_digits(value), NOTIFY_DIALOG_POSITION_Y);
     SH1106_Puts(buffer2, &Font_7x10, SH1106_COLOR_WHITE);
-
+    SH1106_ShowFixedInfo();
     update_ambient_info();
    
     SH1106_Update_Range(0,NOTIFY_DIALOG_POSITION_Y,127,NOTIFY_DIALOG_POSITION_Y+10);
@@ -369,7 +369,6 @@ void update_ambient_info(void) {
     char buffer[10];
     char buffer1[10];
 
-    SH1106_ShowFixedInfo();
     sprintf(buffer, "%d*C", temperature);
     sprintf(buffer1, "%d%%", humidity);
      // // ---- TEMP ----

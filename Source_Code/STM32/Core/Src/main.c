@@ -157,7 +157,7 @@ int main(void)
   configASSERT(received_commandHandle != NULL);
 
   // Create queue form monitoring task to uart task
-  transmit_Handle = xQueueCreate(10,sizeof(uart_tx_monitoring_packet_t));
+  transmit_Handle = xQueueCreate(10,sizeof(uart_tx_packet_t));
   configASSERT(transmit_Handle != NULL);
 
   // Create queue from input task to ui task

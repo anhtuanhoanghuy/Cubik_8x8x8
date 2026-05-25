@@ -33,7 +33,7 @@ typedef enum {
 
 typedef struct {
     uint8_t status;
-    PL9823_led_mode_t mode;
+    uint8_t mode;
     uint8_t speed;
     uint8_t brightness;
 } PL9823_config_t;
