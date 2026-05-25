@@ -110,7 +110,7 @@ uint8_t get_menu_count(void) {
 void action_mode(void) {
      /* xử lý Chế độ */ 
     command_packet_t command;
-    command.commandID = CMD_LED_MODE;
+    command.commandID = CMD_LED_MODE_ID;
     command.commandData[0] = temp_value;
     xQueueSend(received_commandHandle, &command, portMAX_DELAY);
 }
@@ -118,7 +118,7 @@ void action_mode(void) {
 void action_brightness(void) { 
     /* chỉnh độ sáng */ 
     command_packet_t command;
-    command.commandID = CMD_LED_BRIGHTNESS;
+    command.commandID = CMD_LED_BRIGHTNESS_ID;
     command.commandData[0] = temp_value;
     xQueueSend(received_commandHandle, &command, portMAX_DELAY);
 }
@@ -126,7 +126,7 @@ void action_brightness(void) {
 void action_speed(void) { 
     /* chỉnh tốc độ */ 
     command_packet_t command;
-    command.commandID = CMD_LED_SPEED;
+    command.commandID = CMD_LED_SPEED_ID;
     command.commandData[0] = temp_value;
     xQueueSend(received_commandHandle, &command, portMAX_DELAY);
 }

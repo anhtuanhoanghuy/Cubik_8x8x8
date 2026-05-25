@@ -43,7 +43,7 @@ void sensor_task_handler(void)
                 command_packet_t command = {0};
                 cmd_lcd_t cmd_tx = CMD_LCD_RENDER_UPDATE_AMBIENT;
                 xQueueSend(lcd_commandHandle, &cmd_tx, pdMS_TO_TICKS(10));
-                command.commandID = CMD_AMBIENT_UPDATE;
+                command.commandID = CMD_AMBIENT_UPDATE_ID;
                 command.commandData[0] = dht22.temperature;
                 command.commandData[1] = dht22.humidity;
                 xQueueSend(received_commandHandle, &command, pdMS_TO_TICKS(10));
@@ -82,7 +82,8 @@ void uart_task_handler(void)
     uint8_t byte = 0;
     parser_context_t parser = {0};
     parser.state = WAIT_HEADER;
-    uart_tx_monitoring_packet_t monitoring_packet;
+    uart_tx_packet_t packet_to_send;
+
     while (1) {
         events = xEventGroupWaitBits(
             uart_event_group,
@@ -102,9 +103,9 @@ void uart_task_handler(void)
             (events & UART_EVENT_TX_COMPLETE))
         {
             if (!uart_tx_busy) {
-                if (xQueueReceive(transmit_Handle, &monitoring_packet, 0) == pdPASS) {
+                if (xQueueReceive(transmit_Handle, &packet_to_send, 0) == pdPASS) {
                     uart_tx_busy = true;
-                    HAL_UART_Transmit_IT(&huart1, monitoring_packet.data, monitoring_packet.length);
+                    HAL_UART_Transmit_IT(&huart1, (uint8_t*)&packet_to_send.data, packet_to_send.size);
                 }
             }
         }
@@ -138,7 +139,10 @@ void control_task_handler(void) {
     command_packet_t command = {0};
     while (1) {
         if (xQueueReceive(received_commandHandle, &command, portMAX_DELAY) == pdPASS) {
-            process_command(&command);
+            ack_packet_t ack_packet;
+            ack_packet.seq_id = command.commandID;
+            ack_packet.status = process_command(&command);
+            send_ACK(&ack_packet);
         }
     }
 }
@@ -218,7 +222,7 @@ void ui_task_handler(void)
             case EVT_BTN_LED:
                 uint8_t led_state = !(global_system_data.LED.status);
                 command_packet_t command;
-                command.commandID = CMD_LED_ON_OFF;
+                command.commandID = CMD_LED_ON_OFF_ID;
                 command.commandData[0] = led_state;
                 xQueueSend(received_commandHandle, &command, portMAX_DELAY);
                 break;
@@ -350,16 +354,17 @@ void monitoring_task_handler(void)
 {
     TickType_t xMonitoringTime = xTaskGetTickCount();
     global_system_data_t data;
-    uart_tx_monitoring_packet_t monitoring_packet;
+    uart_tx_packet_t packet_tx = {0};
 
     while (1)
     {
         LOCK();
         data = global_system_data;
         UNLOCK();
-        monitoring_packet.length = encode_monitoring_data(monitoring_packet.data, &data);
-        xQueueSend(transmit_Handle, &monitoring_packet, portMAX_DELAY);
+
+        encode_monitoring_data(&packet_tx, &data);
+        xQueueSend(transmit_Handle, &packet_tx, portMAX_DELAY);
         xEventGroupSetBits(uart_event_group, UART_EVENT_TX_REQUEST);
-        vTaskDelayUntil(&xMonitoringTime, pdMS_TO_TICKS(1000));
+        vTaskDelayUntil(&xMonitoringTime, pdMS_TO_TICKS(5000));
     }
 }

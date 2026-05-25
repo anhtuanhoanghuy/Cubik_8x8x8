@@ -82,13 +82,13 @@ typedef struct {
 typedef struct {
     command_packet_t command;
     uint8_t data_index;
-    parser_state_t state;
+    uint8_t state;
 } parser_context_t;
 
 typedef struct {
-    uint8_t data[UART_TX_MAX_SIZE];
-    uint8_t length;
-} uart_tx_monitoring_packet_t;
+  uint8_t size;
+  uint8_t data[UART_TX_MAX_SIZE];
+} uart_tx_packet_t;
 
 /* USER CODE END Private defines */
 

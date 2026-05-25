@@ -15,9 +15,12 @@ typedef enum {
     CHECKSUM_ERROR
 } checksum_status_t;    
 
-checksum_status_t validateChecksum(command_packet_t *cmd, uint8_t checksum);
+checksum_status_t validateChecksum(command_packet_t *, uint8_t );
 
-void led_test(led_test_mode_t mode);
+void led_test(led_test_mode_t);
 
 int count_digits(int);
+
+uint8_t calculate_checksum(uint8_t *, uint8_t);
+
 #endif

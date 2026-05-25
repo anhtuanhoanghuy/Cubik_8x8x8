@@ -12,10 +12,9 @@ extern SemaphoreHandle_t global_system_mutex;
 #define UNLOCK() xSemaphoreGive(global_system_mutex)
 
 typedef enum {
-
-    PACKET_HEADER_IDX = 0,
-    PACKET_COMMAND_IDX,
-
+    HEADER,
+    COMMAND_ID,
+    PAYLOAD_LENGTH,
     // LED
     LED_STATUS_IDX,
     LED_MODE_IDX,
@@ -39,11 +38,11 @@ typedef enum {
     VOLUME_IDX,
 
     /////////////////
-    PACKET_CHECKSUM_IDX,
-    MONITORING_PACKET_SIZE
+    CHECKSUM_IDX,
+    MONITORING_FRAME_SIZE
 
 } monitoring_data_protocol_t;
 
-uint8_t encode_monitoring_data(uint8_t*, global_system_data_t*) ;
+uint8_t encode_monitoring_data(uart_tx_packet_t *, const global_system_data_t *);
 
 #endif
