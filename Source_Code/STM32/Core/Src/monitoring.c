@@ -7,7 +7,7 @@ uint8_t encode_monitoring_data(uart_tx_packet_t *monitoring_data, const global_s
 
     // ===== FRAME HEADER =====
     monitoring_data->data[HEADER] = 0xAA;
-    monitoring_data->data[COMMAND_ID] = CMD_MONITORING_ID;
+    monitoring_data->data[COMMAND_ID] = CMD_SYSTEM_MONITORING_ID;
     monitoring_data->data[PAYLOAD_LENGTH] = MONITORING_FRAME_SIZE - 4;
 
     // ===== PAYLOAD =====

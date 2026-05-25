@@ -32,6 +32,7 @@
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
+#include "timers.h"
 #include "DHT22.h"
 #include "PL9823.h"
 #include "SH1106.h"
@@ -171,6 +172,15 @@ int main(void)
   // Create mutex for global system data
   global_system_mutex = xSemaphoreCreateMutex();
   configASSERT(global_system_mutex != NULL);
+
+  //Create timer to track user interface
+  go_to_home_timer = xTimerCreate(
+                      "Input_Track_Timer",
+                      pdMS_TO_TICKS(10000),
+                      pdFALSE,
+                      0,
+                      goToHomePageCb);
+  configASSERT(go_to_home_timer != NULL); 
 
   // Create UART task
   BaseType_t ret;

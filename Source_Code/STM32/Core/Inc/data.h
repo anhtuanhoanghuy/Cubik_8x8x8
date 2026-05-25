@@ -20,4 +20,22 @@ typedef struct {
 
 extern global_system_data_t global_system_data;
 
+uint8_t SysData_get_notification_setting(void);
+void SysData_set_notification_setting(uint8_t value);
+
+uint8_t SysData_get_auto_sleep_setting(void);
+void SysData_set_auto_sleep_setting(uint8_t value);
+
+uint8_t SysData_get_disp_auto_off_setting(void);
+void SysData_set_disp_auto_off_setting(uint8_t value);
+
+uint8_t SysData_get_AI_realtime_setting(void);
+void SysData_set_AI_realtime_setting(uint8_t value);
+
+uint8_t SysData_get_volume_setting(void);
+void SysData_set_volume_setting(uint8_t value);
+
+uint8_t SysData_get_wifi_setting(void);
+void SysData_set_wifi_setting(uint8_t value);
+
 #endif

@@ -41,30 +41,71 @@ ack_status_t process_command(command_packet_t *cmd) {
                 vTaskResume(led_task_t);
             }
             return ACK_OK;
+
         case CMD_LED_MODE_ID:
             LOCK();
             global_system_data.LED.mode = cmd->commandData[0];
             UNLOCK();
             PL9823_set_mode(global_system_data.LED.mode);
             return ACK_OK;
+
         case CMD_LED_BRIGHTNESS_ID:
             LOCK();
             global_system_data.LED.brightness = cmd->commandData[0];
             UNLOCK();
             PL9823_set_brightness( global_system_data.LED.brightness);
             return ACK_OK;
+
         case CMD_LED_SPEED_ID:
             LOCK();
             global_system_data.LED.speed = cmd->commandData[0];
             UNLOCK();
             PL9823_set_speed( global_system_data.LED.speed);
             return ACK_OK;
-        case CMD_AMBIENT_UPDATE_ID:
+        
+        case CMD_SENSOR_AMBIENT_UPDATE_ID:
             LOCK();
             global_system_data.DHT22.temperature = cmd->commandData[0];
             global_system_data.DHT22.humidity = cmd->commandData[1];
             UNLOCK();
             return ACK_OK;
+
+        case CMD_LCD_DISP_AUTO_OFF_ID:
+            LOCK();
+            global_system_data.LCD.disp_auto_off = cmd->commandData[0];
+            UNLOCK();
+            return ACK_OK;
+
+        case CMD_SYSTEM_NOTIFICATION_ID:
+            LOCK();
+            global_system_data.notification = cmd->commandData[0];
+            UNLOCK();
+            return ACK_OK;
+
+        case CMD_SYSTEM_AUTO_SLEEP_ID:
+            LOCK();
+            global_system_data.auto_sleep = cmd->commandData[0];
+            UNLOCK();
+            return ACK_OK;
+
+        case CMD_SYSTEM_AI_REALTIME_ID:
+            LOCK();
+            global_system_data.ai_realtime = cmd->commandData[0];
+            UNLOCK();
+            return ACK_OK;
+
+        case CMD_SYSTEM_VOLUME_ID:
+            LOCK();
+            global_system_data.volume = cmd->commandData[0];
+            UNLOCK();
+            return ACK_OK;
+
+        case CMD_SYSTEM_WIFI_ID:
+            LOCK();
+            global_system_data.wifi_status = cmd->commandData[0];
+            UNLOCK();
+            return ACK_OK;
+
         default:
             return ACK_INVALID_PARAM;
     }

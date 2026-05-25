@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include <FreeRTOS.h>
+#include "timers.h"
 #include <queue.h>
 
 #define btn_Port                            GPIOB
@@ -30,6 +31,7 @@ typedef enum {
 } input_event_t;
 
 extern QueueHandle_t input_Handle;
+extern TimerHandle_t go_to_home_timer;
 
 void button_process(uint16_t GPIO_Pin);
 

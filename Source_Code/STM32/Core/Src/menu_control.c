@@ -9,6 +9,7 @@
 menu_item_t menu_items[] = {
     {
         .label = "1.LED Mode",
+        .type  = SETTING_TYPE_RANGE,
         .value_range = {
             .min_value = 0,
             .max_value = 10,
@@ -19,8 +20,9 @@ menu_item_t menu_items[] = {
     },
     {
         .label = "2.Brightness",
+        .type  = SETTING_TYPE_RANGE,
         .value_range = {
-            .min_value = 0,
+            .min_value = 10,
             .max_value = 100,
             .step = 10,
         },
@@ -29,7 +31,8 @@ menu_item_t menu_items[] = {
     },
     {
         .label = "3.LED Speed",
-         .value_range = {
+        .type  = SETTING_TYPE_RANGE,
+        .value_range = {
             .min_value = 0,
             .max_value = 100,
             .step = 10,
@@ -37,46 +40,82 @@ menu_item_t menu_items[] = {
         .get_value = &PL9823_get_speed,
         .action = &action_speed
     },
-    // {
-    //     .label = "4.Notification",
-    //     .get_value = NULL,
-    //     .action = &action_notify
-    // },
-    // {
-    //     .label = "5.Auto sleep",
-    //     .get_value = NULL,
-    //     .action = &action_sleep
-    // },
-    // {
-    //     .label = "6.DispAutoOff",
-    //     .get_value = NULL,
-    //     .action = &action_display_off
-    // },
-    // {
-    //     .label = "7.AI Realtime",
-    //     .get_value = NULL,
-    //     .action = &action_AI
-    // },
-    // {
-    //     .label = "8.Volume",
-    //     .get_value = NULL,
-    //     .action = &action_volume
-    // },
-    // {
-    //     .label = "9.Wifi",
-    //     .get_value = NULL,
-    //     .action = &action_wifi
-    // },
-    // {
-    //     .label = "10.Check Update",
-    //     .get_value = NULL,
-    //     .action = &action_check_update
-    // },
-    // {
-    //     .label = "11.Reset Device",
-    //     .get_value = NULL,
-    //     .action = &action_factory_reset
-    // }
+    {
+        .label = "4.Notification",
+        .type  = SETTING_TYPE_TOGGLE,
+        .value_range = {
+            .min_value = RESET,
+            .max_value = SET,
+            .step = 1,
+        },
+        .get_value = &SysData_get_notification_setting,
+        .action = &action_notify
+    },
+    {
+        .label = "5.Auto sleep",
+        .type  = SETTING_TYPE_TOGGLE,
+        .value_range = {
+            .min_value = RESET,
+            .max_value = SET,
+            .step = 1,
+        },
+        .get_value = &SysData_get_auto_sleep_setting,
+        .action = &action_sleep
+    },
+    {
+        .label = "6.DispAutoOff",
+        .type  = SETTING_TYPE_TOGGLE,
+        .value_range = {
+            .min_value = RESET,
+            .max_value = SET,
+            .step = 1,
+        },
+        .get_value = &SysData_get_disp_auto_off_setting,
+        .action = &action_display_off
+    },
+    {
+        .label = "7.AI Realtime",
+        .type  = SETTING_TYPE_TOGGLE,
+        .value_range = {
+            .min_value = RESET,
+            .max_value = SET,
+            .step = 1,
+        },
+        .get_value = &SysData_get_AI_realtime_setting,
+        .action = &action_AI
+    },
+    {
+        .label = "8.Volume",
+        .type  = SETTING_TYPE_RANGE,
+        .value_range = {
+            .min_value = 0,
+            .max_value = 100,
+            .step = 10,
+        },
+        .get_value = &SysData_get_volume_setting,
+        .action = &action_volume
+    },
+    {
+        .label = "9.Wifi",
+        .type  = SETTING_TYPE_TOGGLE,
+        .value_range = {
+            .min_value = RESET,
+            .max_value = SET,
+            .step = 1,
+        },
+        .get_value = &SysData_get_wifi_setting,
+        .action = &action_wifi
+    },
+    {
+        .label = "10.Check Update",
+        // .get_value = NULL,
+        .action = &action_check_update
+    },
+    {
+        .label = "11.Reset Device",
+        // .get_value = NULL,
+        .action = &action_factory_reset
+    }
 };
 
 static menu_state_t menu = {
@@ -107,41 +146,103 @@ uint8_t get_menu_count(void) {
     return MENU_COUNT;
 }
 
-void action_mode(void) {
-     /* xử lý Chế độ */ 
-    command_packet_t command;
-    command.commandID = CMD_LED_MODE_ID;
-    command.commandData[0] = temp_value;
-    xQueueSend(received_commandHandle, &command, portMAX_DELAY);
+void send_command(command_t cmd_id, const uint8_t *data, uint8_t length) {
+    command_packet_t command = {0};
+    command.commandID = cmd_id;
+    command.length = length;
+
+    if ((data != NULL) && (length > 0))
+    {
+        memcpy(command.commandData,
+               data,
+               length);
+    }
+
+    xQueueSend(received_commandHandle,
+                      &command,
+                      portMAX_DELAY);
 }
 
-void action_brightness(void) { 
-    /* chỉnh độ sáng */ 
-    command_packet_t command;
-    command.commandID = CMD_LED_BRIGHTNESS_ID;
-    command.commandData[0] = temp_value;
-    xQueueSend(received_commandHandle, &command, portMAX_DELAY);
+void action_mode(void)
+{
+    send_command(
+        CMD_LED_MODE_ID,
+        &temp_value,
+        1
+    );
 }
 
-void action_speed(void) { 
-    /* chỉnh tốc độ */ 
-    command_packet_t command;
-    command.commandID = CMD_LED_SPEED_ID;
-    command.commandData[0] = temp_value;
-    xQueueSend(received_commandHandle, &command, portMAX_DELAY);
+void action_brightness(void)
+{
+    send_command(
+        CMD_LED_BRIGHTNESS_ID,
+        &temp_value,
+        1
+    );
 }
 
-void action_notify(void) { /* bật/tắt thông báo */ }
+void action_speed(void)
+{
+    send_command(
+        CMD_LED_SPEED_ID,
+        &temp_value,
+        1
+    );
+}
 
-void action_sleep(void) { /* tự động ngủ */ }
+void action_notify(void)
+{
+    send_command(
+        CMD_SYSTEM_NOTIFICATION_ID,
+        &temp_value,
+        1
+    );
+}
 
-void action_display_off(void) { /* tắt màn */ }
+void action_sleep(void)
+{
+    send_command(
+        CMD_SYSTEM_AUTO_SLEEP_ID,
+        &temp_value,
+        1
+    );
+}
 
-void action_AI(void) { /* AI realtime */ }
+void action_display_off(void)
+{
+    send_command(
+        CMD_LCD_DISP_AUTO_OFF_ID,
+        &temp_value,
+        1
+    );
+}
 
-void action_volume(void) { /* âm lượng */ }
+void action_AI(void)
+{
+    send_command(
+        CMD_SYSTEM_AI_REALTIME_ID,
+        &temp_value,
+        1
+    );
+}
 
-void action_wifi(void) { /* wifi */ }
+void action_volume(void)
+{
+    send_command(
+        CMD_SYSTEM_VOLUME_ID,
+        &temp_value,
+        1
+    );
+}
+
+void action_wifi(void)
+{
+    send_command(
+        CMD_SYSTEM_WIFI_ID,
+        &temp_value,
+        1
+    );
+}
 
 void action_check_update(void) { /* cập nhật */ }
 
@@ -293,13 +394,23 @@ void frame_render(void)
     );
 }
 
-static void render_setting_value(uint8_t value)
+static void render_setting_value(uint8_t value, setting_type_t type )
 {
-    uint8_t y = (menu.selected_option % VISIBLE_LINES) * LINE_HEIGHT;
-
     char str[5];
-    sprintf(str, "%d", value);
+    switch (type) {
+        case SETTING_TYPE_TOGGLE:
+            strcpy(str, value ? "ON" : "OFF");
+            break;
 
+        case SETTING_TYPE_RANGE:
+            sprintf(str, "%d", value);
+            break;
+
+        case SETTING_TYPE_ENUM:
+            break;
+    }
+
+    uint8_t y = (menu.selected_option % VISIBLE_LINES) * LINE_HEIGHT;
     SH1106_Clear_Range(
         SH1106_WIDTH - 24,
         y,
@@ -325,7 +436,7 @@ static void render_setting_value(uint8_t value)
 void active_setting_render(void)
 {   
     temp_value = menu_items[menu.selected_option].get_value();
-    render_setting_value(temp_value);
+    render_setting_value(temp_value, menu_items[menu.selected_option].type);
 }
 
 void deactive_setting_render(void) {
@@ -348,7 +459,7 @@ void increase_value_setting_render(void)
         menu_items[menu.selected_option].value_range.max_value,
         menu_items[menu.selected_option].value_range.step);
 
-    render_setting_value(temp_value);
+    render_setting_value(temp_value, menu_items[menu.selected_option].type);
 }
 
 void decrease_value_setting_render(void)
@@ -358,7 +469,7 @@ void decrease_value_setting_render(void)
         menu_items[menu.selected_option].value_range.min_value,
         menu_items[menu.selected_option].value_range.step);
 
-    render_setting_value(temp_value);
+    render_setting_value(temp_value, menu_items[menu.selected_option].type);
 }
 
 void update_ambient_info(void) {

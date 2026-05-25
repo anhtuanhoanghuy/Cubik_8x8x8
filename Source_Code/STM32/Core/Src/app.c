@@ -41,9 +41,11 @@ void sensor_task_handler(void)
                 (dht22.humidity    != last_humidity))
             {
                 command_packet_t command = {0};
-                cmd_lcd_t cmd_tx = CMD_LCD_RENDER_UPDATE_AMBIENT;
-                xQueueSend(lcd_commandHandle, &cmd_tx, pdMS_TO_TICKS(10));
-                command.commandID = CMD_AMBIENT_UPDATE_ID;
+                if(get_current_page() == HOME_PAGE) {
+                    cmd_lcd_t cmd_tx = CMD_LCD_RENDER_UPDATE_AMBIENT;
+                    xQueueSend(lcd_commandHandle, &cmd_tx, pdMS_TO_TICKS(10));
+                }
+                command.commandID = CMD_SENSOR_AMBIENT_UPDATE_ID;
                 command.commandData[0] = dht22.temperature;
                 command.commandData[1] = dht22.humidity;
                 xQueueSend(received_commandHandle, &command, pdMS_TO_TICKS(10));
@@ -188,6 +190,7 @@ void ui_task_handler(void)
     while (1)
     {
         xQueueReceive(input_Handle, &event, portMAX_DELAY);
+        xTimerReset(go_to_home_timer, 0);
         page_t current_page = get_current_page();
         menu_state_t *menu = get_menu();
         uint8_t old_top = menu->top;
@@ -367,4 +370,12 @@ void monitoring_task_handler(void)
         xEventGroupSetBits(uart_event_group, UART_EVENT_TX_REQUEST);
         vTaskDelayUntil(&xMonitoringTime, pdMS_TO_TICKS(5000));
     }
+}
+
+void goToHomePageCb(void) {
+    cmd_lcd_t cmd_tx;
+    set_current_page(HOME_PAGE);
+    cmd_tx = CMD_LCD_RENDER_FULL_PAGE;
+    xQueueSend(lcd_commandHandle, &cmd_tx, pdMS_TO_TICKS(10));
+    xTimerStop(go_to_home_timer, 0);
 }

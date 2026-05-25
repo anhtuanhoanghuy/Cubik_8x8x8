@@ -40,8 +40,17 @@ typedef struct {
     uint8_t step;
 } value_range_t;
 
+typedef enum
+{
+    SETTING_TYPE_TOGGLE = 0x00,
+    SETTING_TYPE_RANGE,
+    SETTING_TYPE_ENUM
+
+} setting_type_t;
+
 typedef struct {
     const char *label;
+    setting_type_t type;
     menu_get_value_func_t get_value;
     value_range_t value_range;
     menu_action_func_t action;

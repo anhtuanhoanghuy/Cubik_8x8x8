@@ -9,5 +9,6 @@ void input_task_handler(void);
 void ui_task_handler(void);
 void lcd_task_handler(void);
 void monitoring_task_handler(void);
+void goToHomePageCb(void);
 
 #endif
