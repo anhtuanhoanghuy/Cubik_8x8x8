@@ -1,0 +1,81 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6">
+  <diagram name="Trang-1" id="zysH8gwVXd9wHFdVsan8">
+    <mxGraphModel dx="2084" dy="1460" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-57" edge="1" parent="1" source="DN1QFX1ujQFbN8PtV7Ew-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="DN1QFX1ujQFbN8PtV7Ew-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-58" edge="1" parent="1" source="DN1QFX1ujQFbN8PtV7Ew-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="DN1QFX1ujQFbN8PtV7Ew-36">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-59" edge="1" parent="1" source="DN1QFX1ujQFbN8PtV7Ew-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="DN1QFX1ujQFbN8PtV7Ew-51">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-60" edge="1" parent="1" source="DN1QFX1ujQFbN8PtV7Ew-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="DN1QFX1ujQFbN8PtV7Ew-30">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1330" y="380" />
+              <mxPoint x="1130" y="380" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-61" edge="1" parent="1" source="DN1QFX1ujQFbN8PtV7Ew-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="DN1QFX1ujQFbN8PtV7Ew-33">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-62" edge="1" parent="1" source="DN1QFX1ujQFbN8PtV7Ew-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="DN1QFX1ujQFbN8PtV7Ew-53">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="ESP32" vertex="1">
+          <mxGeometry height="60" width="120" x="1270" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-27" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Wifi task" vertex="1">
+          <mxGeometry height="200" width="220" x="460" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-29" parent="DN1QFX1ujQFbN8PtV7Ew-27" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="MEDIUM" vertex="1">
+          <mxGeometry height="30" width="90" x="60" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-30" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="BLE task" vertex="1">
+          <mxGeometry height="200" width="220" x="1020" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-32" parent="DN1QFX1ujQFbN8PtV7Ew-30" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="MEDIUM HIGH" vertex="1">
+          <mxGeometry height="30" width="90" x="65" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-33" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Control task" vertex="1">
+          <mxGeometry height="200" width="200" x="1330" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-35" parent="DN1QFX1ujQFbN8PtV7Ew-33" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="LOW" vertex="1">
+          <mxGeometry height="30" width="90" x="55" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-66" parent="DN1QFX1ujQFbN8PtV7Ew-33" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="- Process command&lt;div&gt;- Response&lt;/div&gt;&lt;div&gt;- Push to queue&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="140" x="20" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-36" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="UART task" vertex="1">
+          <mxGeometry height="200" width="200" x="1860" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-38" parent="DN1QFX1ujQFbN8PtV7Ew-36" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="MEDIUM" vertex="1">
+          <mxGeometry height="30" width="90" x="55" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-65" parent="DN1QFX1ujQFbN8PtV7Ew-36" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="- Decode command&lt;div&gt;- Convert command&lt;/div&gt;&lt;div&gt;- Push to queue&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="140" x="20" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-51" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="MQTT task" vertex="1">
+          <mxGeometry height="200" width="220" x="740" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-53" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="ISR UART&amp;nbsp;" vertex="1">
+          <mxGeometry height="200" width="200" x="1620" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-55" parent="DN1QFX1ujQFbN8PtV7Ew-53" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="MEDIUM HIGH" vertex="1">
+          <mxGeometry height="30" width="90" x="55" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-63" parent="DN1QFX1ujQFbN8PtV7Ew-53" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="- push command to queue" vertex="1">
+          <mxGeometry height="30" width="160" x="20" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="DN1QFX1ujQFbN8PtV7Ew-64" parent="DN1QFX1ujQFbN8PtV7Ew-53" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="DMA + IDLE + ring bufer" vertex="1">
+          <mxGeometry height="30" width="140" x="30" y="75" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

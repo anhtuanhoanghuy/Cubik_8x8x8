@@ -7,8 +7,7 @@
 #define OFF         0
 
 #define MIN_PACKAGE_LENGTH 4
-#define WIFI_BLE_DATA_MAX_PACKET_LENGTH 255
-
+#define WIFI_BLE_DATA_MAX_PACKET_LENGTH 32
 typedef struct {
     uint8_t device_name[30];
     uint8_t device_tag[30];
