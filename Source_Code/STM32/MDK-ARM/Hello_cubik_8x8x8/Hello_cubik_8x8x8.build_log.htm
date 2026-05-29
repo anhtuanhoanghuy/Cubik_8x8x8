@@ -1,0 +1,87 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.43.1.0
+Copyright (C) 2025 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Anh Tuan hoanghuyanhtuan@outlook.com, fpt, LIC=JL28G-VPT32-BSJYX-H7UD7-9CMLV-U6J1B
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Plus  Version: 5.43.0.0
+Toolchain Path:  C:\Users\hoang\AppData\Local\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin
+C Compiler:      Armcc.exe V5.06 update 7 (build 960)
+Assembler:       Armasm.exe V5.06 update 7 (build 960)
+Linker/Locator:  ArmLink.exe V5.06 update 7 (build 960)
+Library Manager: ArmAr.exe V5.06 update 7 (build 960)
+Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
+CPU DLL:         SARMCM3.DLL V5.43.0.0
+Dialog DLL:      DCM.DLL V1.17.5.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.3.1.0
+Dialog DLL:      TCM.DLL V1.56.6.0
+ 
+<h2>Project:</h2>
+D:\Code\Cubik_8x8x8\Source_Code\STM32\MDK-ARM\Hello_cubik_8x8x8.uvprojx
+Project File Date:  05/06/2026
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Users\hoang\AppData\Local\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin'
+Build target 'Hello_cubik_8x8x8'
+Note: source file '../Core/Src/system_stm32f1xx.c' - object file renamed from 'Hello_cubik_8x8x8\system_stm32f1xx.o' to 'Hello_cubik_8x8x8\system_stm32f1xx_1.o'.
+compiling menu_control.c...
+..\Core\Src\menu_control.c(137): warning:  #223-D: function "sprintf" declared implicitly
+      sprintf(buffer, "%d*C", value);
+..\Core\Src\menu_control.c(141): warning:  #223-D: function "count_digits" declared implicitly
+      SH1106_GotoXY(NOTIFY_DIALOG_POSITION_X - count_digits(value), NOTIFY_DIALOG_POSITION_Y);
+..\Core\Src\menu_control.c(279): warning:  #223-D: function "sprintf" declared implicitly
+      sprintf(str, "%d", value);
+..\Core\Src\menu_control.c(340): warning:  #1-D: last line of file ends without a newline
+  }
+..\Core\Src\menu_control.c: 4 warnings, 0 errors
+compiling app.c...
+..\Core\Src\app.c(268): warning:  #223-D: function "frame_render" declared implicitly
+                  frame_render();
+..\Core\Src\app.c(280): warning:  #223-D: function "decrease_value_setting_render" declared implicitly
+                  decrease_value_setting_render();
+..\Core\Src\app.c(286): warning:  #1-D: last line of file ends without a newline
+  }
+..\Core\Src\app.c(254): warning:  #177-D: variable "value"  was declared but never referenced
+      int value = 0;
+..\Core\Src\app.c(255): warning:  #177-D: variable "buffer"  was declared but never referenced
+      char buffer[6];
+..\Core\Src\app.c(256): warning:  #177-D: variable "buffer1"  was declared but never referenced
+      char buffer1[4];
+..\Core\Src\app.c(257): warning:  #177-D: variable "buffer2"  was declared but never referenced
+      char buffer2[30];
+..\Core\Src\app.c: 7 warnings, 0 errors
+linking...
+Program Size: Code=30468 RO-data=10940 RW-data=444 ZI-data=17324  
+FromELF: creating hex file...
+"Hello_cubik_8x8x8\Hello_cubik_8x8x8.axf" - 0 Error(s), 11 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                https://www.keil.com/pack/ARM.CMSIS.6.3.0.pack
+                ARM::CMSIS@6.3.0
+                CMSIS (Common Microcontroller Software Interface Standard)
+   * Component: CORE Version: 6.2.0
+
+Package Vendor: Keil
+                https://www.keil.com/pack/Keil.STM32F1xx_DFP.2.4.1.pack
+                Keil::STM32F1xx_DFP@2.4.1
+                STMicroelectronics STM32F1 Series Device Support, Drivers and Examples
+
+<h2>Collection of Component include folders:</h2>
+  ./RTE/_Hello_cubik_8x8x8
+  C:/Users/hoang/AppData/Local/Arm/Packs/ARM/CMSIS/6.3.0/CMSIS/Core/Include
+  C:/Users/hoang/AppData/Local/Arm/Packs/Keil/STM32F1xx_DFP/2.4.1/Device/Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE@6.2.0
+      Include file:  CMSIS/Core/Include/tz_context.h
+Build Time Elapsed:  00:00:01
+</pre>
+</body>
+</html>

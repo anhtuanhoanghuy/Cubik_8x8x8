@@ -1,0 +1,13 @@
+hello_cubik_8x8x8\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c
+hello_cubik_8x8x8\heap_4.o: C:\Users\hoang\AppData\Local\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdlib.h
+hello_cubik_8x8x8\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
+hello_cubik_8x8x8\heap_4.o: C:\Users\hoang\AppData\Local\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
+hello_cubik_8x8x8\heap_4.o: C:\Users\hoang\AppData\Local\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
+hello_cubik_8x8x8\heap_4.o: ../Core/Inc/FreeRTOSConfig.h
+hello_cubik_8x8x8\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
+hello_cubik_8x8x8\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
+hello_cubik_8x8x8\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
+hello_cubik_8x8x8\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3/portmacro.h
+hello_cubik_8x8x8\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
+hello_cubik_8x8x8\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
+hello_cubik_8x8x8\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h

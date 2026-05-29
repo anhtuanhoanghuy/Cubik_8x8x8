@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6">
   <diagram name="Trang-1" id="ShXuMjC0I8t31k8yDF35">
-    <mxGraphModel dx="1831" dy="683" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1756" dy="635" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -129,14 +129,14 @@
         <mxCell id="8BC8TP-pW5rQX7Ch0sgB-23" parent="8BC8TP-pW5rQX7Ch0sgB-21" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="&lt;div&gt;- Receive command from queue&lt;/div&gt;- Control LED mode&lt;div&gt;- Control LED brightness&lt;/div&gt;&lt;div&gt;- Control LED speed&lt;/div&gt;&lt;div&gt;- Control LED on/off&lt;/div&gt;" vertex="1">
           <mxGeometry height="30" width="180" x="20" y="55" as="geometry" />
         </mxCell>
-        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-58" parent="8BC8TP-pW5rQX7Ch0sgB-21" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="VERY HIGH" vertex="1">
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-58" parent="8BC8TP-pW5rQX7Ch0sgB-21" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="MEDIUM" vertex="1">
           <mxGeometry height="30" width="90" x="60" y="140" as="geometry" />
         </mxCell>
-        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-25" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Encoder/Button task" vertex="1">
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-25" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Input task" vertex="1">
           <mxGeometry height="200" width="220" x="-20" y="485" as="geometry" />
         </mxCell>
-        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-51" parent="8BC8TP-pW5rQX7Ch0sgB-25" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="- Decode direction&lt;div&gt;- Polling button state&lt;/div&gt;&lt;div&gt;- Push to queue&lt;/div&gt;" vertex="1">
-          <mxGeometry height="30" width="180" x="30" y="40" as="geometry" />
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-51" parent="8BC8TP-pW5rQX7Ch0sgB-25" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="&lt;div&gt;- Read encoder from Timer&lt;/div&gt;- Decode direction&lt;div&gt;- Push to queue&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="180" x="30" y="50" as="geometry" />
         </mxCell>
         <mxCell id="8BC8TP-pW5rQX7Ch0sgB-60" parent="8BC8TP-pW5rQX7Ch0sgB-25" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="MEDIUM HIGH" vertex="1">
           <mxGeometry height="30" width="90" x="65" y="145" as="geometry" />
@@ -186,7 +186,7 @@
         <mxCell id="8BC8TP-pW5rQX7Ch0sgB-44" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Monitoring task" vertex="1">
           <mxGeometry height="200" width="200" x="1820" y="490" as="geometry" />
         </mxCell>
-        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-45" parent="8BC8TP-pW5rQX7Ch0sgB-44" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="- Send monitoring data every 5 seconds" vertex="1">
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-45" parent="8BC8TP-pW5rQX7Ch0sgB-44" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="- Encode packet&lt;div&gt;- Send to queue every 5 seconds&lt;/div&gt;" vertex="1">
           <mxGeometry height="30" width="140" x="20" y="40" as="geometry" />
         </mxCell>
         <mxCell id="8BC8TP-pW5rQX7Ch0sgB-66" parent="8BC8TP-pW5rQX7Ch0sgB-44" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="LOW MEDIUM" vertex="1">
@@ -195,10 +195,10 @@
         <mxCell id="8BC8TP-pW5rQX7Ch0sgB-49" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="xQueueOverwrite" vertex="1">
           <mxGeometry height="30" width="60" x="340" y="575" as="geometry" />
         </mxCell>
-        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-50" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Encoder ISR" vertex="1">
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-50" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="GPIO ISR" vertex="1">
           <mxGeometry height="200" width="220" x="-270" y="485" as="geometry" />
         </mxCell>
-        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-27" parent="8BC8TP-pW5rQX7Ch0sgB-50" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="- Read encoder&lt;div&gt;- Push to queue&lt;/div&gt;" vertex="1">
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-27" parent="8BC8TP-pW5rQX7Ch0sgB-50" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="&lt;div&gt;- Read button state&lt;br&gt;&lt;div&gt;- Push to queue&lt;/div&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="30" width="140" x="30" y="40" as="geometry" />
         </mxCell>
         <mxCell id="8BC8TP-pW5rQX7Ch0sgB-53" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="UI task" vertex="1">
