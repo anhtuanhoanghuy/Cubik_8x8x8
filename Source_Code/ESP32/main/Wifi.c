@@ -40,6 +40,7 @@ static char  current_ssid[WIFI_SSID_MAX] = {0};
 static char  current_pass[WIFI_PASS_MAX] = {0};
 static int8_t current_rssi = -127;
 static bool wifi_config_from_user = false;
+
 /* =========================================================
  * EVENT HANDLER
  * ========================================================= */
