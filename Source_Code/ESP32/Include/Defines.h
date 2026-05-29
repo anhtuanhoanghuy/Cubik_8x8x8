@@ -1,6 +1,13 @@
 #if !defined (__DEFINES_H__)
 #define __DEFINES_H__
 
+#define PRIORITY_LOW            1
+#define PRIORITY_LOW_MEDIUM     2
+#define PRIORITY_MEDIUM         3
+#define PRIORITY_MEDIUM_HIGH    4
+#define PRIORITY_HIGH           5
+#define PRIORITY_VERY_HIGH      6
+
 #define ENABLE      1
 #define DISNABLE    0
 #define ON          1

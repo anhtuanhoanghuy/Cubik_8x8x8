@@ -7,6 +7,8 @@
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "nvs.h"
+#include "app.h"
+
 #include "Wifi.h"
 #include "WebServer.h"
 #include "Bluetooth.h"
@@ -22,6 +24,9 @@ TimerHandle_t debounce_timer;
 TimerHandle_t periodic_timer;
 System_Variable system_Variable = {0};
 
+void wifi_task(void) {
+    wifi_task_handler();
+}
 static void console_task(void *arg)
 {
     int key;
@@ -102,7 +107,14 @@ void app_main(void)
     mqtt_app_start();
     /* Không AP – không Web */
 
-
+    xTaskCreate(
+        wifi_task,
+        "wifi_task",
+        configMINIMAL_STACK_SIZE * 2,
+        NULL,
+        PRIORITY_MEDIUM,
+        NULL
+    )
     xTaskCreate(
         console_task,
         "console",
