@@ -1,0 +1,219 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6">
+  <diagram name="Trang-1" id="ShXuMjC0I8t31k8yDF35">
+    <mxGraphModel dx="1756" dy="635" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-10" edge="1" parent="1" source="8BC8TP-pW5rQX7Ch0sgB-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="8BC8TP-pW5rQX7Ch0sgB-8">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="540" y="200" />
+              <mxPoint x="-470" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-15" connectable="0" parent="8BC8TP-pW5rQX7Ch0sgB-10" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="PWM" vertex="1">
+          <mxGeometry relative="1" x="0.7111" y="2" as="geometry">
+            <mxPoint x="-60" y="38" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-11" edge="1" parent="1" source="8BC8TP-pW5rQX7Ch0sgB-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="8BC8TP-pW5rQX7Ch0sgB-6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="540" y="200" />
+              <mxPoint x="-40" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-16" connectable="0" parent="8BC8TP-pW5rQX7Ch0sgB-11" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="GPIO" vertex="1">
+          <mxGeometry relative="1" x="0.531" y="1" as="geometry">
+            <mxPoint x="-67" y="39" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-12" edge="1" parent="1" source="8BC8TP-pW5rQX7Ch0sgB-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="8BC8TP-pW5rQX7Ch0sgB-7">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="540" y="200" />
+              <mxPoint x="390" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-18" connectable="0" parent="8BC8TP-pW5rQX7Ch0sgB-12" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="One wire" vertex="1">
+          <mxGeometry relative="1" x="0.1" as="geometry">
+            <mxPoint x="-34" y="50" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-13" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="540" y="200" />
+              <mxPoint x="920" y="200" />
+            </Array>
+            <mxPoint x="540" y="170" as="sourcePoint" />
+            <mxPoint x="920" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-19" connectable="0" parent="8BC8TP-pW5rQX7Ch0sgB-13" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="SPI" vertex="1">
+          <mxGeometry relative="1" x="0.6581" as="geometry">
+            <mxPoint y="37" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-14" edge="1" parent="1" source="8BC8TP-pW5rQX7Ch0sgB-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="8BC8TP-pW5rQX7Ch0sgB-9">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="540" y="200" />
+              <mxPoint x="1160" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-20" connectable="0" parent="8BC8TP-pW5rQX7Ch0sgB-14" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="UART" vertex="1">
+          <mxGeometry relative="1" x="0.6936" y="-3" as="geometry">
+            <mxPoint x="15" y="27" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="STM32" vertex="1">
+          <mxGeometry height="60" width="120" x="480" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-33" edge="1" parent="1" source="8BC8TP-pW5rQX7Ch0sgB-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="8BC8TP-pW5rQX7Ch0sgB-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-56" edge="1" parent="1" source="8BC8TP-pW5rQX7Ch0sgB-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="8BC8TP-pW5rQX7Ch0sgB-53">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="LCD" vertex="1">
+          <mxGeometry height="60" width="120" x="860" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-26" edge="1" parent="1" source="8BC8TP-pW5rQX7Ch0sgB-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="8BC8TP-pW5rQX7Ch0sgB-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-52" edge="1" parent="1" source="8BC8TP-pW5rQX7Ch0sgB-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="8BC8TP-pW5rQX7Ch0sgB-50">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Encoder/Button" vertex="1">
+          <mxGeometry height="60" width="120" x="-100" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-30" edge="1" parent="1" source="8BC8TP-pW5rQX7Ch0sgB-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="8BC8TP-pW5rQX7Ch0sgB-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Sensor" vertex="1">
+          <mxGeometry height="60" width="120" x="330" y="305" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-22" edge="1" parent="1" source="8BC8TP-pW5rQX7Ch0sgB-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="8BC8TP-pW5rQX7Ch0sgB-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="LED" vertex="1">
+          <mxGeometry height="60" width="120" x="-530" y="305" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-37" edge="1" parent="1" source="8BC8TP-pW5rQX7Ch0sgB-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="8BC8TP-pW5rQX7Ch0sgB-34">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1160" y="360" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-46" edge="1" parent="1" source="8BC8TP-pW5rQX7Ch0sgB-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="8BC8TP-pW5rQX7Ch0sgB-40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-47" edge="1" parent="1" source="8BC8TP-pW5rQX7Ch0sgB-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="8BC8TP-pW5rQX7Ch0sgB-42">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-48" edge="1" parent="1" source="8BC8TP-pW5rQX7Ch0sgB-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="8BC8TP-pW5rQX7Ch0sgB-44">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="ESP32" vertex="1">
+          <mxGeometry height="60" width="120" x="1100" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-21" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="LED task" vertex="1">
+          <mxGeometry height="200" width="220" x="-580" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-23" parent="8BC8TP-pW5rQX7Ch0sgB-21" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="&lt;div&gt;- Receive command from queue&lt;/div&gt;- Control LED mode&lt;div&gt;- Control LED brightness&lt;/div&gt;&lt;div&gt;- Control LED speed&lt;/div&gt;&lt;div&gt;- Control LED on/off&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="180" x="20" y="55" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-58" parent="8BC8TP-pW5rQX7Ch0sgB-21" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="MEDIUM" vertex="1">
+          <mxGeometry height="30" width="90" x="60" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-25" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Input task" vertex="1">
+          <mxGeometry height="200" width="220" x="-20" y="485" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-51" parent="8BC8TP-pW5rQX7Ch0sgB-25" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="&lt;div&gt;- Read encoder from Timer&lt;/div&gt;- Decode direction&lt;div&gt;- Push to queue&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="180" x="30" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-60" parent="8BC8TP-pW5rQX7Ch0sgB-25" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="MEDIUM HIGH" vertex="1">
+          <mxGeometry height="30" width="90" x="65" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-28" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Sensor task" vertex="1">
+          <mxGeometry height="200" width="200" x="290" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-29" parent="8BC8TP-pW5rQX7Ch0sgB-28" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="- Read and convert sensor every 5 seconds&lt;div&gt;- Push to queue&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="140" x="10" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-59" parent="8BC8TP-pW5rQX7Ch0sgB-28" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="LOW" vertex="1">
+          <mxGeometry height="30" width="90" x="55" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-31" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="LCD task" vertex="1">
+          <mxGeometry height="200" width="200" x="820" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-32" parent="8BC8TP-pW5rQX7Ch0sgB-31" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="- Render to LCD" vertex="1">
+          <mxGeometry height="30" width="140" x="20" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-63" parent="8BC8TP-pW5rQX7Ch0sgB-31" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="MEDIUM" vertex="1">
+          <mxGeometry height="30" width="90" x="55" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-34" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="ISR UART&amp;nbsp;" vertex="1">
+          <mxGeometry height="200" width="200" x="1060" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-35" parent="8BC8TP-pW5rQX7Ch0sgB-34" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="- push command to queue" vertex="1">
+          <mxGeometry height="30" width="160" x="20" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-40" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="UART task" vertex="1">
+          <mxGeometry height="200" width="200" x="1310" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-41" parent="8BC8TP-pW5rQX7Ch0sgB-40" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="- Decode command&lt;div&gt;- Convert command&lt;/div&gt;&lt;div&gt;- Push to queue&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="140" x="20" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-64" parent="8BC8TP-pW5rQX7Ch0sgB-40" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="HIGH" vertex="1">
+          <mxGeometry height="30" width="90" x="45" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-42" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Control task" vertex="1">
+          <mxGeometry height="200" width="200" x="1570" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-43" parent="8BC8TP-pW5rQX7Ch0sgB-42" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="- Process command&lt;div&gt;- Response&lt;/div&gt;&lt;div&gt;- Push to queue&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="140" x="20" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-65" parent="8BC8TP-pW5rQX7Ch0sgB-42" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="HIGH" vertex="1">
+          <mxGeometry height="30" width="90" x="45" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-44" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Monitoring task" vertex="1">
+          <mxGeometry height="200" width="200" x="1820" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-45" parent="8BC8TP-pW5rQX7Ch0sgB-44" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="- Encode packet&lt;div&gt;- Send to queue every 5 seconds&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="140" x="20" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-66" parent="8BC8TP-pW5rQX7Ch0sgB-44" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="LOW MEDIUM" vertex="1">
+          <mxGeometry height="30" width="90" x="55" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-49" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="xQueueOverwrite" vertex="1">
+          <mxGeometry height="30" width="60" x="340" y="575" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-50" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="GPIO ISR" vertex="1">
+          <mxGeometry height="200" width="220" x="-270" y="485" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-27" parent="8BC8TP-pW5rQX7Ch0sgB-50" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="&lt;div&gt;- Read button state&lt;br&gt;&lt;div&gt;- Push to queue&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="140" x="30" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-53" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="UI task" vertex="1">
+          <mxGeometry height="200" width="200" x="580" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-54" parent="8BC8TP-pW5rQX7Ch0sgB-53" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="- Receive input&lt;div&gt;- Keep data, state&lt;/div&gt;&lt;div&gt;- Control display&lt;/div&gt;&lt;div&gt;- Push to queue&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="140" x="30" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-67" parent="8BC8TP-pW5rQX7Ch0sgB-53" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="MEDIUM HIGH" vertex="1">
+          <mxGeometry height="30" width="90" x="55" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="8BC8TP-pW5rQX7Ch0sgB-57" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="DMA + IDLE + ring bufer" vertex="1">
+          <mxGeometry height="30" width="140" x="1090" y="560" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

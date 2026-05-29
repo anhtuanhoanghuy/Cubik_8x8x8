@@ -1,0 +1,12 @@
+Private-key:
+openssl ecparam -genkey -name prime256v1 -out private.pem
+
+public key:
+openssl ec -in private.pem -pubout -out public.pem
+
+Check private key
+openssl ec -in private.pem -check
+
+Check public key
+openssl ec -in public.pem -pubin -text -noout
+
