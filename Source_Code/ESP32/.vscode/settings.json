@@ -1,3 +1,6 @@
 {
-    "terminal.integrated.defaultProfile.windows": "ESP-IDF CMD"
+    "terminal.integrated.defaultProfile.windows": "ESP-IDF CMD",
+    "idf.currentSetup": "C:/Espressif/frameworks/esp-idf-v5.2.6/",
+    "idf.flashType": "UART",
+    "idf.portWin": "COM12"
 }

@@ -1,5 +1,5 @@
 # Quét tất cả file .c trong thư mục main/
-file(GLOB COMPONENT_SRCS "*.c")
+file(GLOB COMPONENT_SRCS "uart.c" "WebServer.c" "*.c")
 
 # Đăng ký component với ESP-IDF
 idf_component_register(
@@ -16,4 +16,5 @@ idf_component_register(
         json
         bt
         mqtt
+        driver
 )
