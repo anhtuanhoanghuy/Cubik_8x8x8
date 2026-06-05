@@ -41,6 +41,8 @@ uint8_t encode_monitoring_data(uart_tx_packet_t *monitoring_data, const global_s
 
     monitoring_data->data[VOLUME_IDX]         = data->volume;
 
+    
+
     // ===== CHECKSUM =====
 
     monitoring_data->data[CHECKSUM_IDX] = calculate_checksum(&monitoring_data->data[COMMAND_ID], monitoring_data->data[PAYLOAD_LENGTH] + 2);

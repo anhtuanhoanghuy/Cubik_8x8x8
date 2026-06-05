@@ -13,12 +13,14 @@ static const char *TAG = "DATA_RECEIVED";
 extern QueueHandle_t wifi_ble_rx_queue; 
 extern TimerHandle_t debounce_timer;
 
-bool validateChecksum(const uint8_t *data, uint8_t len, uint8_t checksum) {
+checksum_status_t validateChecksum(command_packet_t *cmd, uint8_t checksum) {
     uint8_t calc_checksum = 0;
-    for (uint8_t i = 0; i < len; i++) {
-        calc_checksum^= data[i];
+    calc_checksum ^= cmd->commandID;
+    calc_checksum ^= cmd->length;
+    for (uint8_t i = 0; i < cmd->length; i++) {
+        calc_checksum ^= cmd->commandData[i];
     }
-    return calc_checksum == checksum;
+    return calc_checksum == checksum ? CHECKSUM_OK : CHECKSUM_ERROR;
 }
 
 uint8_t decode_data(wifi_ble_command_t *cmd, const uint8_t *data_received, uint16_t packet_length) {
@@ -37,8 +39,12 @@ uint8_t decode_data(wifi_ble_command_t *cmd, const uint8_t *data_received, uint1
             return INVALID_ATTR_VALUE_LEN;
         } 
 
+        uint8_t calc_checksum = 0;
+        for (uint8_t i = 0; i < packet_length - 1; i++) {
+            calc_checksum^= data_received[i];
+        }
         // Validate Checksum
-        if (!validateChecksum(data_received, packet_length - 1, data_received[packet_length - 1])) {         
+        if (data_received[packet_length - 1] != calc_checksum) {         
             return MISTAKE_DATA;
         } 
         memcpy(cmd->data,&data_received[3],cmd->len);
