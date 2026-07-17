@@ -10,10 +10,12 @@
 #include "driver/gpio.h"
 
 #define UART_PORT UART_NUM_2
-#define UART_TX_REQUEST 0x0A
-#define UART_TX_COMPLETE 0x0B
-#define UART_DATA_MAX_PACKET_LENGTH 128
-#define UART_TX_MAX_SIZE 128
+#define UART_EVENT_RX             UART_DATA
+#define UART_EVENT_TX_REQUEST     0x0A
+#define UART_EVENT_TX_COMPLETE    0x0B
+#define UART_EVENT_OVERFLOW       UART_FIFO_OVF
+#define DATA_MAX_PACKET_LENGTH 128
+
 typedef enum {
     UART_PARSER_SUCCESS = 0,
     UART_PARSER_FAILURE,
@@ -30,7 +32,7 @@ typedef enum {
 typedef struct {
     uint8_t commandID;
     uint8_t length;
-    uint8_t commandData[UART_DATA_MAX_PACKET_LENGTH];
+    uint8_t commandData[DATA_MAX_PACKET_LENGTH];
 } command_packet_t;
 
 typedef struct {
@@ -41,14 +43,13 @@ typedef struct {
 
 typedef struct {
     uint8_t size;
-    uint8_t data[UART_TX_MAX_SIZE];
+    uint8_t data[DATA_MAX_PACKET_LENGTH];
 } uart_tx_packet_t;
 
 extern TaskHandle_t uart_task_t;
 extern QueueHandle_t received_eventHandle;
 extern QueueHandle_t received_commandHandle;
 extern QueueHandle_t transmit_Handle;
-extern EventGroupHandle_t uart_event_group;
 extern volatile bool uart_tx_busy;
 
 void uart_init(void);
@@ -56,6 +57,6 @@ void uart_init(void);
 UART_Parser_Status_t parse_byte(parser_context_t *, uint8_t);
 
 void parser_reset(parser_context_t *);
-
+void send_uart_packet(uart_tx_packet_t *);
 
 #endif

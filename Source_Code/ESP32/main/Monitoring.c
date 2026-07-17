@@ -5,17 +5,15 @@
 #include "Utils.h"
 #include "Defines.h"
 
-extern TimerHandle_t periodic_timer;
-extern System_Variable system_Variable;
-
-int mqtt_monitoring(const char *data, uint16_t len) {
+int send_mqtt(type_t type, const char *data, uint16_t len) {
   if (getMQTTClient() == NULL) {
     ESP_LOGE("MQTT", "MQTT client not initialized");
     return -1;
   }
    int msg_id = esp_mqtt_client_publish(
         getMQTTClient(),
-        topic_monitoring,
+        type == MONITORING ? 
+        topic_monitoring : topic_command,
         data,
         len,
         1,                    // QoS
@@ -28,12 +26,4 @@ int mqtt_monitoring(const char *data, uint16_t len) {
   }
   
   return msg_id;
-}
-
-void publish_monitoring_callback(TimerHandle_t xTimer)
-{
-  mqtt_monitoring((char*)encode_monitoring(&system_Variable),sizeof(System_Variable) + 3);
-  if (xTimer != periodic_timer) {
-    xTimerReset(periodic_timer,0);
-  }
 }

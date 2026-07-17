@@ -15,7 +15,6 @@
 static const char *TAG = "BLUETOOTH";
 static ble_state_t ble_state = BLE_STATE_OFF;
 static uint16_t conn_handle = BLE_HS_CONN_HANDLE_NONE;
-extern QueueHandle_t wifi_ble_rx_queue;
 static uint8_t BLE_tx_buffer[256] = {0};
 /* =========================================================
  * FORWARD DECLARATIONS
@@ -77,20 +76,20 @@ static int gatt_svr_chr_access(uint16_t conn_handle, uint16_t attr_handle,
             uint16_t total_len = OS_MBUF_PKTLEN(ctxt->om);
             os_mbuf_copydata(ctxt->om, 0, total_len, data_received);
 
-        // ---------------------------------------------------------
-        uint8_t buffer[256];
-        os_mbuf_copydata(ctxt->om, 0, total_len, buffer);
-        printf("Packet: ");
-        for (int i = 0; i < total_len; i++) {
-            printf("%02X ", buffer[i]);
-        }
-        printf("\n");
-        // ---------------------------------------------------------
-            wifi_ble_command_t cmd = {0};
-            if (decode_data(&cmd, data_received, total_len) == DATA_VALID){
+            // ---------------------------------------------------------
+            uint8_t buffer[256];
+            os_mbuf_copydata(ctxt->om, 0, total_len, buffer);
+            printf("Packet: ");
+            for (int i = 0; i < total_len; i++) {
+                printf("%02X ", buffer[i]);
+            }
+            printf("\n");
+            // ---------------------------------------------------------
+            command_packet_t cmd = {0};
+            if (build_command_packet(&cmd, data_received, total_len) == DATA_VALID){
                 // Đẩy sang task xử lý
-                xQueueSendFromISR(wifi_ble_rx_queue, &cmd, NULL);
-                ESP_LOGI(TAG, "BLE receive:%d bytes", total_len);  
+                ESP_LOGI(TAG, "BLE received:%d bytes", total_len);  
+                xQueueSendFromISR(received_commandHandle, &cmd, NULL);
                 // Return ngay!
                 return 0;
             }
@@ -164,6 +163,7 @@ static void ble_on_sync(void)
         ESP_LOGI(TAG, "📍 BLE MAC: %02X:%02X:%02X:%02X:%02X:%02X",
                  addr[5], addr[4], addr[3], addr[2], addr[1], addr[0]);
     }
+    bluetooth_start();
 }
 
 static void ble_on_reset(int reason)

@@ -26,7 +26,6 @@ static const char *TAG = "WIFI";
  * ========================================================= */
 
 static esp_netif_t *sta_netif = NULL;
-static esp_netif_t *ap_netif  = NULL;
 
 static EventGroupHandle_t wifi_event_group;
 
@@ -192,7 +191,6 @@ void wifi_init(void)
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
     sta_netif = esp_netif_create_default_wifi_sta();
-    ap_netif  = esp_netif_create_default_wifi_ap();
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
@@ -283,7 +281,7 @@ void wifi_disconnect(void)
 void wifi_on(void)
 {
     // ⚠️ SET MODE DUY NHẤT Ở ĐÂY
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_start());
 
     ESP_LOGI(TAG, "WiFi APSTA initialized");

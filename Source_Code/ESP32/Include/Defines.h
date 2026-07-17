@@ -16,6 +16,7 @@
 #define MIN_PACKAGE_LENGTH 4
 #define WIFI_BLE_DATA_MAX_PACKET_LENGTH 32
 typedef struct {
+    //System config
     uint8_t device_name[30];
     uint8_t device_tag[30];
     uint8_t wifiInfo[32];
@@ -23,17 +24,20 @@ typedef struct {
     uint8_t sleepStartMinute;
     uint8_t sleepEndHour;
     uint8_t sleepEndMinute;
+    uint8_t voiceMessageEnable;
+    uint8_t autoSleepEnable;
+    uint8_t dispAutoOffEnable;
+    uint8_t aiEnable;
+    
+    //System status
     uint8_t ledMode;
     uint8_t brightness;
     uint8_t speed;
-    uint8_t isOnline : 1; //MQTT connected
-    uint8_t bleStatus : 1;
-    uint8_t wifiStatus : 1;
-    uint8_t isBLEConnected : 1;
-    uint8_t isWiFiConnected : 1;
-    uint8_t LEDStatus : 1;
-    uint8_t voiceMessageStatus : 1;
-    uint8_t autoOff : 1;
+    uint8_t volume;
+    uint8_t isWiFiConnected;
+    uint8_t isOnline; //MQTT connected
+    uint8_t LEDStatus;
+    uint8_t DispStatus;
 } System_Variable;
 
 enum {
@@ -50,37 +54,6 @@ typedef struct
 } wifi_ble_command_t;
 
 
-//command via Bluetooth
-enum {
-    CMD_BLE_WIFI_SCAN           = 0x00,
-    CMD_BLE_WIFI_CONNECT,
-    CMD_BLE_WIFI_DISCONNECT,
-    CMD_BLE_WIFI_ON_OFF,
-    CMD_BLE_TEST_MODE
-};
-
-//command via Bluetooth/Wifi
-enum {
-    CMD_WIFI_BLE_NAME_CHANGE    = 0X05,
-    CMD_WIFI_BLE_TAG_CHANGE,
-    CMD_WIFI_BLE_LED_ON_OFF,
-    CMD_WIFI_BLE_VOICE_ON_OFF ,
-    CMD_WIFI_BLE_AUTO_OFF,
-    CMD_WIFI_BLE_AUTO_OFF_SET_TIME,
-    CMD_WIFI_BLE_RESTART,
-    CMD_WIFI_BLE_RESET,
-    CMD_WIFI_BLE_DELETE,
-    CMD_WIFI_BLE_LED_MODE,
-    CMD_WIFI_BLE_SPEED,
-    CMD_WIFI_BLE_BRIGHTNESS,
-};
-
-//command via wifi
-enum {
-    CMD_WIFI_CHECK_UPDATE = 0X11,
-    CMD_WIFI_MESSAGE,
-};
-
 //LED mode
 enum {
     LED_MODE_RAINBOW = 0X01,
@@ -91,4 +64,49 @@ enum {
     LED_MODE_STAR,
     LED_MODE_CUSTOM,
 };
+
+typedef enum
+{
+    // ===== INTERNAL =====
+    CMD_DUMMY_ID = 0x00,
+
+    // ===== WIFI COMMANDS =====
+    CMD_WIFI_SCAN_ID           = 0x10,
+    CMD_WIFI_CONNECT_ID ,
+    CMD_WIFI_DISCONNECT_ID ,
+
+    // ===== LED COMMANDS =====
+    CMD_LED_ON_OFF_ID      = 0x20,
+    CMD_LED_MODE_ID,
+    CMD_LED_BRIGHTNESS_ID,
+    CMD_LED_SPEED_ID,
+    CMD_LED_AUTO_OFF_SET_TIME_ID,
+
+    // ===== SENSOR COMMANDS =====
+    CMD_SENSOR_AMBIENT_UPDATE_ID = 0x30,
+
+    // ===== LCD COMMANDS =====
+    CMD_LCD_DISP_AUTO_OFF_ID = 0x40,
+
+    // ===== SPEAKER COMMANDS =====
+    CMD_SPEAKER_VOLUME_ID = 0x50,
+
+    // ===== SYSTEM SETTINGS =====
+    CMD_SYSTEM_NOTIFICATION_ID = 0x60,
+    CMD_SYSTEM_AI_REALTIME_ID,
+    CMD_SYSTEM_RESTART_ID,
+    CMD_SYSTEM_RESET_ID,
+    CMD_SYSTEM_DELETE_ID,
+    CMD_SYSTEM_CHECK_UPDATE_ID,
+    CMD_SYSTEM_TEST_MODE_ID,
+    CMD_SYSTEM_NAME_CHANGE_ID,
+    CMD_SYSTEM_TAG_CHANGE_ID,
+
+    // ===== SYSTEM PACKETS =====
+    CMD_SYSTEM_MONITORING_ID  = 0xF0,
+    CMD_ACK_RESPONSE_ID,
+    CMD_WIFI_MESSAGE,
+
+} command_t;
+
 #endif
