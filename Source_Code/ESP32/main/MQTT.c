@@ -13,7 +13,6 @@
 
 static const char *TAG = "mqtts_example";
 static esp_mqtt_client_handle_t client = NULL;
-extern QueueHandle_t wifi_ble_rx_queue; 
 
 esp_mqtt_client_handle_t getMQTTClient(void) {
     return client;
@@ -57,11 +56,11 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         }
         printf("\n");
         // ---------------------------------------------------------
-        wifi_ble_command_t cmd = {0};
-        if (decode_data(&cmd, (const uint8_t*) event->data, event->data_len) == DATA_VALID){
+        command_packet_t cmd = {0};
+        if (build_command_packet(&cmd, (const uint8_t*) event->data, event->data_len) == DATA_VALID){
             // Đẩy sang task xử lý
-            xQueueSendFromISR(wifi_ble_rx_queue, &cmd, NULL);
-            ESP_LOGI(TAG, "BLE receive:%d bytes", event->data_len);  
+            xQueueSendFromISR(received_commandHandle, &cmd, NULL);
+            ESP_LOGI(TAG, "MQTT received:%d bytes", event->data_len);  
         }
         break;
 

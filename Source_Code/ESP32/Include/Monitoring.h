@@ -4,7 +4,11 @@
 #include "MQTT.h"
 #include "freertos/timers.h"
 
-int mqtt_monitoring(const char *data, uint16_t len);
-void publish_monitoring_callback(TimerHandle_t);
+typedef enum {
+    MONITORING,
+    ACK,
+} type_t;
+
+int send_mqtt(type_t type, const char *data, uint16_t len);
 
 #endif

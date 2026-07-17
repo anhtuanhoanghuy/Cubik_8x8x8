@@ -7,9 +7,13 @@
 #include "portmacro.h"
 #include "uart.h"
 #include <string.h>
+#include "control.h"
 
 void wifi_task_handler(void) {
-    
+    ESP_LOGW("WIFI", "Wifi task run");
+    vTaskSuspend(NULL);
+    while (1) {
+    }
 }
 
 void uart_task_handler(void) {
@@ -21,7 +25,7 @@ void uart_task_handler(void) {
     while (1) {
         if (xQueueReceive(received_eventHandle, &event, portMAX_DELAY) == pdPASS) {
             switch ((uint8_t)event.type) {
-                case UART_DATA:
+                case UART_EVENT_RX:
                     for (uint16_t i = 0; i < event.size; i++) {
                         if (uart_read_bytes(UART_PORT, &byte, 1, 0) > 0) {
                             if (byte == 0xAA && parser.state != WAIT_HEADER) {
@@ -39,9 +43,9 @@ void uart_task_handler(void) {
                     }
                     break;
 
-                case UART_TX_REQUEST:
-                case UART_TX_COMPLETE:
-                  
+                case UART_EVENT_TX_REQUEST:
+                case UART_EVENT_TX_COMPLETE:
+                    
                     if (!uart_tx_busy) {
                         if (xQueueReceive(transmit_Handle, &packet_to_send, 0) == pdPASS) {
                             uart_tx_busy = true;
@@ -53,7 +57,7 @@ void uart_task_handler(void) {
                     }
                     break;
 
-                case UART_FIFO_OVF:
+                case UART_EVENT_OVERFLOW:
                     ESP_LOGW("UART", "Hardware FIFO Overflow!");
                     uart_flush_input(UART_PORT);
                     parser_reset(&parser);
@@ -62,6 +66,18 @@ void uart_task_handler(void) {
                 default:
                     break;
             }
+        }
+    }
+}
+
+void control_task_handler(void) {
+    command_packet_t command = {0};
+    while (1) {
+        if (xQueueReceive(received_commandHandle, &command, portMAX_DELAY) == pdPASS) {
+            ack_packet_t ack_packet;
+            ack_packet.seq_id = command.commandID;
+            ack_packet.status = process_command(&command);
+            send_ACK(&ack_packet);
         }
     }
 }

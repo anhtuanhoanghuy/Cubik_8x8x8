@@ -6,7 +6,6 @@ TaskHandle_t uart_task_t;
 QueueHandle_t received_eventHandle = NULL;
 QueueHandle_t received_commandHandle = NULL;
 QueueHandle_t transmit_Handle = NULL;
-EventGroupHandle_t uart_event_group;
 volatile bool uart_tx_busy = false;
 
 void uart_init(void) {
@@ -37,9 +36,6 @@ void uart_init(void) {
         &received_eventHandle,
         0
     ));
-
-    char* test_str = "This is a test string.\n";
-    uart_write_bytes(UART_PORT, (const char*)test_str, strlen(test_str));
 }
 
 
@@ -55,7 +51,7 @@ void send_uart_packet(uart_tx_packet_t *packet) {
         
         // 2. DATA vào kho an toàn rồi mới tạo EVENT để bấm chuông
         uart_event_t tx_event;
-        tx_event.type = (uart_event_type_t)UART_TX_REQUEST;
+        tx_event.type = (uart_event_type_t)UART_EVENT_TX_REQUEST;
         tx_event.size = 0;
         
         // Bắn chuông đánh thức Task UART
@@ -76,7 +72,7 @@ UART_Parser_Status_t parse_byte(parser_context_t *parser, uint8_t byte) {
             break;
 
         case WAIT_LEN:
-            if (byte <= UART_DATA_MAX_PACKET_LENGTH) {
+            if (byte <= DATA_MAX_PACKET_LENGTH) {
                 parser->command.length = byte;
                 parser->data_index = 0;
                 parser->state = (parser->command.length == 0) ? WAIT_CRC : WAIT_CMD_DATA;
@@ -86,7 +82,7 @@ UART_Parser_Status_t parse_byte(parser_context_t *parser, uint8_t byte) {
             break;
 
         case WAIT_CMD_DATA:
-            if (parser->data_index < UART_DATA_MAX_PACKET_LENGTH) {
+            if (parser->data_index < DATA_MAX_PACKET_LENGTH) {
                 parser->command.commandData[parser->data_index++] = byte;
                 if (parser->data_index >= parser->command.length)
                     parser->state = WAIT_CRC;
